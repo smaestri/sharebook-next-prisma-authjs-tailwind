@@ -14,6 +14,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// AUTH
+
 model User {
   id            String          @id @default(cuid())
   name          String?
@@ -24,11 +26,14 @@ model User {
   sessions      Session[]
   // Optional for WebAuthn support
   Authenticator Authenticator[]
- 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Borrow    Borrow[]
+  Messages  Messages[]
+  UserBook  UserBook[]
 }
- 
+
 model Account {
   userId            String
   type              String
@@ -41,33 +46,33 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([provider, providerAccountId])
 }
- 
+
 model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@id([identifier, token])
 }
- 
+
 // Optional for WebAuthn support
 model Authenticator {
   credentialID         String  @unique
@@ -78,8 +83,68 @@ model Authenticator {
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([userId, credentialID])
+}
+
+// APP
+
+model Book {
+  id         Int        @id @default(autoincrement())
+  createdAt  DateTime
+  title      String
+  author     String
+  isbn       String
+  image      String
+  categoryId Int
+  category   Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  Borrow     Borrow[]
+  UserBook   UserBook[]
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime
+  Book      Book[]
+}
+
+model Borrow {
+  id            Int        @id @default(autoincrement())
+  createdAt     DateTime
+  validatedDate DateTime
+  closedDate    DateTime
+  rdvDate       DateTime
+  rdvPlace      String
+  userBook      UserBook   @relation(fields: [userBookId], references: [id])
+  userBookId    Int
+  borrower      User       @relation(fields: [borrowerId], references: [id])
+  borrowerId    String
+  Messages      Messages[]
+  Book          Book?      @relation(fields: [bookId], references: [id])
+  bookId        Int?
+
+  @@unique([userBookId, borrowerId])
+}
+
+model Messages {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime
+  message   String
+  borrow    Borrow   @relation(fields: [borrowId], references: [id])
+  borrowId  Int
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserBook {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime
+  book      Book     @relation(fields: [bookId], references: [id])
+  bookId    Int
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Borrow    Borrow[]
 }
