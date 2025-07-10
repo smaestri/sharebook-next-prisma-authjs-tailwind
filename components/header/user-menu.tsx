@@ -9,6 +9,7 @@ import { signOut, useSession } from 'next-auth/react';
 import { Button } from '../ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import Link from 'next/link';
 
 interface AccountProps {
   userId?: string
@@ -52,7 +53,7 @@ export default function UserMenu({ }: AccountProps) {
           <DropdownMenuItem key="profile" className="h-14 gap-2">
             <p className="font-semibold">Signed in as {session?.user.email}</p>
           </DropdownMenuItem>
-          <DropdownMenuItem key="books">Ma bibiliothèque</DropdownMenuItem>
+          <DropdownMenuItem key="books"><Link href="my-books">Ma bibiliothèque</Link></DropdownMenuItem>
           <DropdownMenuItem key="purchases">Mes achats</DropdownMenuItem>
           <DropdownMenuItem key="sales">Mes ventes</DropdownMenuItem>
           <DropdownMenuItem key="account">Mon compte</DropdownMenuItem>
