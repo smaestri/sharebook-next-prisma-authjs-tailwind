@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE "Borrow" ALTER COLUMN "validatedDate" DROP NOT NULL,
+ALTER COLUMN "closedDate" DROP NOT NULL,
+ALTER COLUMN "rdvDate" DROP NOT NULL,
+ALTER COLUMN "rdvPlace" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "UserBook" ADD COLUMN     "status" TEXT NOT NULL DEFAULT 'FREE';

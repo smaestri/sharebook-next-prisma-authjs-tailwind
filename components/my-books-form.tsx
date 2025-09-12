@@ -10,9 +10,6 @@ interface MyBooksFormProps {
 }
 
 export default function MyBooksForm({ books, email }: MyBooksFormProps) {
-console.log(books)
-
-
 if (!books || books.length === 0) {
   return <div className="flex">Vous n'avez pas déclaré de livres pour le moment.</div>
 }
@@ -25,18 +22,18 @@ if (!books || books.length === 0) {
         >
           <div className="flex flex-col items-center">
             <div className="h-[150px] mb-3">
-              <Image
+              {/* <Image
                 src={userBook.bookInfo.image}
                 alt={`${userBook.bookInfo.title}`}
                 width={100}
                 height={100}
-              />
+              /> */}
             </div>
             <div className="h-[65px] mb-5">
               <p title={userBook.bookInfo.title} className="line-clamp-3 font-sans">{userBook.bookInfo.title} - {userBook.bookInfo.author}</p>
             </div>
           </div>
-          <div>Catégorie: {userBook.bookInfo.category.name}</div>
+          {/* <div>Catégorie: {userBook.bookInfo.category.name}</div> */}
           <div>Etat: {userBook.state}</div>
           <div>Prix: {userBook.price}</div>
           <div className="flex flex-col items-center">

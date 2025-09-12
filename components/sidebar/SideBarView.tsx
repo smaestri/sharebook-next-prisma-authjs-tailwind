@@ -27,6 +27,7 @@ export default function SideBarView({ categories }: { categories: Counter[] }) {
   return (<div className="flex flex-col">
     <div><b>Filtrer par catégorie</b></div>
     {renderCategories}
+    
   </div>
   )
 }

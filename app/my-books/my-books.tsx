@@ -17,14 +17,18 @@ export default async function MyBooks() {
   const email = session.user.email
   console.log('email', email)
 
-  // let { data: userBooks, error } = await supabase
-  //   .from("user_book")
-  //   .select("*, user(*), book(*, category(*))")
-  //   .eq("email", email)
-  //   .eq("deleted", false)
-     const userBooks : any= await prisma.userBook.findMany();
+     const userBooks : any= await prisma.userBook.findMany({
+      include: {
+        book: true,
+        user: true
+      },
+      where: {
+        deleted: false,
+        userId: session.user.id
+      }
+     });
+  console.log('userBooks', JSON.stringify(userBooks))
 
-  console.log('books', userBooks)
   const finalBooks = userBooks?.map((item: any) => ({ id: item.id, place: item.place, state: item.state, price: item.price, bookInfo: item.book, userInfo: item.user }))
   console.log('books fetched', JSON.stringify(finalBooks))
 

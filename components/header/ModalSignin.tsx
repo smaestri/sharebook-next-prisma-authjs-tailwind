@@ -19,16 +19,22 @@ const ModalSignin = ({ isOpen, onClose }: { isOpen: boolean, onClose: any }) => 
           <DialogTitle>
             Choisir un provider
           </DialogTitle></DialogHeader>
-        <DialogDescription>
-          <Image
-            src={githubIcon}
-            alt="Github"
-            onClick={() => {
-              signIn("github", { redirectTo: "/" })
-            }}
-            className='cursor-pointer '
-          />
-        </DialogDescription>
+        <Image
+          src={githubIcon}
+          alt="Github"
+          onClick={() => {
+            signIn("github", { redirectTo: "/" })
+          }}
+          className='cursor-pointer '
+        />
+        <Image
+          src={googleIcon}
+          alt="Google"
+          onClick={() => {
+            signIn("google", { redirectTo: "/" })
+          }}
+          className='cursor-pointer '
+        />
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline" onClick={onClose}>Cancel</Button>

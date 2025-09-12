@@ -4,8 +4,23 @@ export default async function SideBarPage({}) {
 
 
   const categories : any= await prisma.category.findMany();
- 
-   console.log('cate', categories)
 
-  return (<SideBarView categories={categories}/>)
+
+  const resCat = []
+
+  // for each category, get counter of books
+  for (const category of categories) {
+    const count = await prisma.userBook.findMany({
+      where: {
+        book: {
+          categoryId: category.id,
+        },
+        deleted: false
+      }
+    });
+    resCat.push({ ...category, count: count.length });
+  }
+   console.log('resCat', resCat)
+
+  return (<SideBarView categories={resCat}/>)
 }

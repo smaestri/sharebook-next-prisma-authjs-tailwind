@@ -47,16 +47,15 @@ export default function UserMenu({ }: AccountProps) {
                 height={50}
                 alt="Picture of the author"
                 />
-
         </DropdownMenuTrigger>
         <DropdownMenuContent aria-label="Profile Actions">
           <DropdownMenuItem key="profile" className="h-14 gap-2">
             <p className="font-semibold">Signed in as {session?.user.email}</p>
           </DropdownMenuItem>
-          <DropdownMenuItem key="books"><Link href="my-books">Ma bibiliothèque</Link></DropdownMenuItem>
-          <DropdownMenuItem key="purchases">Mes achats</DropdownMenuItem>
-          <DropdownMenuItem key="sales">Mes ventes</DropdownMenuItem>
-          <DropdownMenuItem key="account">Mon compte</DropdownMenuItem>
+          <DropdownMenuItem asChild key="books"><Link href="my-books">Ma bibiliothèque</Link></DropdownMenuItem>
+          <DropdownMenuItem asChild key="purchases"><Link href="purchases">Mes achats</Link></DropdownMenuItem>
+          <DropdownMenuItem asChild key="sales"><Link href="sales">Mes ventes</Link></DropdownMenuItem>
+          <DropdownMenuItem asChild key="account"><Link href="account">Mon compte</Link></DropdownMenuItem>
           <DropdownMenuItem key="logout" color="danger" onClick={signOutAndRedirect}>
             Log Out
           </DropdownMenuItem>
