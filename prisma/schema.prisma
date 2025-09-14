@@ -93,7 +93,6 @@ model Book {
   createdAt  DateTime? @default(now())
   title      String
   author     String
-  isbn       String
   image      String
   categoryId Int
   category   Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
@@ -138,6 +137,7 @@ model UserBook {
   id        Int      @id @default(autoincrement())
   createdAt DateTime? @default(now())
   book      Book     @relation(fields: [bookId], references: [id])
+  description       String?
   bookId    Int
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)

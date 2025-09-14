@@ -1,13 +1,16 @@
 "use client"
-import { BookWithCategory } from "@/app/my-books/page";
-import React, { useActionState, useState } from "react";
-import { createBook } from "@/lib/actions";
-import axios from "axios";
-import { Input } from "./ui/input";
-import { Select, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
+import React, { useState } from "react";
+import { createBook, updateBook } from "@/lib/actions";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import FormButton from "./form-button";
-import { SelectContent } from "@radix-ui/react-select";
-import { Label } from "./ui/label";
+import { useForm } from "react-hook-form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import { bookSchema, BookType } from "@/lib/ValidationSchemas copy";
+import { UserBookWithBookAndUser } from "@/lib/DbSchemas";
 
 export interface Category {
   id: string;
@@ -15,85 +18,117 @@ export interface Category {
 }
 
 export interface CreateEditBookFormProps {
-  book?: BookWithCategory
+  userBook?: UserBookWithBookAndUser | null
   categories: Category[]
 }
 
-const states = [
-  { id: "NEW", label: "Neuf" },
-  { id: "GOOD", label: "Bon état" },
-  { id: "AVERAGE", label: "Moyen" },
-  { id: "BAD", label: "Mauvais état" }]
-
-
-export default function CreateEditBookForm({ categories, book }: CreateEditBookFormProps) {
-  // need to transform ID in string to display Select correctly
-  //const categoriesFormatted = categories.map((cat: any) => ({ ...cat, id: cat.id.toString() }))
-
-  const [fetchedBook, setFetchedBook] = useState<BookWithCategory>();
-  const [loading, setLoading] = useState<boolean>();
-  const [catSelected, setCatSelected] = useState<string>();
-
-  const [formState, action] = useActionState(createBook, {
-    errors: {}
-  })
-
-  console.log('categories', categories)
-  console.log('formState', formState)
-  console.log('catSelected', catSelected)
+export default function CreateEditBookForm({ categories, userBook }: CreateEditBookFormProps) {
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const renderCat = () => {
-    return categories.map((cat) => <SelectItem key={cat.name} value={cat.name}>{cat.name}</SelectItem>)
+    return categories.map((cat) => <SelectItem value={cat.id.toString()}>{cat.name}</SelectItem>)
+  }
+  console.log('all cats', categories)
+  console.log('userBook passed', userBook)
+
+  const form = useForm<BookType>({
+    resolver: zodResolver(bookSchema),
+    defaultValues: {
+      title: userBook?.book.title || "",
+      author: userBook?.book.author || "",
+      category: userBook?.book.categoryId?.toString() || "",
+      description: userBook?.description || "",
+    },
+  })
+
+  async function onSubmit(values: z.infer<typeof bookSchema>) {
+    console.log("onSubmit ", values)
+    setErrorMessage("")
+
+    let response = null
+    if(userBook){
+      response = await updateBook(userBook.id, values)
+
+    } else {
+      response = await createBook(values)
+    }
+    if (response?.error) {
+      setErrorMessage(response.error)
+    }
   }
 
   const renderBookForm = () => {
+    return (<>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Titre</FormLabel>
+                <FormControl>
+                  <Input placeholder="title" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
 
-    return (
-      <form action={action}>
-        <div>
-        <div>
-        <Label htmlFor="title">Title</Label>
-        <Input id="titre" placeholder="titre" />
-        </div>
-        <div>
-        <Label htmlFor="state">author</Label>
-        <Input id="author" placeholder="author" />
-        </div>
-        <div>
-        <Label htmlFor="category">category</Label>
+          <FormField
+            control={form.control}
+            name="author"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Auteur</FormLabel>
+                <FormControl>
+                  <Input placeholder="auteur" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
 
-        <Select value={catSelected} onValueChange={(e)=> setCatSelected(e)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {renderCat()}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        </div>
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Catégorie</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectGroup>
+                      {renderCat()}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {/* <FormButton>Save</FormButton> */}
-        {formState?.errors?._form ? <div className="p-2 bg-red-200 border border-red-400">{formState.errors._form?.join(', ')}</div> : null}
-        </div>
-        <Select>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select a fruit" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Fruits</SelectLabel>
-          <SelectItem value="apple">Apple</SelectItem>
-          <SelectItem value="banana">Banana</SelectItem>
-          <SelectItem value="blueberry">Blueberry</SelectItem>
-          <SelectItem value="grapes">Grapes</SelectItem>
-          <SelectItem value="pineapple">Pineapple</SelectItem>
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-      </form>
-      
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Textarea placeholder="description" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormButton>Save</FormButton>
+          {errorMessage ? <div className="p-2 bg-red-200 border border-red-400">{errorMessage}</div> : null}
+        </form>
+      </Form>
+    </>
+
     )
   }
   return (
