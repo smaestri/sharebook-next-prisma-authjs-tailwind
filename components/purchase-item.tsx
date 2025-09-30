@@ -15,10 +15,8 @@ export default async function PurchasePage({sale, isPurchase}: {sale: Borrow, is
         where: {
             id: sale.borrowerId
         },
-        // .from("user")
-        // .select("pseudo")
-        // .eq("email", sale.borrower_id)
     })
+    buyerName = buyer?.name
     }
     
     console.log('buyerName', buyerName)

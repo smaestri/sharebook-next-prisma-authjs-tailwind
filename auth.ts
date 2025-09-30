@@ -14,8 +14,17 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID!,
       clientSecret: process.env.AUTH_GOOGLE_SECRET!,
-    })
-  ]
+    }),
+    
+  ],
+  callbacks: {
+    session({ session, user } :any) {
+      // As seen on https://authjs.dev/guides/role-based-access-control
+      if (user?.id) session.user.id = user.id;
+      if (user?.role) session.user.role = user.role;
+      return session;
+    }
+  }
 };
 
 export const {

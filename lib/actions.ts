@@ -2,62 +2,29 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 // import * as cheerio from 'cheerio';
-import { BOOK_STATUS } from "./constants";
+import { BORROW_STATUS } from "./constants";
 import prisma from "./prisma";
 import { Book, UserBook } from "@/app/generated/prisma";
 import { auth } from "@/auth";
-import { bookSchema, BookType } from "./ValidationSchemas copy";
+import { bookSchema, BookType, UserInfoType } from "./ValidationSchemas copy";
 import { UserBooksWithBorrow } from "./DbSchemas";
 
-const saveUser = async (supabase: any, email: string, pseudo: string) => {
-    console.log('saving user with email ' + email)
-    let { data: user } = await supabase
-        .from("user")
-        .select("*")
-        .eq("email", email);
+export const updateUser = async (email: string, cp: string, formData: UserInfoType) => {
+    console.log('update user with formData ' + JSON.stringify(formData) + " and cp" + cp +" and mail" + email )
+   await prisma.user.update({
+        where: { email: email },
+        data: { 
+            city: formData.city,
+            cp: cp,
+            street: formData.street
+        }
+    })
 
-    if (user == null || user.length == 0) {
-        const { error: userError } = await supabase
-            .from('user')
-            .insert({
-                email,
-                pseudo
-            })
-        console.log('error when saving user ', userError)
-    }
+    // console.log('user updated', test)
+
+    revalidatePath('/')
+    redirect('/')
 }
-
-export const saveCity = async (email: string, street: any, selectedCity: any, formState: any, formData: any) => {
-
-    console.log('save city with city ', selectedCity + " and cp " + formData.get('cp') + ' street', street + " pseudo " + formData.get('pseudo'))
-    console.log('')
-    // const supabase = createClient();
-    // const { data: { user } } = await supabase.auth.getUser();
-    // console.log('user retrieved from oauth', (JSON.stringify(user)))
-    // console.log('email', email)
-
-    // await saveUser(supabase, email, formData.get('pseudo') )
-
-    console.log('saving city ...')
-
-    // const { error: errorCity } = await supabase
-    //     .from('user')
-    //     .update({
-    //         pseudo: formData.get('pseudo'),
-    //         cp: formData.get('cp'),
-    //         city: selectedCity,
-    //         street,
-    //     })
-    //     .eq('email', email)
-
-    // if (errorCity) {
-    //     console.log('error when updating city / cp')
-    //     return 'KO';
-    // }
-    return 'OK';
-
-}
-
 
 const saveBook = async (formData: BookType): Promise<Book> => {
 
@@ -66,10 +33,12 @@ const saveBook = async (formData: BookType): Promise<Book> => {
     const category = formData.category
 
     let book: Book | null = await prisma.book.findFirst({
-        where: { title: {
-            contains: title,
-            mode: 'insensitive'
-        } }
+        where: {
+            title: {
+                contains: title,
+                mode: 'insensitive'
+            }
+        }
     })
 
     if (!book) {
@@ -89,7 +58,7 @@ const saveBook = async (formData: BookType): Promise<Book> => {
     return book;
 }
 
-const attachBookToUser = async (book: Book, userId: string,description: string) => {
+const attachBookToUser = async (book: Book, userId: string, description: string) => {
 
     // does the use already declared this book?
     let userBook: UserBook | null = await prisma.userBook.findFirst({
@@ -222,84 +191,55 @@ export async function deleteBook(id: number) {
 
 export async function validatePurchase(purchaseId: number) {
 
-    // TODO only if PENDING
-    // console.log('validatePurchase', purchaseId)
-    // const supabase = createClient();
-
-    // const { data: { user }, error: errConnect } = await supabase.auth.getUser()
-
-    // const { error: errorValidatre } = await supabase
-    //     .from('borrow')
-    //     .update({
-    //         status: BORROW_STATUS.VALIDATED,
-    //         validated_date: new Date().toISOString()
-    //     })
-    //     .eq('id', purchaseId)
-
-    // if (errorValidatre) {
-    //     console.log('error during borrows update')
-    // }
+    await prisma.borrow.update({
+        where: {
+            id: purchaseId,
+        },
+        data: {
+            status: BORROW_STATUS.VALIDATED,
+            validatedDate: new Date(),
+        },
+    })
 
     revalidatePath('/sales')
     redirect('/sales')
 }
 
-export async function refusePurchase(purchaseId: number, bookId: number, motif: any, slot: any) {
-    // TODO only if PENDING
-    // console.log('refusePurchase', purchaseId, " book=", bookId, " motif= ", motif, " slot= " + slot)
-    // const supabase = createClient();
-    // const { data: { user }, error: errConnect } = await supabase.auth.getUser()
-    // const email = user?.user_metadata["email"]
-
-    // if (motif == "INCORRECT_SLOT") {
-    //     const { error: errorMessage } = await supabase
-    //         .from('messages')
-    //         .insert({
-    //             borrow_id: purchaseId,
-    //             email,
-    //             message: "Le créneau ne me convient pas, pouvez-vous refaire la demande sur ce créneau SVP: " + slot
-    //         })
-    // }
-
-    // const { error: errorValidatre } = await supabase
-    //     .from('borrow')
-    //     .update({
-    //         status: BORROW_STATUS.REFUSED,
-    //         close_date: new Date().toISOString()
-    //     })
-    //     .eq('id', purchaseId)
-
-    // setBookToFree(bookId, supabase)
+export async function refusePurchase(purchaseId: number) {
+    await prisma.borrow.update({
+        where: {
+            id: purchaseId,
+        },
+        data: {
+            status: BORROW_STATUS.REFUSED,
+            closedDate: new Date(),
+        },
+    })
 
     revalidatePath('/sales')
     redirect('/sales')
 }
 
 
-export async function cancelPurchase(purchaseId: number, bookId: number) {
-    // TODO only if PENDING
-    // console.log('cancel', purchaseId, " book=", bookId)
-    // const supabase = createClient();
-    // const { data: { user }, error: errConnect } = await supabase.auth.getUser()
-    // const { error: errorValidatre } = await supabase
-    //     .from('borrow')
-    //     .update({
-    //         status: BORROW_STATUS.CANCELLED,
-    //         close_date: new Date().toISOString()
-    //     })
-    //     .eq('id', purchaseId)
-
-    // setBookToFree(bookId, supabase)
+export async function cancelPurchase(purchaseId: number) {
+    await prisma.borrow.update({
+        where: {
+            id: purchaseId,
+        },
+        data: {
+            status: BORROW_STATUS.CANCELLED,
+            closedDate: new Date(),
+        },
+    })
 
     revalidatePath('/purchases')
     redirect('/purchases')
 }
 
 
-export async function purchaseBook(userBookId: string, rdvDate: any, message?: string, formData: FormData) {
+export async function purchaseBook(userBookId: string, rdvDate: any, message?: string) {
 
     console.log('purchaseBook bookId: ', userBookId, " rdvDate ", rdvDate, "message:", message)
-
     const session = await auth()
 
     const userConnectedId = session?.user?.id
@@ -321,19 +261,6 @@ export async function purchaseBook(userBookId: string, rdvDate: any, message?: s
     console.log('userBook found:', userBook)
 
     // 1. Insert borrow
-
-    // check if already borrowed
-    const existingBorrow = await prisma.borrow.findFirst({
-        where: {
-            userBookId: userBook.id,
-            borrowerId: userConnectedId
-        }
-    })
-    if (existingBorrow) {
-        console.error('error user book already borrowed')
-        return
-    }
-
     console.log('creating borrow for userConnectedId:', userConnectedId, 'and userBook', userBook)
     const borrow = await prisma.borrow.create({
         data: {
@@ -344,7 +271,6 @@ export async function purchaseBook(userBookId: string, rdvDate: any, message?: s
     })
 
     console.log('borrow created:', borrow)
-
     //2. Insert message
     if (message) {
         await prisma.messages.create({
@@ -355,46 +281,24 @@ export async function purchaseBook(userBookId: string, rdvDate: any, message?: s
             }
         })
     }
-    // //3. Update status
-    await prisma.userBook.update({
-        data: {
-            status: BOOK_STATUS.PURCHASED,
-        },
-        where: { id: userBook.id }
+    revalidatePath('/purchases')
+    redirect('/purchases')
+}
 
+export async function closePurchase(borrowId: number) {
+    await prisma.borrow.update({
+        where: {
+            id: borrowId,
+        },
+        data: {
+            status: BORROW_STATUS.CLOSED,
+            closedDate: new Date(),
+        },
     })
 
     revalidatePath('/purchases')
     redirect('/purchases')
 }
-
-export async function closePurchase(borrowId: number, bookId: number) {
-    // const supabase = createClient();
-    // const { error: errorBorrow } = await supabase
-    //     .from('borrow')
-    //     .update({
-    //         status: BORROW_STATUS.CLOSED,
-    //         close_date: new Date().toISOString()
-    //     })
-    //     .eq('id', borrowId)
-
-    // setBookToFree(bookId, supabase)
-
-    revalidatePath('/purchases')
-    redirect('/purchases')
-}
-
-
-
-const setBookToFree = async (bookId: any, supabase: any) => {
-    const { error: errorBook } = await supabase
-        .from('user_book')
-        .update({
-            status: BOOK_STATUS.FREE,
-        })
-        .eq('id', bookId)
-}
-
 export async function search(formData: FormData) {
     const term = formData.get('term')
     console.log('in server action ', term)

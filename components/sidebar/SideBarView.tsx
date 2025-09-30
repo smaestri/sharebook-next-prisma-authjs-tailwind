@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 
-interface Counter {
+export interface Counter {
   id: number
   name: string
   count: number

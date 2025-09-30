@@ -3,8 +3,6 @@ import Messages from "@/components/Messages";
 import PurchaseClient from "@/components/purchase-client";
 import prisma from "@/lib/prisma";
 
-export type BorrowWithBook = any
-
 export type BorrowDate = {
   createdDate: string | undefined
   validatedDate: string | undefined

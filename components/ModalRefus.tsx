@@ -24,9 +24,8 @@ const ModalRefus = ({ isOpen, onClose, sale }: { isOpen: boolean, onClose: any, 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
-          <form action={refusePurchase.bind(null, sale.id, sale.userBook.id, motif, slot)}>
+          <form action={refusePurchase.bind(null, sale.id)}>
             <DialogHeader className="flex flex-col gap-1">Motif du refus</DialogHeader>
-
               <Select
                 required
                 // label="Motif du refus"

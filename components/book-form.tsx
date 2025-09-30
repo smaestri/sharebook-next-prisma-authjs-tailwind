@@ -3,6 +3,7 @@ import { useState } from "react";
 import DialogUser from "./DialogUser";
 import Image from "next/image"
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 export default function BookForm({ book, userBooks, email }: any) {
 
@@ -36,11 +37,15 @@ export default function BookForm({ book, userBooks, email }: any) {
                             </svg>
                         </div>
                         <div>
-                            {userBooks?.length} utilisateurs possèdent ce livres
+                          {userBooks?.length > 1 && <span>{userBooks?.length} utilisateurs possèdent ce livres</span>}
+                            {userBooks?.length === 1 && <span>{userBooks[0].user.name} possède ce livre</span>}
                         </div>
                     </div>
                     <div className="flex justify-center gap-2 mt-3">
-                       <DialogUser book={book} userBooks={userBooks}/>
+                       {userBooks.length > 1  && <DialogUser book={book} userBooks={userBooks}/>}
+                       {userBooks.length == 1 && <Link href={`purchases/new?bookId=${userBooks[0].id}`}>
+                      <Button>Demander</Button>
+                    </Link>}
                     </div>
                 </>
             }

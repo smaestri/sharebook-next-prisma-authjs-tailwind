@@ -1,4 +1,3 @@
-import { BOOK_STATUS } from "@/lib/constants";
 import prisma from "@/lib/prisma";
 import BookForm from "./book-form";
 
@@ -11,7 +10,7 @@ export default async function BookPage({book, email} : any) {
       },
       where: {
         book: {
-          isbn: book.isbn,
+          id: book.id,
         },
         user: {
             email: {

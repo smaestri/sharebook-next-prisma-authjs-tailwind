@@ -31,6 +31,9 @@ model User {
   Borrow    Borrow[]
   Messages  Messages[]
   UserBook  UserBook[]
+  cp         String?
+  city         String?
+  street       String?
 }
 
 model Account {
@@ -119,8 +122,6 @@ model Borrow {
   borrowerId    String
   messages      Messages[]
   status        String   @default("PENDING")
-
-  @@unique([userBookId, borrowerId])
 }
 
 model Messages {

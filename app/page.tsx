@@ -1,26 +1,33 @@
 import { auth, signIn } from "@/auth"
 import SideBarPage from "@/components/sidebar/page"
+import prisma from "@/lib/prisma";
+import { User } from "./generated/prisma";
+import ModalCity from "./AdditionalUserInfos/ModalCity";
 
 export default async function SignIn() {
 
   const session = await auth()
 
   if (!session?.user) return (
-    // <form
-    //   action={async () => {
-    //     "use server"
-    //     await signIn("github")
-    //   }}
-    // >
-    //   <button type="submit">Signin with GitHub</button>
-    // </form>
-    <div>Please sign in from ehader</div>
+    <div>Please sign in.</div>
   )
 
-  return (
+  // fetchu user from DB to get address
+  const user= await prisma.user.findFirst({
+      where: {
+        id: session?.user.id,
+      }
+    });
 
+console.log('user from db', user)
+
+  return (
+<>
+
+    {(!user?.cp || !user.city) && <ModalCity email={user?.email || ""} isOpen={true} />}
 
     <div>Bienvenue</div>
+    </>
 
   )
 } 

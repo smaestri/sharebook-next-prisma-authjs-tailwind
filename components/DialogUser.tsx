@@ -11,47 +11,44 @@ const DialogUser = ({ userBooks, book }: { userBooks: any, book: any }) => {
   return (
     <Dialog>
       <form>
-         <DialogTrigger asChild>
-            <Button variant="outline">Voir</Button>
-          </DialogTrigger>
-      <DialogContent>
-          <DialogContent>
-            <DialogHeader className="flex flex-col gap-1">
-              <DialogTitle>Choisir un propriétaire</DialogTitle>
-            </DialogHeader>
-            <p>
-              Plusieurs personnes possèdent <i>{book.title}</i>
-            </p>
-            <p>Merci de choisir: </p>
-            <div>
-              <table>
+        <DialogTrigger asChild>
+          <Button variant="outline">Voir</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader className="flex flex-col gap-1">
+            <DialogTitle>Choisir un propriétaire</DialogTitle>
+          </DialogHeader>
+          <p>
+            Plusieurs personnes possèdent <i>{book.title}</i>
+          </p>
+          <p>Merci de choisir: </p>
+          <div>
+            <table>
+              <tr>
+                <td>Livre</td>
+                <td>Nom propriétaire</td>
+                <td>Email propriétaire</td>
+              </tr>
+              {userBooks.map((userBook: any) => (
                 <tr>
-                  <td>Livre</td>
-                  <td>Nom propriétaire</td>
-                  <td>Email propriétaire</td>
+                  <td>{userBook.book.title}</td>
+                  <td>{userBook.user.name}</td>
+                  <td>{userBook.user.email}</td>
+                  <td><Link href={`purchases/new?bookId=${userBook.id}`}>
+                    <Button>Acheter</Button>
+                  </Link></td>
                 </tr>
-                {userBooks.map((userBook: any) => (
-                  <tr>
-                    <td>{userBook.book.title}</td>
-                    <td>{userBook.user.name}</td>
-                    <td>{userBook.user.email}</td>
-                    <td><Link href={`purchases/new?bookId=${userBook.id}`}>
-                      <Button>Acheter</Button>
-                    </Link></td>
-                  </tr>
-                ))}
-              </table>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button type="button" variant="secondary">
-                  Close
-                </Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        
-      </DialogContent>
+              ))}
+            </table>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Close
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
       </form>
     </Dialog>
 

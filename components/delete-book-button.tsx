@@ -24,17 +24,17 @@ export function DeleteBook({ userBookId }: { userBookId: number }) {
     </form>
     <Dialog open={showBorrowModal} onOpenChange={onOpenChange}>
       <DialogContent>
-        <DialogHeader className="flex flex-col gap-1">Modal Title</DialogHeader>
+        <DialogHeader className="flex flex-col gap-1">Livre emprunté</DialogHeader>
         <DialogDescription>
           <p>
-            The book is currently being borrowed, you cannot delete it!
+            Le livre ne peut pas être supprimé car il est actuellement emprunté.
           </p>
 
         </DialogDescription>
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline" onClick={() => { }}>Cancel</Button>
+            <Button variant="outline" onClick={() => { }}>Fermer</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

@@ -8,6 +8,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
 import { Select, SelectItem } from "@/components/ui/select"
 import React from "react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Button } from "@/components/ui/button"
+import { ChevronDownIcon } from "lucide-react"
 
 const Borrow = ({ searchParams }: { searchParams: any }) => {
 
@@ -27,15 +30,16 @@ const Borrow = ({ searchParams }: { searchParams: any }) => {
 
   return (
     <form action={purchaseBook.bind(null, bookId.bookId,rdv, message)}>
+
       <div className="flex justify-center">
         <div className="flex flex-col gap-2">
 
           <div>
             <p>La vente aura lieu au domicile du vendeur. Merci d'indiquer la date et l'heure de rencontre souhaités</p>
           </div>
-          <div className="flex justify-center gap-2">
-            {/* <Choice timeFieldName="firstTime" setDate={setRdvDate} /> */}
-          </div>
+          {/* <div className="flex justify-center gap-2">
+            <Choice />
+          </div> */}
           <div>
             <Textarea
               name="message"
@@ -53,20 +57,44 @@ const Borrow = ({ searchParams }: { searchParams: any }) => {
   )
 }
 
-const Choice = ({ setDate, timeFieldName }: { setDate: any, timeFieldName: string }) => {
+const Choice = () => {
   
-  const [datePicker, setDatePicker] = React.useState<Date | undefined>(new Date())
-
+  const [open, setOpen] = React.useState(false)
+  const [date, setDate] = React.useState<Date | undefined>(undefined)
   return (
     <div className="flex flex-col gap-2">
+        <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            id="date"
+            className="w-48 justify-between font-normal"
+          >
+            {date ? date.toLocaleDateString() : "Select date"}
+            <ChevronDownIcon />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto overflow-hidden p-0" align="start">
           <Calendar
+
+            mode="single"
+            selected={date}
+            captionLayout="dropdown"
+            onSelect={(date) => {
+              setDate(date)
+              setOpen(false)
+            }}
+          />
+        </PopoverContent>
+      </Popover>
+          {/* <Calendar
       mode="single"
       selected={datePicker}
       onSelect={setDatePicker}
       className="rounded-md border shadow-sm"
       captionLayout="dropdown"
-    />
-    <Select
+    /> */}
+    {/* <Select
         required
         // items={times}
         name={timeFieldName}
@@ -77,7 +105,7 @@ const Choice = ({ setDate, timeFieldName }: { setDate: any, timeFieldName: strin
             {time.label}
           </SelectItem>
         ))}
-      </Select>
+      </Select> */}
       {/* <Calendar
         selected={new Date()}
         // minValue={today(getLocalTimeZone())}

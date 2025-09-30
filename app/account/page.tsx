@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
-import UserAccountForm from "@/components/user-account-form";
 import prisma from "@/lib/prisma";
+import UserAccountForm from "../AdditionalUserInfos/user-account-form";
 
 export default async function Account() {
 
@@ -23,12 +23,6 @@ export default async function Account() {
       return null;
     }
 
-    // fetch user account
-    // const { data: userInfo } = await supabase
-    // .from("user")
-    // .select("*")
-    // .eq("email", email)
-
     const userInfo = await prisma.user.findFirst({
       where: { email }
     })
@@ -40,7 +34,7 @@ export default async function Account() {
     }
 
     return (
-        <UserAccountForm email={email} userInfo={userInfo} pseudo={userInfo.name} />
+        <UserAccountForm email={email} userInfo={userInfo} />
     )
       
 }

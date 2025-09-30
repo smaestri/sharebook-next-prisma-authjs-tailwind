@@ -15,5 +15,16 @@ export const bookSchema = z.object({
   }),
 })
 
+export const userInfoSchema = z.object({
+  city: z.string().min(2, {
+    message: "Mercid'indiquer la ville",
+  }),
+  street: z.string().min(2, {
+    message: "Merci d'indiquer la rue et le numéro",
+  }),
+
+})
+
 export type BookType = z.infer<typeof bookSchema>
 
+export type UserInfoType = z.infer<typeof userInfoSchema>

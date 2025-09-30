@@ -1,7 +1,5 @@
-import { BorrowWithBook } from "@/app/sales/page";
 import PurchasePage from "./purchase-item";
 import PurchaseSelector from "./PuchaseSelector";
-import { Borrow } from "@/app/generated/prisma";
 
 export default function ListSalesOrPurchases({ sales, isPurchase }: { sales: any, isPurchase: boolean }) {
   console.log('sales', sales)

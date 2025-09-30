@@ -1,14 +1,11 @@
 "use client"
 import { cancelPurchase, closePurchase, refusePurchase, validatePurchase } from "@/lib/actions";
 import { useState } from "react";
-import ModalRefus from "./ModalRefus";
 import Link from "next/link";
 import { BORROW_STATUS } from "@/lib/constants";
 import { times } from "@/lib/utils";
-import Image from "next/image"
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { Borrow } from "@/app/generated/prisma";
 
 export default function PurchaseClient({ sale, isPurchase, buyerName, isItem }: { buyerName: any, sale: any, isPurchase: boolean, isItem?: boolean }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -83,21 +80,21 @@ export default function PurchaseClient({ sale, isPurchase, buyerName, isItem }: 
             {sale.userBook.price} €</div>
         </div>
         <div className="flex flex-col mt-3 gap-2 items-center">
-          {sale.status === BORROW_STATUS.PENDING && isPurchase && <Badge color="warning">Attente de validation du vendeur</Badge>}
+          {sale.status === BORROW_STATUS.PENDING && isPurchase && <Badge variant="outline">Attente de validation du vendeur</Badge>}
           <div className="flex flex-row gap-2">
-            {sale.status === BORROW_STATUS.PENDING && !isPurchase && <div><Button disabled={!sale.userBook.user.street} onClick={() => validatePurchase(sale.id)}>Accepter</Button></div>}
-            {sale.status === BORROW_STATUS.PENDING && !isPurchase && <div><Button onClick={() => setModalOpen(true)}>Refuser</Button></div>}
-            {sale.status === BORROW_STATUS.PENDING && isPurchase && <div><Button onClick={() => cancelPurchase(sale.id, sale.userBook.id)}>Annuler ma demande</Button></div>}
-            {sale.status === BORROW_STATUS.VALIDATED && isPurchase && <div><Button onClick={() => closePurchase(sale.id, sale.userBook.id)}>Cloturer</Button></div>}
+            {sale.status === BORROW_STATUS.PENDING && !isPurchase && <div><Button onClick={() => validatePurchase(sale.id)}>Accepter</Button></div>}
+            {sale.status === BORROW_STATUS.PENDING && !isPurchase && <div><Button onClick={() => refusePurchase(sale.id)}>Refuser</Button></div>}
+            {sale.status === BORROW_STATUS.PENDING && isPurchase && <div><Button onClick={() => cancelPurchase(sale.id)}>Annuler ma demande</Button></div>}
+            {sale.status === BORROW_STATUS.VALIDATED && isPurchase && <div><Button onClick={() => closePurchase(sale.id)}>Cloturer</Button></div>}
           </div>
 
-          {sale.status === BORROW_STATUS.REFUSED && <Badge color="danger">Demande refusée le {new Date(sale.close_date).toLocaleDateString("fr-FR")}</Badge>}
-          {sale.status === BORROW_STATUS.CANCELLED && <Badge color="danger">Demande annulée le {new Date(sale.close_date).toLocaleDateString("fr-FR")}</Badge>}
-          {sale.status === BORROW_STATUS.CLOSED && <Badge color="success">Demande cloturée le {new Date(sale.close_date).toLocaleDateString("fr-FR")}</Badge>}
-          {sale.status === BORROW_STATUS.VALIDATED && !isPurchase && <Badge color="success">Demande validée, attente du RDV</Badge>}
+          {sale.status === BORROW_STATUS.REFUSED && <Badge variant="outline">Demande refusée le {new Date(sale.closedDate).toLocaleDateString("fr-FR")}</Badge>}
+          {sale.status === BORROW_STATUS.CANCELLED && <Badge variant="outline">Demande annulée le {new Date(sale.closedDate).toLocaleDateString("fr-FR")}</Badge>}
+          {sale.status === BORROW_STATUS.CLOSED && <Badge variant="outline">Demande cloturée le {new Date(sale.closedDate).toLocaleDateString("fr-FR")}</Badge>}
+          {sale.status === BORROW_STATUS.VALIDATED && !isPurchase && <Badge variant="outline">Demande validée le {new Date(sale.validatedDate).toLocaleDateString("fr-FR")}</Badge>}
         </div>
       </div>
-      <ModalRefus isOpen={modalOpen} onClose={() => { setModalOpen(false) }} sale={sale} />
+      {/* <ModalRefus isOpen={modalOpen} onClose={() => { setModalOpen(false) }} sale={sale} /> */}
     </>
 
   )
