@@ -58,7 +58,7 @@ const saveBook = async (formData: BookType): Promise<Book> => {
     return book;
 }
 
-const attachBookToUser = async (book: Book, userId: string, description: string) => {
+const saveUserBook = async (book: Book, userId: string, description: string, price: number) => {
 
     // does the use already declared this book?
     let userBook: UserBook | null = await prisma.userBook.findFirst({
@@ -72,6 +72,7 @@ const attachBookToUser = async (book: Book, userId: string, description: string)
         userBook = await prisma.userBook.create({
             data: {
                 description,
+                price,
                 bookId: book.id,
                 userId
             }
@@ -125,6 +126,8 @@ export async function updateBook(id: number, formData: BookType): Promise<any> {
         },
         data: {
             description: formData.description,
+            price: formData.price,
+
         },
     })
 
@@ -132,7 +135,6 @@ export async function updateBook(id: number, formData: BookType): Promise<any> {
     redirect('/my-books')
 
 }
-
 
 export async function createBook(formData: BookType): Promise<any> {
     console.log('create book with data', formData)
@@ -156,7 +158,7 @@ export async function createBook(formData: BookType): Promise<any> {
     }
 
     const book: Book = await saveBook(formData)
-    await attachBookToUser(book, session.user.id, formData.description)
+    await saveUserBook(book, session.user.id, formData.description, formData.price)
 
     revalidatePath('/my-books')
     redirect('/my-books')
@@ -249,7 +251,6 @@ export async function purchaseBook(userBookId: string, rdvDate: any, message?: s
     }
     console.log('userConnectedId', userConnectedId)
 
-    // 0 - Get user of the borrowed book
     const userBook = await prisma.userBook.findUnique({
         where: { id: parseInt(userBookId) }
     })
@@ -265,7 +266,7 @@ export async function purchaseBook(userBookId: string, rdvDate: any, message?: s
     const borrow = await prisma.borrow.create({
         data: {
             userBookId: userBook.id,
-            //rdvDate,
+            rdvDate,
             borrowerId: userConnectedId,
         }
     })

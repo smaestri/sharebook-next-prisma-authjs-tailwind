@@ -41,9 +41,16 @@ export default function BookForm({ book, userBooks, email }: any) {
                             {userBooks?.length === 1 && <span>{userBooks[0].user.name} possède ce livre</span>}
                         </div>
                     </div>
+                    <div className="flex flex-row gap-2">
+                        <div>
+                            Habite à {userBooks?.length === 1 && <span>{userBooks[0].user.city} ({userBooks[0].user.cp})</span>}
+                        </div>
+                    </div>
+
+
                     <div className="flex justify-center gap-2 mt-3">
-                       {userBooks.length > 1  && <DialogUser book={book} userBooks={userBooks}/>}
-                       {userBooks.length == 1 && <Link href={`purchases/new?bookId=${userBooks[0].id}`}>
+                       {userBooks.length == 1  && <DialogUser book={book} userBooks={userBooks}/>}
+                       {userBooks.length == 1 && <Link href={`purchases/new?userBookId=${userBooks[0].id}`}>
                       <Button>Demander</Button>
                     </Link>}
                     </div>

@@ -23,23 +23,21 @@ const DialogUser = ({ userBooks, book }: { userBooks: any, book: any }) => {
           </p>
           <p>Merci de choisir: </p>
           <div>
-            <table>
-              <tr>
-                <td>Livre</td>
-                <td>Nom propriétaire</td>
-                <td>Email propriétaire</td>
-              </tr>
+            <div>
+              <div className="flex flex-row gap-10 font-bold">
+                <div>Vendeur</div>
+                <div>Lieu</div>
+              </div>
               {userBooks.map((userBook: any) => (
-                <tr>
-                  <td>{userBook.book.title}</td>
-                  <td>{userBook.user.name}</td>
-                  <td>{userBook.user.email}</td>
-                  <td><Link href={`purchases/new?bookId=${userBook.id}`}>
+                <div className="flex flex-row gap-3 items-center">
+                  <div>{userBook.user.name}</div>
+                  <div>{userBook.user.city} ({userBook.user.cp})</div>
+                  <div><Link href={`purchases/new?userBookId=${userBook.id}`}>
                     <Button>Acheter</Button>
-                  </Link></td>
-                </tr>
+                  </Link></div>
+                </div>
               ))}
-            </table>
+            </div>
           </div>
           <DialogFooter>
             <DialogClose asChild>

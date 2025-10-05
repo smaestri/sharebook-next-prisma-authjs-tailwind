@@ -35,9 +35,10 @@ export default function MyBooksForm({ books, email }: MyBooksFormProps) {
           </div>
           {/* <div>Catégorie: {userBook.bookInfo.category.name}</div> */}
           <div>Description: {userBook.description}</div>
+          <div>Prix: {userBook.price} €</div>
           <div className="flex flex-col items-center">
             {email && userBook.user.email !== email &&
-              <Link href={`purchases/new?bookId=${userBook.id}`}>
+              <Link href={`purchases/new?userBookId=${userBook.id}`}>
                 <Button>Acheter</Button>
               </Link>}
           </div>

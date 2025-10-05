@@ -38,6 +38,7 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
       author: userBook?.book.author || "",
       category: userBook?.book.categoryId?.toString() || "",
       description: userBook?.description || "",
+      price: userBook?.price || 0,
     },
   })
 
@@ -123,6 +124,21 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Prix</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder="prix" {...field} onChange={event => field.onChange(+event.target.value)} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormButton>Save</FormButton>
           {errorMessage ? <div className="p-2 bg-red-200 border border-red-400">{errorMessage}</div> : null}
         </form>

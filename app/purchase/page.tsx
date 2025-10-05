@@ -46,12 +46,22 @@ export default async function PurchasePage({ searchParams }: any) {
     createdDate, validatedDate, closeDate
   }
 
+    let buyerName
+  if (!isPurchase) {
+    const buyer = await prisma.user.findFirst({
+      where: {
+        id: borrowerId
+      },
+    })
+    buyerName = buyer?.name
+  }
+
 
   return (
     <div className="flex justify-center">
       <div className="flex flex-row gap-3">
         <div>
-          <PurchaseClient sale={borrowWithMessage} isPurchase={isPurchase} buyer={''} />
+          <PurchaseClient sale={borrowWithMessage} isPurchase={isPurchase} buyerName={buyerName} />
         </div>
         <div>
           <Messages messages={borrowWithMessage.messages} borrowId={borrowWithMessage.id} isPurchase={isPurchase} borrowDate={borrowDate} />

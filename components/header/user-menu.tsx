@@ -55,7 +55,7 @@ export default function UserMenu({ }: AccountProps) {
           <DropdownMenuItem asChild key="books"><Link href="my-books">Ma bibiliothèque</Link></DropdownMenuItem>
           <DropdownMenuItem asChild key="purchases"><Link href="purchases">Mes achats</Link></DropdownMenuItem>
           <DropdownMenuItem asChild key="sales"><Link href="sales">Mes ventes</Link></DropdownMenuItem>
-          <DropdownMenuItem asChild key="account"><Link href="account">Mon compte</Link></DropdownMenuItem>
+          <DropdownMenuItem asChild key="account"><Link href="account">Mes infos</Link></DropdownMenuItem>
           <DropdownMenuItem key="logout" color="danger" onClick={signOutAndRedirect}>
             Log Out
           </DropdownMenuItem>

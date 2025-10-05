@@ -10,8 +10,11 @@ export const bookSchema = z.object({
   category: z.string().min(1, {
     message: "La catégorie est requise.",
   }),
- description: z.string().min(2, {
+  description: z.string().min(2, {
     message: "La description est requise.",
+  }),
+  price: z.number().min(1, {
+    message: "Le prix est requis.",
   }),
 })
 

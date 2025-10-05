@@ -139,6 +139,7 @@ model UserBook {
   createdAt DateTime? @default(now())
   book      Book     @relation(fields: [bookId], references: [id])
   description       String?
+  price      Float?
   bookId    Int
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)

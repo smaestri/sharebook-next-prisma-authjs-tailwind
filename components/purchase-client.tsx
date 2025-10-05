@@ -3,18 +3,12 @@ import { cancelPurchase, closePurchase, refusePurchase, validatePurchase } from 
 import { useState } from "react";
 import Link from "next/link";
 import { BORROW_STATUS } from "@/lib/constants";
-import { times } from "@/lib/utils";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 
 export default function PurchaseClient({ sale, isPurchase, buyerName, isItem }: { buyerName: any, sale: any, isPurchase: boolean, isItem?: boolean }) {
   const [modalOpen, setModalOpen] = useState(false);
-  const displayTime = (id: any) => {
-    if (!id) return ''
-    return times
-      .filter((item: any) => item.id == id)[0].label
-  }
-
+  
   return (
     <>
       <div className="flex flex-col w-[300px] bg-slate-50 rounded-lg ">
@@ -57,7 +51,7 @@ export default function PurchaseClient({ sale, isPurchase, buyerName, isItem }: 
                 <path fillRule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clipRule="evenodd" />
               </svg>
             </div>
-            <div>{isPurchase ? `Propiétaire: ${sale.userBook.user.name}` : `Demandeur: ${buyerName}`}</div>
+            <div>{isPurchase ? `Vendeur: ${sale.userBook.user.name}` : `Acheteur: ${buyerName}`}</div>
           </div>
           <div className="flex flex-row gap-2">
             <div>
@@ -66,7 +60,7 @@ export default function PurchaseClient({ sale, isPurchase, buyerName, isItem }: 
               </svg>
             </div>
             <div>
-              {new Date(sale.rdvDate).toLocaleDateString("fr-FR")} : {displayTime(sale.rdvDate)} {isPurchase ? `${sale.userBook.user.street} ${sale.userBook.user.city} ` : ""}
+              {new Date(sale.rdvDate).toLocaleDateString("fr-FR")} {isPurchase ? `au ${sale.userBook.user.street} ${sale.userBook.user.city} ` : "à mon adresse indiquée"}
             </div>
           </div>
         </div>
