@@ -22,21 +22,21 @@ export default function PurchaseForm({ userBook }: any) {
   console.log('date', date)
   // const rdv = new Date(rdvDate.year, rdvDate.month - 1, rdvDate.day).toDateString();
 
-    return (
-    <form action={purchaseBook.bind(null, userBook.id ,date, message)}>
+  return (
+    <form action={purchaseBook.bind(null, userBook.id, date, message)}>
 
       <div className="flex justify-center">
         <div className="flex flex-col gap-2">
-          <h1>Achat du livre "{userBook.book.title}"</h1>
-          <div>
-            <p>La vente aura lieu au domicile de {userBook.user.name}, à {userBook.user.street} {userBook.user.cp} {userBook.user.city}<br/> 
-            Merci d'indiquer la date de rencontre souhaitée</p>
+          <h1 className="">Achat du livre "{userBook.book.title}"</h1>
+          <div className="flex flex-row gap-2 items-center">
+            <div>Date de rencontre avec le vendeur souhaitée</div>
+            <div className="flex justify-center gap-2">
+              <Choice date={date} setDate={setDate} />
+            </div>
           </div>
-          <div className="flex justify-center gap-2">
-            <Choice date={date} setDate={setDate} />
-          </div>
+
           <div>
-            <p>Vous pouvez également ajouter d'autres informations, par exemple préciser l'heure qui vous arrange</p>
+            <p>Message au vendeur (heure RDV, ou toute autre information)</p>
             <Textarea
               name="message"
               onChange={(event) => setMessage(event.target.value)}
@@ -53,13 +53,13 @@ export default function PurchaseForm({ userBook }: any) {
   )
 }
 
-const Choice = ({date, setDate}: any) => {
-  
+const Choice = ({ date, setDate }: any) => {
+
   const [open, setOpen] = useState(false)
 
   return (
     <div className="flex flex-col gap-2">
-        <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
@@ -82,14 +82,14 @@ const Choice = ({date, setDate}: any) => {
           />
         </PopoverContent>
       </Popover>
-          {/* <Calendar
+      {/* <Calendar
       mode="single"
       selected={datePicker}
       onSelect={setDatePicker}
       className="rounded-md border shadow-sm"
       captionLayout="dropdown"
     /> */}
-    {/* <Select
+      {/* <Select
         required
         // items={times}
         name={timeFieldName}

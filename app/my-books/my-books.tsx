@@ -34,7 +34,7 @@ export default async function MyBooks() {
       <div className="flex flex-col">
         <MyBooksForm email={email} books={books} />
         <div className="mt-3">
-          <Link href="my-books/new">
+          <Link href="/my-books/new">
             <Button>Créer un livre</Button>
           </Link>
         </div>

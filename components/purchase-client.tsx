@@ -60,7 +60,7 @@ export default function PurchaseClient({ sale, isPurchase, buyerName, isItem }: 
               </svg>
             </div>
             <div>
-              {new Date(sale.rdvDate).toLocaleDateString("fr-FR")} {isPurchase ? `au ${sale.userBook.user.street} ${sale.userBook.user.city} ` : "à mon adresse indiquée"}
+              {new Date(sale.rdvDate).toLocaleDateString("fr-FR")} {isPurchase ? `au ${sale.userBook.user.street} ${sale.userBook.user.city} ` : "chez moi"}
             </div>
           </div>
         </div>

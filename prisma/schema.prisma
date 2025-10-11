@@ -96,7 +96,8 @@ model Book {
   createdAt  DateTime? @default(now())
   title      String
   author     String
-  image      String
+  image      String?
+  isbn       String?
   categoryId Int
   category   Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   UserBook   UserBook[]

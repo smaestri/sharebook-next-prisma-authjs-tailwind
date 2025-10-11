@@ -10,14 +10,17 @@ import { Button } from '../ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import Link from 'next/link';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { Badge } from '../ui/badge';
+
 
 interface AccountProps {
-  userId?: string
-  avatarSrc?: string
-  mail?: string
+  borrowsCount: number
+  lendsCount: number
 }
 
-export default function UserMenu({ }: AccountProps) {
+export default function UserMenu({ borrowsCount, lendsCount }: AccountProps) {
   const router = useRouter()
   //const { userConnected, loading }: any = useUserContext();
   const [modalSigninOpen, setModalSigninOpen] = useState(false);
@@ -36,26 +39,53 @@ export default function UserMenu({ }: AccountProps) {
       </Button>}
       {/* {session?.user  && <Button onClick={() => setModalFriendOpen(true)}>Voir les livres d'un ami</Button>} */}
 
-      <ModalSignin isOpen={modalSigninOpen} onClose={() => setModalSigninOpen(false) }/>
+      <ModalSignin isOpen={modalSigninOpen} onClose={() => setModalSigninOpen(false)} />
       {/* <ModalFriend isOpen={modalFriendOpen} onClose={() => setModalFriendOpen(false)} /> */}
       {session?.user && session?.user?.image && <DropdownMenu>
         <DropdownMenuTrigger>
-             <Image
-                className='cursor-pointer'
-                src={session?.user?.image}
-                width={50}
-                height={50}
-                alt="Picture of the author"
-                />
+          
+          <div style={{ position: "relative" }}>
+            {lendsCount + borrowsCount > 0 ?
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <ExclamationTriangleIcon style={{ position: "absolute", bottom: 0, right: 0 }} className="size-7 text-red-600" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Vous avez des achat(s) ou vente(s) en cours</p>
+              </TooltipContent>
+            </Tooltip>
+            : null}
+            <Image
+              className='cursor-pointer'
+              src={session?.user?.image}
+              width={50}
+              height={50}
+              alt="Picture of the author"
+            />
+          </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent aria-label="Profile Actions">
           <DropdownMenuItem key="profile" className="h-14 gap-2">
             <p className="font-semibold">Signed in as {session?.user.email}</p>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild key="books"><Link href="my-books">Ma bibiliothèque</Link></DropdownMenuItem>
-          <DropdownMenuItem asChild key="purchases"><Link href="purchases">Mes achats</Link></DropdownMenuItem>
-          <DropdownMenuItem asChild key="sales"><Link href="sales">Mes ventes</Link></DropdownMenuItem>
-          <DropdownMenuItem asChild key="account"><Link href="account">Mes infos</Link></DropdownMenuItem>
+          <DropdownMenuItem asChild key="books">
+            <Link href="/my-books">Ma bibiliothèque</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild key="purchases">
+            <div>
+              <Link href="/purchases">Mes achats</Link>
+              {borrowsCount > 0 && <Badge variant="destructive">{borrowsCount}</Badge>}
+            </div>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild key="sales">
+            <div>
+              <Link href="/sales">Mes ventes</Link>
+              {lendsCount > 0 && <Badge variant="destructive">{lendsCount}</Badge>}
+            </div>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild key="account">
+            <Link href="/account">Mes infos</Link>
+          </DropdownMenuItem>
           <DropdownMenuItem key="logout" color="danger" onClick={signOutAndRedirect}>
             Log Out
           </DropdownMenuItem>

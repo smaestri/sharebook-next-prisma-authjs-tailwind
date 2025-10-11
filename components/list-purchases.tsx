@@ -5,11 +5,9 @@ export default function ListSalesOrPurchases({ sales, isPurchase }: { sales: any
   console.log('sales', sales)
 
   return (
-    <div className="flex justify-center">
+    <div className="flex">
       <div className="flex flex-col">
-        <div>
-          <PurchaseSelector isPurchase={isPurchase} />
-        </div>
+        <PurchaseSelector isPurchase={isPurchase} />
         <div className="flex flex-wrap gap-2">
           {sales?.map((sale: any) => (
             <PurchasePage key={sale.id} sale={sale} isPurchase={isPurchase} />
