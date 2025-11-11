@@ -1,6 +1,5 @@
 "use client"
 import { useRouter, useSearchParams } from "next/navigation";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Switch } from "@/components/ui/switch"
 
 import { Label } from "./ui/label";

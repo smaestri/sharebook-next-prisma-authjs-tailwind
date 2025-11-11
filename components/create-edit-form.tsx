@@ -9,8 +9,9 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { bookSchema, BookType } from "@/lib/ValidationSchemas copy";
+import { bookSchema, BookType } from "@/lib/ValidationSchemas";
 import { UserBookWithBookAndUser } from "@/lib/DbSchemas";
+import SearchInput from "./header/search-input";
 
 export interface Category {
   id: string;
@@ -24,6 +25,8 @@ export interface CreateEditBookFormProps {
 
 export default function CreateEditBookForm({ categories, userBook }: CreateEditBookFormProps) {
   const [errorMessage, setErrorMessage] = useState<string>("");
+  // const [isbn, setIsbn] = useState<string>("");
+  // const [loadin, setLoading] = useState<boolean>();
 
   const renderCat = () => {
     return categories.map((cat) => <SelectItem value={cat.id.toString()}>{cat.name}</SelectItem>)
@@ -35,19 +38,23 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
     resolver: zodResolver(bookSchema),
     defaultValues: {
       title: userBook?.book.title || "",
+      image: userBook?.book.image || "",
       author: userBook?.book.author || "",
       category: userBook?.book.categoryId?.toString() || "",
       description: userBook?.description || "",
       price: userBook?.price || 0,
+      bookId: undefined
     },
   })
+
+  console.log('cat:' + form.getValues("category"))
 
   async function onSubmit(values: z.infer<typeof bookSchema>) {
     console.log("onSubmit ", values)
     setErrorMessage("")
 
     let response = null
-    if(userBook){
+    if (userBook) {
       response = await updateBook(userBook.id, values)
 
     } else {
@@ -57,12 +64,46 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
       setErrorMessage(response.error)
     }
   }
+  // const handleIsbnChanged = async (event: any) => {
+  //   console.log('isbn changed', event.target.value)
+  //   const isbn = event.target.value
+  //   const url = `http://localhost:3000/api/isbn?isbn=${isbn}`
+  //   try {
+  //     setLoading(true)
+  //     const response = await axios.get(url)
+  //     console.log('response from openlibrary', response)
+  //     form.setValue("title", response.data.book.title)
+  //     form.setValue("author", response.data.book.authors[0] )
+
+
+  //   } catch (error) {
+  //     console.log('err' + JSON.stringify(error))
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // }
 
   const renderBookForm = () => {
-    return (<>
+    return (<div className="flex">
+      <div>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
+
+          {/* <FormField
+            control={form.control}
+            name="isbn"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Isbn</FormLabel>
+                <FormControl onChange={handleIsbnChanged}>
+                  <Input placeholder="isbn" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} /> */}
+
+          {/* <FormField
             control={form.control}
             name="title"
             render={({ field }) => (
@@ -73,7 +114,31 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
                 </FormControl>
                 <FormMessage />
               </FormItem>
+            )} /> */}
+
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Titre</FormLabel>
+                <FormControl>
+                    <SearchInput callback={(id: number, author: string, categoryId: number, image: string) => {
+                        alert("clicked with id " + id + " author " + author + " categoryId " + categoryId + " image " + image)
+                        form.setValue("title", field.value)
+                        form.setValue("author", author)
+                        form.setValue("category", categoryId.toString())
+                        form.setValue("image", image)
+                        form.setValue("bookId", id.toString())
+                    }} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )} />
+
+      
+
+
 
           <FormField
             control={form.control}
@@ -143,7 +208,17 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
           {errorMessage ? <div className="p-2 bg-red-200 border border-red-400">{errorMessage}</div> : null}
         </form>
       </Form>
-    </>
+      </div>
+      {/* <div>
+        {loadin ? <div>Loading book info...</div> : null}
+                            <Image
+                                src={form.getValues("image")}
+                                alt={form.getValues("title")}
+                                width={100}
+                                height={100}
+                            />
+      </div> */}
+    </div>
 
     )
   }

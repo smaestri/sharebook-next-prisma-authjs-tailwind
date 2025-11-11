@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { userInfoSchema, UserInfoType } from "@/lib/ValidationSchemas copy";
+import { userInfoSchema, UserInfoType } from "@/lib/ValidationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 

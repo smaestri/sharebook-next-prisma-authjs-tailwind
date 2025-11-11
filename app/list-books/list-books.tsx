@@ -2,29 +2,83 @@ import { auth } from "@/auth";
 import { ListBooksProps } from "./page";
 import prisma from "@/lib/prisma";
 import BookPage from "@/components/book-page";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 export type BookWithCategoryAndUser = any
 
 export default async function ListBooks({ searchParams }: ListBooksProps) {
   const session = await auth()
   const params = await searchParams;
   const categoryId = params?.categoryId;
+  const pageParam = params?.page;
+  let page = Number(pageParam);
+  if (!Number.isFinite(page) || page < 1) page = 1;
+  const COUNT_ITEMS_PER_PAGE = 20
+  const skip = (page - 1) * COUNT_ITEMS_PER_PAGE;
 
   if (!session?.user) return (
     <div>Please connect</div>
   )
   const email = session.user.email
   console.log('List book of not userId' + session.user.id + "with cat " + categoryId)
-    const books = await prisma.book.findMany({
-      where: {
-        categoryId: parseInt(categoryId),
-      }
-    });
+  const books = await prisma.book.findMany({
+    where: {
+      categoryId: parseInt(categoryId),
+    },
+    skip: page || 0,
+    take: COUNT_ITEMS_PER_PAGE,
+  });
+
+
+  const total = await prisma.book.count({
+    where: {
+      categoryId: parseInt(categoryId),
+    },
+  });
+
+  console.log('count', total)
+
+
+  const numberOfPages = Math.ceil(total / COUNT_ITEMS_PER_PAGE);
+  // helper to build links preserving categoryId
+  const buildHref = (p: number) => {
+    const qs = new URLSearchParams();
+    if (categoryId) qs.set("categoryId", String(categoryId));
+    qs.set("page", String(p));
+    return `/list-books?${qs.toString()}`;
+  };
+
+  const pageNumbers: number[] = [];
+  for (let i = 1; i <= numberOfPages; i++) pageNumbers.push(i);
+
   return (<>
     <div className="flex flex-wrap gap-4">
       {books?.map((book: any) => (
         <BookPage key={book.id} book={book} email={email} />
       ))}
     </div>
+    <Pagination>
+      <PaginationContent>
+        {page > 1 && (
+          <PaginationItem>
+            <PaginationPrevious href={buildHref(page - 1)} />
+          </PaginationItem>
+        )}
+
+        {pageNumbers.map((p) => (
+          <PaginationItem key={p}>
+            <PaginationLink isActive={p == page} href={buildHref(p)} aria-current={p === page ? "page" : undefined}>
+              {p}
+            </PaginationLink>
+          </PaginationItem>
+        ))}
+
+        {page < numberOfPages && (
+          <PaginationItem>
+            <PaginationNext href={buildHref(page + 1)} />
+          </PaginationItem>
+        )}
+      </PaginationContent>
+    </Pagination>
   </>
   )
 }

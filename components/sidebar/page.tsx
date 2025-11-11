@@ -14,28 +14,20 @@ export default async function SideBarPage({ }) {
   const categories: Category[] = await prisma.category.findMany();
 
   const countUserBookForCategory = async (category: Category, userId?: string) => {
-    const userBooks = await prisma.userBook.findMany({
-      where: {
-        book: {
+    const countBooksForCategory = await prisma.book.count({
+       where: {
           categoryId: category.id,
-        },
-        NOT: {
-          userId,
-        },
-        deleted: false
       }
     });
-    if (userBooks.length === 0) {
-      return 0;
-    }
-    console.log('userBooks for cat ' + category.name + " : " + userBooks.length)
-    let res = 0
-    for (const ub of userBooks) {
-      if (await isUSerBookAvailable(ub)) {
-        res++;
-      }
-    }
-    return res;
+
+    console.log('countBooksForCategory for cat ' + countBooksForCategory)
+    // let res = 0
+    // for (const ub of userBooks) {
+    //   if (await isUSerBookAvailable(ub)) {
+    //     res++;
+    //   }
+    // }
+    return countBooksForCategory;
   }
 
   const isUSerBookAvailable = async (ub: UserBook) => {

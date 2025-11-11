@@ -11,7 +11,8 @@ export type BookWithCategory = any
 
 export interface ListBooksProps{
   searchParams: {
-      categoryId: string
+      categoryId: string,
+      page?: number,
   }
 }
 

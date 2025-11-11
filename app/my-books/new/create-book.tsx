@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import CreateEditBookForm from "@/components/create-edit-form";
 import { UserBookWithBookAndUser } from "@/lib/DbSchemas";
 import prisma from "@/lib/prisma";
@@ -6,6 +7,12 @@ export default async function CreateBook({ bookId }: { bookId?: string }) {
   const categories: any = await prisma.category.findMany();
 
   let userBook: UserBookWithBookAndUser | null = null
+  const session = await auth()
+
+    if (!session?.user) return (
+    <div>Please connect</div>
+  )
+
   if (bookId) {
     const userBookId = parseInt(bookId);
     userBook = await prisma.userBook.findUnique({

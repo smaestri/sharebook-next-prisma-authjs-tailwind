@@ -6,7 +6,7 @@ import { BORROW_STATUS } from "./constants";
 import prisma from "./prisma";
 import { Book, UserBook } from "@/app/generated/prisma";
 import { auth } from "@/auth";
-import { bookSchema, BookType, UserInfoType } from "./ValidationSchemas copy";
+import { bookSchema, BookType, UserInfoType } from "./ValidationSchemas";
 import { UserBooksWithBorrow } from "./DbSchemas";
 
 export const updateUser = async (email: string, cp: string, formData: UserInfoType) => {
@@ -32,18 +32,18 @@ const saveBook = async (formData: BookType): Promise<Book> => {
     const title = formData.title
     const category = formData.category
 
-    let book: Book | null = await prisma.book.findFirst({
-        where: {
-            title: {
-                contains: title,
-                mode: 'insensitive'
-            }
-        }
-    })
+    // let book: Book | null = await prisma.book.findFirst({
+    //     where: {
+    //         title: {
+    //             contains: title,
+    //             mode: 'insensitive'
+    //         }
+    //     }
+    // })
 
-    if (!book) {
+    // if (!book) {
         console.log("saving book with title:", title, " author" + author, " category " + category)
-        book = await prisma.book.create({
+        const book = await prisma.book.create({
             data: {
                 title,
                 author,
@@ -52,9 +52,9 @@ const saveBook = async (formData: BookType): Promise<Book> => {
             }
         })
 
-    } else {
-        console.error('book already exists')
-    }
+    // } else {
+    //     console.error('book already exists')
+    // }
     return book;
 }
 

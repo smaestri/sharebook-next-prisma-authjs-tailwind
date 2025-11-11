@@ -16,15 +16,15 @@ export default function BookForm({ book, userBooks, email }: any) {
         >
             <div className="flex flex-col items-center">
                 <div className="h-[150px] mb-3">
-                    {/* <Image
+                    <Image
                         src={book.image}
                         alt={`${book.title}`}
                         width={100}
                         height={100}
-                    /> */}
+                    />
                 </div>
                 <div className="h-[65px] mb-5">
-                    <p title={book.title} className="line-clamp-3 italic">{book.title} - {book.author}</p>
+                    <Link href={`/list-books/${book.id}`}><p title={book.title} className="line-clamp-3 italic">{book.title} - {book.author}</p></Link>
                 </div>
             </div>
             {userBooks?.length === 0 ?
