@@ -3,8 +3,7 @@ import React, { useState } from "react";
 import { createBook, updateBook } from "@/lib/actions";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import FormButton from "./form-button";
-import { useForm } from "react-hook-form"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
+import { Controller, useForm } from "react-hook-form"
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "./ui/input";
@@ -12,6 +11,7 @@ import { Textarea } from "./ui/textarea";
 import { bookSchema, BookType } from "@/lib/ValidationSchemas";
 import { UserBookWithBookAndUser } from "@/lib/DbSchemas";
 import SearchInput from "./header/search-input";
+import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
 
 export interface Category {
   id: string;
@@ -29,7 +29,7 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
   // const [loadin, setLoading] = useState<boolean>();
 
   const renderCat = () => {
-    return categories.map((cat) => <SelectItem value={cat.id.toString()}>{cat.name}</SelectItem>)
+    return categories.map((cat) => <SelectItem key={cat.id} value={cat.id.toString()}>{cat.name}</SelectItem>)
   }
   console.log('all cats', categories)
   console.log('userBook passed', userBook)
@@ -47,7 +47,13 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
     },
   })
 
+  React.useEffect(() => {
+    const subscription = form.watch((value, { name, type }) => console.log("WATCH" + value, name, type));
+    return () => subscription.unsubscribe();
+  }, [form.watch]);
+
   console.log('cat:' + form.getValues("category"))
+  console.log('desc:' + form.getValues("description"))
 
   async function onSubmit(values: z.infer<typeof bookSchema>) {
     console.log("onSubmit ", values)
@@ -84,132 +90,124 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
   // }
 
   const renderBookForm = () => {
-    return (<div className="flex">
-      <div>
+    return (
+      <div className="w-300">
+         {/* <FormProvider {...form} > */}
+      <form onSubmit={form.handleSubmit(onSubmit)}>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-
-          {/* <FormField
+        {/* <Controller
             control={form.control}
             name="isbn"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Isbn</FormLabel>
+              <Field>
+                <FieldLabel>Isbn</FieldLabel>
                 <FormControl onChange={handleIsbnChanged}>
                   <Input placeholder="isbn" {...field} />
                 </FormControl>
                 <FormMessage />
-              </FormItem>
+              </Field>
             )} /> */}
 
-          {/* <FormField
+        {/* <Controller
             control={form.control}
             name="title"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Titre</FormLabel>
+              <Field>
+                <FieldLabel>Titre</FieldLabel>
                 <FormControl>
                   <Input placeholder="title" {...field} />
                 </FormControl>
                 <FormMessage />
-              </FormItem>
+              </Field>
             )} /> */}
+        <FieldGroup>
 
-          <FormField
-            control={form.control}
+          <Controller
             name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Titre</FormLabel>
-                <FormControl>
-                    <SearchInput callback={(id: number, author: string, categoryId: number, image: string) => {
-                        alert("clicked with id " + id + " author " + author + " categoryId " + categoryId + " image " + image)
-                        form.setValue("title", field.value)
-                        form.setValue("author", author)
-                        form.setValue("category", categoryId.toString())
-                        form.setValue("image", image)
-                        form.setValue("bookId", id.toString())
-                    }} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field>
+                <FieldLabel>Titre</FieldLabel>
+                <SearchInput defaultValue={userBook?.book.title} field={field} callback={(id: number, title: string, author: string, categoryId: number, image: string) => {
+                  form.setValue("title", title)
+                  form.setValue("author", author)
+                  form.setValue("category", categoryId.toString())
+                  form.setValue("image", image)
+                  form.setValue("bookId", id.toString())
+                }} />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )} />
 
-      
-
-
-
-          <FormField
+          <Controller
             control={form.control}
             name="author"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Auteur</FormLabel>
-                <FormControl>
-                  <Input placeholder="auteur" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field>
+                <FieldLabel>Auteur</FieldLabel>
+                <Input disabled={!!userBook} placeholder="auteur" {...field} />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )} />
 
-          <FormField
+          <Controller
             control={form.control}
             name="category"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Catégorie</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                  </FormControl>
+            render={({ field, fieldState }) => (
+              <Field>test-sma{field.value}
+                <FieldLabel>Catégorie</FieldLabel>
+                <Select disabled={!!userBook} name={field.name} value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
                       {renderCat()}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-                <FormMessage />
-              </FormItem>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
           />
 
-          <FormField
+          <Controller
             control={form.control}
             name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="description" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field>
+                <FieldLabel>Description</FieldLabel>
+                <Textarea placeholder="description" {...field} />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
           />
 
-          <FormField
+          <Controller
             control={form.control}
             name="price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Prix</FormLabel>
-                <FormControl>
-                  <Input type="number" placeholder="prix" {...field} onChange={event => field.onChange(+event.target.value)} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field>
+                <FieldLabel>Prix</FieldLabel>
+                <Input type="number" placeholder="prix" {...field} onChange={event => field.onChange(+event.target.value)} />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
           />
-
-          <FormButton>Save</FormButton>
-          {errorMessage ? <div className="p-2 bg-red-200 border border-red-400">{errorMessage}</div> : null}
-        </form>
-      </Form>
-      </div>
-      {/* <div>
+        </FieldGroup>
+        <FormButton>Save</FormButton>
+        {errorMessage ? <div className="p-2 bg-red-200 border border-red-400">{errorMessage}</div> : null}
+        {/* <div>
         {loadin ? <div>Loading book info...</div> : null}
                             <Image
                                 src={form.getValues("image")}
@@ -218,9 +216,19 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
                                 height={100}
                             />
       </div> */}
-    </div>
-
-    )
+      </form>
+          {/* </FormProvider> */}
+ <button
+        type="button"
+        onClick={() => {
+          const values = form.getValues(); 
+          console.log("Current form values:", values);
+         
+        }}
+      >
+        Get Values
+      </button>
+      </div>)
   }
   return (
     <div className="flex">

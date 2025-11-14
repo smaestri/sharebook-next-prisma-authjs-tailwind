@@ -10,10 +10,10 @@ import { bookSchema, BookType, UserInfoType } from "./ValidationSchemas";
 import { UserBooksWithBorrow } from "./DbSchemas";
 
 export const updateUser = async (email: string, cp: string, formData: UserInfoType) => {
-    console.log('update user with formData ' + JSON.stringify(formData) + " and cp" + cp +" and mail" + email )
-   await prisma.user.update({
+    console.log('update user with formData ' + JSON.stringify(formData) + " and cp" + cp + " and mail" + email)
+    await prisma.user.update({
         where: { email: email },
-        data: { 
+        data: {
             city: formData.city,
             cp: cp,
             street: formData.street
@@ -42,15 +42,15 @@ const saveBook = async (formData: BookType): Promise<Book> => {
     // })
 
     // if (!book) {
-        console.log("saving book with title:", title, " author" + author, " category " + category)
-        const book = await prisma.book.create({
-            data: {
-                title,
-                author,
-                categoryId: parseInt(category),
-                image: "toto"
-            }
-        })
+    console.log("saving book with title:", title, " author" + author, " category " + category)
+    const book = await prisma.book.create({
+        data: {
+            title,
+            author,
+            categoryId: parseInt(category),
+            image: "toto"
+        }
+    })
 
     // } else {
     //     console.error('book already exists')
@@ -60,7 +60,7 @@ const saveBook = async (formData: BookType): Promise<Book> => {
 
 const saveUserBook = async (book: Book, userId: string, description: string, price: number) => {
 
-    // does the use already declared this book?
+    // does the user already declared this book?
     let userBook: UserBook | null = await prisma.userBook.findFirst({
         where: {
             bookId: book.id,
@@ -156,8 +156,17 @@ export async function createBook(formData: BookType): Promise<any> {
         console.error('error no user')
         return
     }
-
-    const book: Book = await saveBook(formData)
+    const bookId = formData.bookId
+    let book: Book
+    if (!bookId) {
+        console.log('book not found, creating it')
+        book = await saveBook(formData)
+    } else {
+        console.log('book found')
+        book = await prisma.book.findUniqueOrThrow({
+            where: { id: parseInt(bookId) }
+        })
+    }
     await saveUserBook(book, session.user.id, formData.description, formData.price)
 
     revalidatePath('/my-books')
