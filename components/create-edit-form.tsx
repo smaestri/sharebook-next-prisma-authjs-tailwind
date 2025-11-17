@@ -25,6 +25,8 @@ export interface CreateEditBookFormProps {
 
 export default function CreateEditBookForm({ categories, userBook }: CreateEditBookFormProps) {
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [authorDisabled, setAuthorDisabled] = useState<boolean>(false);
+  const [catDisabled, setCatDisabled] = useState<boolean>(false);
   // const [isbn, setIsbn] = useState<string>("");
   // const [loadin, setLoading] = useState<boolean>();
 
@@ -92,10 +94,10 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
   const renderBookForm = () => {
     return (
       <div className="w-300">
-         {/* <FormProvider {...form} > */}
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+        {/* <FormProvider {...form} > */}
+        <form onSubmit={form.handleSubmit(onSubmit)}>
 
-        {/* <Controller
+          {/* <Controller
             control={form.control}
             name="isbn"
             render={({ field }) => (
@@ -108,7 +110,7 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
               </Field>
             )} /> */}
 
-        {/* <Controller
+          {/* <Controller
             control={form.control}
             name="title"
             render={({ field }) => (
@@ -120,94 +122,118 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
                 <FormMessage />
               </Field>
             )} /> */}
-        <FieldGroup>
+          <FieldGroup>
 
-          <Controller
-            name="title"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <Field>
-                <FieldLabel>Titre</FieldLabel>
-                <SearchInput defaultValue={userBook?.book.title} field={field} callback={(id: number, title: string, author: string, categoryId: number, image: string) => {
-                  form.setValue("title", title)
-                  form.setValue("author", author)
-                  form.setValue("category", categoryId.toString())
-                  form.setValue("image", image)
-                  form.setValue("bookId", id.toString())
-                }} />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )} />
+            <Controller
+              name="title"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field>
+                  <FieldLabel>Titre</FieldLabel>
+                  <div className="flex items-center">
+                    <div>
+                      <SearchInput 
+                         defaultValue={userBook?.book.title} field={field}
+                         callbackChange = {(title: string )=> {
+                          form.setValue("title", title)
+                         }}
+                         callbackNotFound = {() => {
+                          console.log('not found callback')
+                           setAuthorDisabled(false);
+                           setCatDisabled(false);
+                           //form.setValue("title", "")
+                           form.setValue("author", "")
+                           form.setValue("category", "")
+                           form.setValue("image", "")
+                           form.setValue("bookId", "")
+                         }}
+                         callback={(id: number, title: string, author: string, categoryId: number, image: string) => {
+                          setAuthorDisabled(true);
+                          setCatDisabled(true);
+                          form.setValue("title", title)
+                          form.setValue("author", author)
+                          form.setValue("category", categoryId.toString())
+                          form.setValue("image", image)
+                          form.setValue("bookId", id.toString())
+                        }} />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </div>
+                    <div>
+                      {form.getValues("image") && <img src={form.getValues("image")} alt={form.getValues("title")} width={100} height={150} />}
+                    </div>
+                  </div>
+                </Field>
+              )} />
 
-          <Controller
-            control={form.control}
-            name="author"
-            render={({ field, fieldState }) => (
-              <Field>
-                <FieldLabel>Auteur</FieldLabel>
-                <Input disabled={!!userBook} placeholder="auteur" {...field} />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )} />
+            <Controller
+              control={form.control}
+              name="author"
+              render={({ field, fieldState }) => (
+                <Field>
+                  <FieldLabel>Auteur</FieldLabel>
+                  <Input disabled={!!userBook || authorDisabled} placeholder="auteur" {...field} />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )} />
 
-          <Controller
-            control={form.control}
-            name="category"
-            render={({ field, fieldState }) => (
-              <Field>test-sma{field.value}
-                <FieldLabel>Catégorie</FieldLabel>
-                <Select disabled={!!userBook} name={field.name} value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {renderCat()}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
+            <Controller
+              control={form.control}
+              name="category"
+              render={({ field, fieldState }) => (
+                <Field>
+                  <FieldLabel>Catégorie</FieldLabel>
+                  <Select disabled={!!userBook || catDisabled} name={field.name} value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {renderCat()}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
 
-          <Controller
-            control={form.control}
-            name="description"
-            render={({ field, fieldState }) => (
-              <Field>
-                <FieldLabel>Description</FieldLabel>
-                <Textarea placeholder="description" {...field} />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
+            <Controller
+              control={form.control}
+              name="description"
+              render={({ field, fieldState }) => (
+                <Field>
+                  <FieldLabel>Description</FieldLabel>
+                  <Textarea placeholder="description" {...field} />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
 
-          <Controller
-            control={form.control}
-            name="price"
-            render={({ field, fieldState }) => (
-              <Field>
-                <FieldLabel>Prix</FieldLabel>
-                <Input type="number" placeholder="prix" {...field} onChange={event => field.onChange(+event.target.value)} />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
-        </FieldGroup>
-        <FormButton>Save</FormButton>
-        {errorMessage ? <div className="p-2 bg-red-200 border border-red-400">{errorMessage}</div> : null}
-        {/* <div>
+            <Controller
+              control={form.control}
+              name="price"
+              render={({ field, fieldState }) => (
+                <Field>
+                  <FieldLabel>Prix</FieldLabel>
+                  <Input type="number" placeholder="prix" {...field} onChange={event => field.onChange(+event.target.value)} />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+          <FormButton>Save</FormButton>
+          {errorMessage ? <div className="p-2 bg-red-200 border border-red-400">{errorMessage}</div> : null}
+          {/* <div>
         {loadin ? <div>Loading book info...</div> : null}
                             <Image
                                 src={form.getValues("image")}
@@ -216,18 +242,18 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
                                 height={100}
                             />
       </div> */}
-      </form>
-          {/* </FormProvider> */}
- <button
-        type="button"
-        onClick={() => {
-          const values = form.getValues(); 
-          console.log("Current form values:", values);
-         
-        }}
-      >
-        Get Values
-      </button>
+        </form>
+        {/* </FormProvider> */}
+        <button
+          type="button"
+          onClick={() => {
+            const values = form.getValues();
+            console.log("Current form values:", values);
+
+          }}
+        >
+          Get Values
+        </button>
       </div>)
   }
   return (

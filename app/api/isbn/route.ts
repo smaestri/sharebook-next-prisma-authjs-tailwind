@@ -45,7 +45,7 @@ console.log('fetch isbn info for', isbn)
     }
     console.log('fetch isbn info2 for', isbn)
     // Fallback: search endpoint (sometimes returns docs with useful metadata)
-    const searchRes = await fetch(`https://openlibrary.org/search.json?isbn=${isbn}&limit=1`);
+    const searchRes = await fetch(`https://openlibrary.org/search.json?q=${isbn}&limit=1`);
     if (searchRes.ok) {
       const sjson = await searchRes.json();
       const doc = sjson.docs?.[0];

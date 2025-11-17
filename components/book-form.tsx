@@ -16,7 +16,7 @@ export default function BookForm({ book, userBooks, email }: any) {
         >
             <div className="flex flex-col items-center">
                 <div className="h-[150px] mb-3">
-                    <Image
+                    <img
                         src={book.image}
                         alt={`${book.title}`}
                         width={100}
@@ -50,7 +50,7 @@ export default function BookForm({ book, userBooks, email }: any) {
 
                     <div className="flex justify-center gap-2 mt-3">
                        {userBooks.length > 1  && <DialogUser book={book} userBooks={userBooks}/>}
-                       {userBooks.length == 1 && <Link href={`purchases/new?userBookId=${userBooks[0].id}`}>
+                       {userBooks.length == 1 && <Link href={`/purchases/new?userBookId=${userBooks[0].id}`}>
                       <Button>Demander</Button>
                     </Link>}
                     </div>

@@ -20,8 +20,7 @@ export default async function BookPage({book, email} : any) {
         deleted: false,
       }
     })
-
-    console.log('all user_books',JSON.stringify(userBooks))
+    console.log('book id',book.id,'has',userBooks.length,'userBooks')
 
     return (<BookForm book={book} userBooks={userBooks} email={email} />)
 }

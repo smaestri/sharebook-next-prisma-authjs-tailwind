@@ -12,8 +12,10 @@ export default async function ListBooks({ searchParams }: ListBooksProps) {
   const pageParam = params?.page;
   let page = Number(pageParam);
   if (!Number.isFinite(page) || page < 1) page = 1;
+  console.log('page', page)
   const COUNT_ITEMS_PER_PAGE = 20
   const skip = (page - 1) * COUNT_ITEMS_PER_PAGE;
+  console.log('skip', skip)
 
   if (!session?.user) return (
     <div>Please connect</div>
@@ -24,10 +26,12 @@ export default async function ListBooks({ searchParams }: ListBooksProps) {
     where: {
       categoryId: parseInt(categoryId),
     },
-    skip: page || 0,
+    skip: skip,
     take: COUNT_ITEMS_PER_PAGE,
   });
 
+
+  console.log('books found', books.length)
 
   const total = await prisma.book.count({
     where: {

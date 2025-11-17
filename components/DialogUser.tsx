@@ -32,7 +32,7 @@ const DialogUser = ({ userBooks, book }: { userBooks: any, book: any }) => {
                 <div className="flex flex-row gap-3 items-center">
                   <div>{userBook.user.name}</div>
                   <div>{userBook.user.city} ({userBook.user.cp})</div>
-                  <div><Link href={`purchases/new?userBookId=${userBook.id}`}>
+                  <div><Link href={`/purchases/new?userBookId=${userBook.id}`}>
                     <Button>Acheter</Button>
                   </Link></div>
                 </div>

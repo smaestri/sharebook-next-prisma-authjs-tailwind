@@ -17,7 +17,7 @@ export default async function MyBooks() {
 
   const books: UserBookWithBookAndUser[] = await prisma.userBook.findMany({
     include: {
-      book: true,
+      book: { include: { category: true } },
       user: true
     },
     where: {

@@ -5,15 +5,18 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group"
 import { Search } from "lucide-react";
 import axios from "axios";
 import { useDebounce } from "./useDebounce";
+import { Input } from "../ui/input";
 
 type SearchInputProps = {
     redirect?: boolean;
     callback?: (id: number, title: string, author: string, categoryId: number, image: string) => void;
+    callbackNotFound?: () => void;
+    callbackChange?: (toto: string) => void;
     field?: any;
     defaultValue?: string;
 }
 
-export default function SearchInput({ redirect, callback, field, defaultValue }: SearchInputProps) {
+export default function SearchInput({ redirect, callback, callbackNotFound, callbackChange, field, defaultValue }: SearchInputProps) {
     const [searchVal, setSearchVal] = useState(defaultValue || "");
     const [finalValue, setFinalValue] = useState("");
     const [debounceVal, setDebounceVal] = useState("");
@@ -62,6 +65,7 @@ export default function SearchInput({ redirect, callback, field, defaultValue }:
             console.log("Searching for:", debounceVal);
             // Call your search function here with the debounced value
             search(debounceVal);
+            
         }
     }, [debounceVal]);
 
@@ -76,11 +80,14 @@ export default function SearchInput({ redirect, callback, field, defaultValue }:
             if (response.data.books.length === 0) {
                 setResults([])
                 setNotFound(true)
+                if (callbackNotFound) {
+                    callbackNotFound()
+                }
                 return
             }
             setNotFound(false)
-
             setResults(response.data.books)
+
         } catch (error) {
             console.log('err' + JSON.stringify(error))
         } finally {
@@ -88,10 +95,9 @@ export default function SearchInput({ redirect, callback, field, defaultValue }:
         }
     }
 
-    // const handleBlur = ()=> {
-    //     setDisplay(false)
-    //     setNotFound(false)
-    // }
+    const handleBlur = ()=> {
+        console.log('blur')
+    }
 
     const handleFocus = () => {
         setDisplay(true)
@@ -125,23 +131,27 @@ export default function SearchInput({ redirect, callback, field, defaultValue }:
         if (notFound) {
             return <div>No results found.</div>
         }
-        return (
-            <div className="max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto">
-                {display && <div className="text-foreground [&_[cmdk-group-heading]]:text-muted-foreground overflow-hidden p-1 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium">
+
+        if (display) {
+            return (
+                <div style={{position: "absolute", backgroundColor: "white", border: "1px solid gray", zIndex: 1000, width: "100%"}}>
                     {results.map((book) => (
                         <button onClick={() => handleClick(book.id, book.title, book.author, book.categoryId, book.image)} className="data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4" key={book.id} onSelect={() => console.log(book.title)}>
                             {book.title}
                         </button>
                     ))}
-                </div>}
-            </div>
-        )
+                </div>
+
+            )
+        }
+        return null;
+
     }
 
     return (
-        <div ref={wrapperRef} className="bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 origin-(--radix-popover-content-transform-origin) rounded-md border shadow-md outline-hidden w-[200px] p-0">
-            <div className="bg-popover text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-md">
-                <InputGroup>
+        <div ref={wrapperRef} >
+            <div style={{ position: "relative" }}>
+                {/* <InputGroup>
                     <InputGroupInput
                         disabled={!!defaultValue}
                         {...field}
@@ -153,7 +163,17 @@ export default function SearchInput({ redirect, callback, field, defaultValue }:
                     <InputGroupAddon>
                         <Search />
                     </InputGroupAddon>
-                </InputGroup>
+                </InputGroup> */}
+                <div style={{ position: "relative" }}>
+                    <Input
+                        disabled={!!defaultValue}
+                        {...field}
+                        value={defaultValue || finalValue || searchVal}
+                        onFocus={handleFocus}
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        placeholder="Search..." />
+                </div>
                 {renderResults()}
 
             </div>

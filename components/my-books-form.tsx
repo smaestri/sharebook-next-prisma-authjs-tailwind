@@ -15,30 +15,25 @@ export default function MyBooksForm({ books, email }: MyBooksFormProps) {
   }
   return (
     <div className="flex flex-wrap gap-2">
-      {books?.map((userBook: UserBookWithBookAndUser) => (
+      {books?.map((userBook: any) => (
         <div
           key={userBook.id}
           className="flex flex-col w-[300px]"
         >
           <div className="flex flex-col items-center">
             <div className="h-[150px] mb-3">
-              {/* <Image
-                src={userBook.bookInfo.image}
-                alt={`${userBook.bookInfo.title}`}
-                width={100}
-                height={100}
-              /> */}
+              <img src={userBook.book.image || ""} alt={userBook.book.title} width={100} height={150} />
             </div>
             <div className="h-[65px] mb-5">
               <p title={userBook.book.title} className="line-clamp-3 font-sans">{userBook.book.title} - {userBook.book.author}</p>
             </div>
           </div>
-          {/* <div>Catégorie: {userBook.bookInfo.category.name}</div> */}
+          <div>Catégorie: {userBook.book.category.name}</div>
           <div>Description: {userBook.description}</div>
           <div>Prix: {userBook.price} €</div>
           <div className="flex flex-col items-center">
             {email && userBook.user.email !== email &&
-              <Link href={`purchases/new?userBookId=${userBook.id}`}>
+              <Link href={`/purchases/new?userBookId=${userBook.id}`}>
                 <Button>Acheter</Button>
               </Link>}
           </div>
