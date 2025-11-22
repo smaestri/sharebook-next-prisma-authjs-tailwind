@@ -1,2 +1,2 @@
 -- @param {String} $1:term
-SELECT * FROM "Book" WHERE to_tsvector('english', "title") @@ to_tsquery('english', $1);
+SELECT * FROM "Book" WHERE to_tsvector('french', "title") @@ to_tsquery('french', $1);

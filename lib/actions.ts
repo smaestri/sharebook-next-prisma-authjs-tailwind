@@ -26,33 +26,13 @@ export const updateUser = async (email: string, cp: string, formData: UserInfoTy
     redirect('/')
 }
 
-const coverFor = async(title: string) => {
-    let isbn = ""
-    const q = (title || "").trim().replace(/\s+/g, '+');
-    console.log('new q', q)
-
-    const searchRes = await fetch(`https://openlibrary.org/search.json?q=${q}&limit=1&fields=isbn`);
-    if (searchRes.ok) {
-        const sjson = await searchRes.json();
-        const doc = sjson.docs?.[0];
-        console.log('isbn for title', title, doc)
-        if (doc) {
-            isbn = doc["isbn"][0]
-            console.log('isbn found ',isbn )
-            if (isbn) {
-                return "https://covers.openlibrary.org/b/isbn/" + isbn + "-M.jpg"
-            }
-        };
-    }
-
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(title || "Book")}&size=512`;
-};
 
 const saveBook = async (formData: BookType): Promise<Book> => {
 
     const author = formData.author
     const title = formData.title
     const category = formData.category
+    const image = formData.image
 
     // let book: Book | null = await prisma.book.findFirst({
     //     where: {
@@ -65,13 +45,13 @@ const saveBook = async (formData: BookType): Promise<Book> => {
 
     // if (!book) {
     console.log("saving book with title:", title, " author" + author, " category " + category)
-    const cover = await coverFor(title)
+   // const cover = await coverFor(title)
     const book = await prisma.book.create({
         data: {
             title,
             author,
             categoryId: parseInt(category),
-            image: cover
+            image
         }
     })
 

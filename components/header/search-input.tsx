@@ -1,8 +1,6 @@
 "use client"
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group";
-import { Search } from "lucide-react";
 import axios from "axios";
 import { useDebounce } from "./useDebounce";
 import { Input } from "../ui/input";
@@ -10,8 +8,8 @@ import { Input } from "../ui/input";
 type SearchInputProps = {
     redirect?: boolean;
     callback?: (id: number, title: string, author: string, categoryId: number, image: string) => void;
-    callbackNotFound?: () => void;
-    callbackChange?: (toto: string) => void;
+    callbackNotFound?: (title: string) => void;
+    callbackChange?: (title: string) => void;
     field?: any;
     defaultValue?: string;
 }
@@ -81,7 +79,7 @@ export default function SearchInput({ redirect, callback, callbackNotFound, call
                 setResults([])
                 setNotFound(true)
                 if (callbackNotFound) {
-                    callbackNotFound()
+                    callbackNotFound(searchVal)
                 }
                 return
             }
@@ -95,10 +93,6 @@ export default function SearchInput({ redirect, callback, callbackNotFound, call
         }
     }
 
-    const handleBlur = ()=> {
-        console.log('blur')
-    }
-
     const handleFocus = () => {
         setDisplay(true)
     }
@@ -106,6 +100,7 @@ export default function SearchInput({ redirect, callback, callbackNotFound, call
     const handleChange = (e: any) => {
         setFinalValue("")
         setSearchVal(e.target.value);
+        callbackChange && callbackChange(e.target.value)
         setDisplay(true)
     }
 
@@ -128,7 +123,7 @@ export default function SearchInput({ redirect, callback, callbackNotFound, call
         if (loading) {
             return <div>Loading...</div>
         }
-        if (notFound) {
+        if (!callbackNotFound && notFound) {
             return <div>No results found.</div>
         }
 
@@ -170,7 +165,6 @@ export default function SearchInput({ redirect, callback, callbackNotFound, call
                         {...field}
                         value={defaultValue || finalValue || searchVal}
                         onFocus={handleFocus}
-                        onBlur={handleBlur}
                         onChange={handleChange}
                         placeholder="Search..." />
                 </div>

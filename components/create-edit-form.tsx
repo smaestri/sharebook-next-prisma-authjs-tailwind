@@ -12,6 +12,7 @@ import { bookSchema, BookType } from "@/lib/ValidationSchemas";
 import { UserBookWithBookAndUser } from "@/lib/DbSchemas";
 import SearchInput from "./header/search-input";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
+import { getBookInfoFromLib } from "@/lib/utils";
 
 export interface Category {
   id: string;
@@ -27,15 +28,11 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [authorDisabled, setAuthorDisabled] = useState<boolean>(false);
   const [catDisabled, setCatDisabled] = useState<boolean>(false);
-  // const [isbn, setIsbn] = useState<string>("");
-  // const [loadin, setLoading] = useState<boolean>();
+  const [cover, setCover] = useState<string | undefined>(undefined);
 
   const renderCat = () => {
     return categories.map((cat) => <SelectItem key={cat.id} value={cat.id.toString()}>{cat.name}</SelectItem>)
   }
-  console.log('all cats', categories)
-  console.log('userBook passed', userBook)
-
   const form = useForm<BookType>({
     resolver: zodResolver(bookSchema),
     defaultValues: {
@@ -49,13 +46,7 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
     },
   })
 
-  React.useEffect(() => {
-    const subscription = form.watch((value, { name, type }) => console.log("WATCH" + value, name, type));
-    return () => subscription.unsubscribe();
-  }, [form.watch]);
-
-  console.log('cat:' + form.getValues("category"))
-  console.log('desc:' + form.getValues("description"))
+  
 
   async function onSubmit(values: z.infer<typeof bookSchema>) {
     console.log("onSubmit ", values)
@@ -72,58 +63,13 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
       setErrorMessage(response.error)
     }
   }
-  // const handleIsbnChanged = async (event: any) => {
-  //   console.log('isbn changed', event.target.value)
-  //   const isbn = event.target.value
-  //   const url = `http://localhost:3000/api/isbn?isbn=${isbn}`
-  //   try {
-  //     setLoading(true)
-  //     const response = await axios.get(url)
-  //     console.log('response from openlibrary', response)
-  //     form.setValue("title", response.data.book.title)
-  //     form.setValue("author", response.data.book.authors[0] )
-
-
-  //   } catch (error) {
-  //     console.log('err' + JSON.stringify(error))
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }
 
   const renderBookForm = () => {
     return (
       <div className="w-300">
         {/* <FormProvider {...form} > */}
         <form onSubmit={form.handleSubmit(onSubmit)}>
-
-          {/* <Controller
-            control={form.control}
-            name="isbn"
-            render={({ field }) => (
-              <Field>
-                <FieldLabel>Isbn</FieldLabel>
-                <FormControl onChange={handleIsbnChanged}>
-                  <Input placeholder="isbn" {...field} />
-                </FormControl>
-                <FormMessage />
-              </Field>
-            )} /> */}
-
-          {/* <Controller
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <Field>
-                <FieldLabel>Titre</FieldLabel>
-                <FormControl>
-                  <Input placeholder="title" {...field} />
-                </FormControl>
-                <FormMessage />
-              </Field>
-            )} /> */}
           <FieldGroup>
-
             <Controller
               name="title"
               control={form.control}
@@ -132,28 +78,32 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
                   <FieldLabel>Titre</FieldLabel>
                   <div className="flex items-center">
                     <div>
-                      <SearchInput 
-                         defaultValue={userBook?.book.title} field={field}
-                         callbackChange = {(title: string )=> {
+                      <SearchInput
+                        defaultValue={userBook?.book.title} field={field}
+                        callbackChange={(title: string) => {
                           form.setValue("title", title)
-                         }}
-                         callbackNotFound = {() => {
+                        }}
+                        callbackNotFound={async (title: string) => {
                           console.log('not found callback')
-                           setAuthorDisabled(false);
-                           setCatDisabled(false);
-                           //form.setValue("title", "")
-                           form.setValue("author", "")
-                           form.setValue("category", "")
-                           form.setValue("image", "")
-                           form.setValue("bookId", "")
-                         }}
-                         callback={(id: number, title: string, author: string, categoryId: number, image: string) => {
+                          setAuthorDisabled(false);
+                          setCatDisabled(false);
+                          form.setValue("author", "")
+                          form.setValue("category", "")
+                          form.setValue("image", "")
+                          form.setValue("bookId", "")
+                          const cover = await getBookInfoFromLib(title);
+                          form.setValue("image", cover.cover || "")
+                          setCover(cover.cover || undefined)
+                          form.setValue("author", cover.author || "")
+                        }}
+                        callback={async (id: number, title: string, author: string, categoryId: number, image: string) => {
                           setAuthorDisabled(true);
                           setCatDisabled(true);
                           form.setValue("title", title)
                           form.setValue("author", author)
                           form.setValue("category", categoryId.toString())
                           form.setValue("image", image)
+                          setCover(image)
                           form.setValue("bookId", id.toString())
                         }} />
                       {fieldState.invalid && (
@@ -161,7 +111,7 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
                       )}
                     </div>
                     <div>
-                      {form.getValues("image") && <img src={form.getValues("image")} alt={form.getValues("title")} width={100} height={150} />}
+                      {cover && <img src={cover} alt={form.getValues("title")} width={100} height={150} />}
                     </div>
                   </div>
                 </Field>
@@ -244,7 +194,7 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
       </div> */}
         </form>
         {/* </FormProvider> */}
-        <button
+        {/* <button
           type="button"
           onClick={() => {
             const values = form.getValues();
@@ -253,7 +203,7 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
           }}
         >
           Get Values
-        </button>
+        </button> */}
       </div>)
   }
   return (
