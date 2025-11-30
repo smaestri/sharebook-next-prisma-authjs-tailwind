@@ -12,7 +12,6 @@ import { bookSchema, BookType } from "@/lib/ValidationSchemas";
 import { UserBookWithBookAndUser } from "@/lib/DbSchemas";
 import SearchInput from "./header/search-input";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
-import { getBookInfoFromLib } from "@/lib/utils";
 
 export interface Category {
   id: string;
@@ -27,7 +26,6 @@ export interface CreateEditBookFormProps {
 export default function CreateEditBookForm({ categories, userBook }: CreateEditBookFormProps) {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [authorDisabled, setAuthorDisabled] = useState<boolean>(false);
-  const [catDisabled, setCatDisabled] = useState<boolean>(false);
   const [cover, setCover] = useState<string | undefined>(undefined);
 
   const renderCat = () => {
@@ -86,22 +84,19 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
                         callbackNotFound={async (title: string) => {
                           console.log('not found callback')
                           setAuthorDisabled(false);
-                          setCatDisabled(false);
                           form.setValue("author", "")
                           form.setValue("category", "")
                           form.setValue("image", "")
                           form.setValue("bookId", "")
-                          const cover = await getBookInfoFromLib(title);
-                          form.setValue("image", cover.cover || "")
-                          setCover(cover.cover || undefined)
-                          form.setValue("author", cover.author || "")
+                          // const cover = await getBookInfoFromLib(title, []);
+                          // form.setValue("image", cover.image || "")
+                          // setCover(cover.image || undefined)
+                          // form.setValue("author", cover.author || "")
                         }}
-                        callback={async (id: number, title: string, author: string, categoryId: number, image: string) => {
+                        callback={async (id: number, title: string, author: string, image: string) => {
                           setAuthorDisabled(true);
-                          setCatDisabled(true);
                           form.setValue("title", title)
                           form.setValue("author", author)
-                          form.setValue("category", categoryId.toString())
                           form.setValue("image", image)
                           setCover(image)
                           form.setValue("bookId", id.toString())
@@ -136,7 +131,7 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel>Catégorie</FieldLabel>
-                  <Select disabled={!!userBook || catDisabled} name={field.name} value={field.value} onValueChange={field.onChange}>
+                  <Select name={field.name} value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>

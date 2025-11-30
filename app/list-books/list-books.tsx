@@ -57,7 +57,7 @@ export default async function ListBooks({ searchParams }: ListBooksProps) {
   return (<>
     <div className="flex flex-wrap gap-4">
       {books?.map((book: any) => (
-        <BookPage key={book.id} book={book} email={email} />
+        <BookPage key={book.id} book={book} email={email} displayLinkToDetail={true} />
       ))}
     </div>
     <Pagination>

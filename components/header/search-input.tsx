@@ -7,7 +7,7 @@ import { Input } from "../ui/input";
 
 type SearchInputProps = {
     redirect?: boolean;
-    callback?: (id: number, title: string, author: string, categoryId: number, image: string) => void;
+    callback?: (id: number, title: string, author: string, image: string) => void;
     callbackNotFound?: (title: string) => void;
     callbackChange?: (title: string) => void;
     field?: any;
@@ -104,17 +104,21 @@ export default function SearchInput({ redirect, callback, callbackNotFound, call
         setDisplay(true)
     }
 
-    const handleClick = (id: number, title: string, author: string, categoryId: number, image: string) => {
+    const handleClick = (id: number, title: string, author: string, image: string) => {
         setLoading(true)
         console.log('handleClick', id)
         setDisplay(false)
         setFinalValue(title)
         setResults([])
         if (redirect) {
-            router.push(`/list-books/${id}`)
+            if(id && id != 0 ){
+                router.push(`/list-books/${id}`)
+            } else {
+                router.push(`/list-books/0?title=${encodeURIComponent(title)}&author=${encodeURIComponent(author)}&image=${encodeURIComponent(image)}`)
+            }
         }
         if (callback) {
-            callback(id, title, author, categoryId, image)
+            callback(id, title, author, image)
         }
         setLoading(false)
     }
@@ -131,8 +135,8 @@ export default function SearchInput({ redirect, callback, callbackNotFound, call
             return (
                 <div style={{position: "absolute", backgroundColor: "white", border: "1px solid gray", zIndex: 1000, width: "100%"}}>
                     {results.map((book) => (
-                        <button onClick={() => handleClick(book.id, book.title, book.author, book.categoryId, book.image)} className="data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4" key={book.id} onSelect={() => console.log(book.title)}>
-                            {book.title}
+                        <button onClick={() => handleClick(book.id, book.title, book.author, book.image)} className="data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4" key={book.id} onSelect={() => console.log(book.title)}>
+                            {book.title} ({book.author})
                         </button>
                     ))}
                 </div>

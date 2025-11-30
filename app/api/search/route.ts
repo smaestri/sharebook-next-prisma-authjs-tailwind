@@ -1,6 +1,6 @@
 import { search } from "@/app/generated/prisma/sql";
 import prisma from "@/lib/prisma";
-import { getBookInfoFromLib } from "@/lib/utils";
+import { getBookInfoFromLib } from "@/lib/utils-search";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -11,23 +11,29 @@ export async function GET(request: Request) {
   }
   console.log('api SEARCH called with value' + value)
   const ftsValue = value.split(" ").join(" & ")
-  const books = await prisma.$queryRawTyped(search(ftsValue + ":*"))
-  if (!books || books.length === 0) {
-    const bookFromLib = await getBookInfoFromLib(value)
-    console.log('bookFromLib', bookFromLib)
-    if (bookFromLib.title) {
-      const bookcreated = await prisma.book.create({
-        data: {
-          title: bookFromLib.title,
-          author: bookFromLib.author || "Unknown Author",
-          image: bookFromLib.cover || "",
-          categoryId: 1
-        }
-      })
-      console.log('bookcreated', bookcreated)
-      return Response.json({ books: [bookcreated] })
-    }
-  }
+  const result = []
+  //const books = await prisma.$queryRawTyped(search(ftsValue + ":*"))
+  //result.push(...books)
 
-  return Response.json({ books })
+  //if (!books || books.length === 0) {
+    const booksFromLib = await getBookInfoFromLib(value)
+    result.push(...booksFromLib)
+    // for (const bookFromLib of booksFromLib) {
+    //   console.log('bookFromLib in loop', bookFromLib)
+
+    //     if (bookFromLib.title) {
+    //       const bookcreated = await prisma.book.create({
+    //         data: {
+    //           title: bookFromLib.title,
+    //           author: bookFromLib.author || "Unknown Author",
+    //           image: bookFromLib.cover || "",
+    //           categoryId: 1
+    //         }
+    //       })
+    //       result.push(bookcreated)
+    //     }
+    //   }
+      console.log('bookcreated', result.length)
+      return Response.json({ books: booksFromLib })
+   // }
 }
