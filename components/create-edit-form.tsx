@@ -12,6 +12,7 @@ import { bookSchema, BookType } from "@/lib/ValidationSchemas";
 import { UserBookWithBookAndUser } from "@/lib/DbSchemas";
 import SearchInput from "./header/search-input";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
+import BookCreateInfos from "./book-create-infos";
 
 export interface Category {
   id: string;
@@ -44,8 +45,6 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
     },
   })
 
-  
-
   async function onSubmit(values: z.infer<typeof bookSchema>) {
     console.log("onSubmit ", values)
     setErrorMessage("")
@@ -53,7 +52,6 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
     let response = null
     if (userBook) {
       response = await updateBook(userBook.id, values)
-
     } else {
       response = await createBook(values)
     }
@@ -125,56 +123,8 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
                 </Field>
               )} />
 
-            <Controller
-              control={form.control}
-              name="category"
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel>Catégorie</FieldLabel>
-                  <Select name={field.name} value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {renderCat()}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
-            <Controller
-              control={form.control}
-              name="description"
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel>Description</FieldLabel>
-                  <Textarea placeholder="description" {...field} />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
-            <Controller
-              control={form.control}
-              name="price"
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel>Prix</FieldLabel>
-                  <Input type="number" placeholder="prix" {...field} onChange={event => field.onChange(+event.target.value)} />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+              <BookCreateInfos form={form} categories={categories} />
+            
           </FieldGroup>
           <FormButton>Save</FormButton>
           {errorMessage ? <div className="p-2 bg-red-200 border border-red-400">{errorMessage}</div> : null}

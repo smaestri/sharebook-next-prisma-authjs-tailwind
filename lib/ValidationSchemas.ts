@@ -15,9 +15,11 @@ export const bookSchema = z.object({
   description: z.string().min(2, {
     message: "La description est requise.",
   }),
-  price: z.number().min(1, {
-    message: "Le prix est requis.",
-  }),
+  price: z.number(),
+  isFree: z.boolean(),
+  // .min(1, {
+  //   message: "Le prix est requis.",
+  // }),
 })
 
 export const userInfoSchema = z.object({

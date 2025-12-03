@@ -13,8 +13,9 @@ import z from "zod"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import FormButton from "./form-button"
+import BookCreateInfos from "@/components/book-create-infos"
 
-const ModalGetBook = ({ categories, isOpen, onClose, book, setLoading }: { isOpen: any, categories: any, onClose: any, book: any, setLoading}) => {
+const ModalGetBook = ({ categories, isOpen, onClose, book, setLoading }: { isOpen: any, categories: any, onClose: any, book: any, setLoading: any}) => {
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const form = useForm<BookType>({
@@ -26,25 +27,21 @@ const ModalGetBook = ({ categories, isOpen, onClose, book, setLoading }: { isOpe
       category: "",
       description: "",
       price: 0,
-      bookId: undefined
+      bookId: undefined,
+      isFree: true
     },
   })
 
   async function onSubmit(values: z.infer<typeof bookSchema>) {
     console.log("onSubmit ", values)
-
     setLoading(true)
     const response = await createBook(values)
     if (response?.error) {
       setErrorMessage(response.error)
     }
         setLoading(false)
-
   }
 
-  const renderCat = () => {
-    return categories.map((cat: any) => <SelectItem key={cat.id} value={cat.id.toString()}>{cat.name}</SelectItem>)
-  }
   return (
     <Dialog open={isOpen}>
       <DialogContent>
@@ -54,59 +51,8 @@ const ModalGetBook = ({ categories, isOpen, onClose, book, setLoading }: { isOpe
             <DialogTitle className="flex flex-col gap-1">J'ai ce livre</DialogTitle>
           </DialogHeader>
 
-          <FieldGroup>
+          <BookCreateInfos form={form} categories={categories} />
 
-            <Controller
-              control={form.control}
-              name="category"
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel>Catégorie</FieldLabel>
-                  <Select name={field.name} value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {renderCat()}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
-            <Controller
-              control={form.control}
-              name="description"
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel>Description</FieldLabel>
-                  <Textarea placeholder="description" {...field} />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
-            <Controller
-              control={form.control}
-              name="price"
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel>Prix</FieldLabel>
-                  <Input type="number" placeholder="prix" {...field} onChange={event => field.onChange(+event.target.value)} />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-          </FieldGroup>
           <DialogFooter>
             <DialogClose>
               <FormButton>

@@ -61,7 +61,7 @@ const saveBook = async (formData: BookType): Promise<Book> => {
     return book;
 }
 
-const saveUserBook = async (book: Book, userId: string, description: string, price: number) => {
+const saveUserBook = async (book: Book, userId: string, description: string, price: number, isFree: boolean) => {
 
     // does the user already declared this book?
     let userBook: UserBook | null = await prisma.userBook.findFirst({
@@ -77,7 +77,8 @@ const saveUserBook = async (book: Book, userId: string, description: string, pri
                 description,
                 price,
                 bookId: book.id,
-                userId
+                userId,
+                isFree
             }
         })
         console.log('userBook created:', userBook)
@@ -170,7 +171,7 @@ export async function createBook(formData: BookType): Promise<any> {
             where: { id: parseInt(bookId) }
         })
     }
-    await saveUserBook(book, session.user.id, formData.description, formData.price)
+    await saveUserBook(book, session.user.id, formData.description, formData.price, formData.isFree)
 
     revalidatePath('/my-books')
     redirect('/my-books')

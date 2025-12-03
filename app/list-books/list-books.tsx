@@ -9,6 +9,10 @@ export default async function ListBooks({ searchParams }: ListBooksProps) {
   const session = await auth()
   const params = await searchParams;
   const categoryId = params?.categoryId;
+  const userId = params?.userId;
+
+    console.log('ListBooks', categoryId, userId)
+
   const pageParam = params?.page;
   let page = Number(pageParam);
   if (!Number.isFinite(page) || page < 1) page = 1;
@@ -21,26 +25,52 @@ export default async function ListBooks({ searchParams }: ListBooksProps) {
     <div>Please connect</div>
   )
   const email = session.user.email
-  console.log('List book of not userId' + session.user.id + "with cat " + categoryId)
-  const books = await prisma.book.findMany({
-    where: {
-      categoryId: parseInt(categoryId),
-    },
-    skip: skip,
-    take: COUNT_ITEMS_PER_PAGE,
-  });
 
+  let books: BookWithCategoryAndUser[] = []
+  let total = 0
+  if (categoryId) {
+    console.log('list books of categoryId', userId)
+    books = await prisma.book.findMany({
+      where: {
+        categoryId: parseInt(categoryId),
+      },
+      skip: skip,
+      take: COUNT_ITEMS_PER_PAGE,
+    });
 
+    total = await prisma.book.count({
+      where: {
+        categoryId: parseInt(categoryId),
+      },
+    });
+  } else if (userId) {
+    console.log('list books of userId', userId)
+    books = await prisma.book.findMany({
+      where: {
+        UserBook: {
+          some: {
+            userId: String(userId),
+            deleted: false,
+          }
+        }
+      },
+      skip: skip,
+      take: COUNT_ITEMS_PER_PAGE,
+    });
+
+    total = await prisma.book.count({
+      where: {
+        UserBook: {
+          some: {
+            userId: String(userId),
+            deleted: false,
+          }
+        }
+      },
+    });
+  }
   console.log('books found', books.length)
-
-  const total = await prisma.book.count({
-    where: {
-      categoryId: parseInt(categoryId),
-    },
-  });
-
   console.log('count', total)
-
 
   const numberOfPages = Math.ceil(total / COUNT_ITEMS_PER_PAGE);
   // helper to build links preserving categoryId
@@ -55,6 +85,7 @@ export default async function ListBooks({ searchParams }: ListBooksProps) {
   for (let i = 1; i <= numberOfPages; i++) pageNumbers.push(i);
 
   return (<>
+  
     <div className="flex flex-wrap gap-4">
       {books?.map((book: any) => (
         <BookPage key={book.id} book={book} email={email} displayLinkToDetail={true} />
