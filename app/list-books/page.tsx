@@ -10,11 +10,11 @@ import ListBooks from "./list-books";
 export type BookWithCategory = any
 
 export interface ListBooksProps{
-  searchParams: {
+  searchParams: Promise<{
       categoryId?: string,
       userId?: string,
       page?: number,
-  }
+  }>
 }
 
 export default async function ListBooksPage({ searchParams }: ListBooksProps) {

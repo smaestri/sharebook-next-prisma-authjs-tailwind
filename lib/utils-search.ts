@@ -1,4 +1,3 @@
-import { Item } from "@radix-ui/react-dropdown-menu"
 import prisma from "./prisma"
 
 export type BookInfo = {
