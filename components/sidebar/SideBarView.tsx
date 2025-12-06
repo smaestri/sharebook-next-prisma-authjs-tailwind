@@ -1,6 +1,7 @@
 "use client"
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { Input } from "../ui/input";
 
 
 export interface Counter {
@@ -27,7 +28,10 @@ export default function SideBarView({ categories }: { categories: Counter[] }) {
   return (<div className="flex flex-col">
     <div><b>Filtrer par catégorie</b></div>
     {renderCategories}
-    
+    <div className="mt-3"><b>Chercher par utilisateur</b></div>
+    <div>
+    <Input style={{"width": "80%"}}  type="text" placeholder="Nom d'utilisateur"  />
+    </div>
   </div>
   )
 }

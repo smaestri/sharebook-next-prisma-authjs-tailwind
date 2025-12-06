@@ -111,6 +111,8 @@ export default function SearchInput({ redirect, callback, callbackNotFound, call
         setFinalValue(title)
         setResults([])
         if (redirect) {
+            setFinalValue("")
+            setSearchVal("")
             if(id && id != 0 ){
                 router.push(`/list-books/${id}`)
             } else {
@@ -125,17 +127,20 @@ export default function SearchInput({ redirect, callback, callbackNotFound, call
 
     const renderResults = () => {
         if (loading) {
-            return <div>Loading...</div>
+            return <div className="absolute rounded-md mt-1 bg-white">Chargement, veuillez patienter SVP ...</div>
         }
         if (!callbackNotFound && notFound) {
             return <div>No results found.</div>
         }
 
-        if (display) {
+        if (display && results.length > 0) {
             return (
-                <div style={{position: "absolute", backgroundColor: "white", border: "1px solid gray", zIndex: 1000, width: "100%"}}>
+                <div className="absolute rounded-md mt-1 bg-white border h-72 overflow-auto z-10" style={{ width: "100%"}}>
                     {results.map((book) => (
-                        <button onClick={() => handleClick(book.id, book.title, book.author, book.image)} className="data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4" key={book.id} onSelect={() => console.log(book.title)}>
+                        <button 
+                            onClick={() => handleClick(book.id, book.title, book.author, book.image)}
+                            className="cursor-pointer w-full text-left px-3 py-2 hover:bg-gray-100 border-b last:border-0"
+                            key={book.id}>
                             {book.title} ({book.author})
                         </button>
                     ))}
