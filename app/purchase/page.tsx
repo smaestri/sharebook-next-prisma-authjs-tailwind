@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { headers } from "next/headers";
 import Messages from "@/components/Messages";
 import PurchaseClient from "@/components/purchase-client";
 import prisma from "@/lib/prisma";
@@ -9,7 +10,9 @@ export type BorrowDate = {
   closeDate: string | undefined
 }
 export default async function PurchasePage({ searchParams }: any) {
-  const session = await auth()
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
   const params = await searchParams;
 
   if (!session?.user) return (
@@ -20,7 +23,7 @@ export default async function PurchasePage({ searchParams }: any) {
   const isPurchase = params.isPurchase === "true" ? true : false
   console.log('id', id)
 
-  const borrowWithMessage : any= await prisma.borrow.findFirst({
+  const borrowWithMessage: any = await prisma.borrow.findFirst({
     include: {
       userBook: { include: { user: true, book: { include: { category: true } } } },
       messages: { include: { user: true } }
@@ -30,13 +33,9 @@ export default async function PurchasePage({ searchParams }: any) {
     }
   })
 
-
-  console.log('borrowWithMessage', JSON.stringify(borrowWithMessage))
-
   if (!borrowWithMessage || borrowWithMessage.length == 0) {
     return <div>Achat introuvable</div>
   }
-
 
   let borrowDate: BorrowDate = { closeDate: undefined, createdDate: undefined, validatedDate: undefined };
   const createdDate = borrowWithMessage.createdDate
@@ -46,7 +45,7 @@ export default async function PurchasePage({ searchParams }: any) {
     createdDate, validatedDate, closeDate
   }
 
-    let buyerName
+  let buyerName
   if (!isPurchase) {
     const buyer = await prisma.user.findFirst({
       where: {

@@ -9,8 +9,8 @@ import { useState } from "react";
 
 export default function BookCreateInfos({ form, categories }: any) {
 
-    const [priceDisabled, setPriceDisabled] = useState<boolean>(true);
-
+    const [priceDisabled, setPriceDisabled] = useState<boolean>(!form.getValues("isFree")  || form.getValues("isFree") == "option-free" ? true : false);
+console.log('form.getValues("isFree")', form.getValues("isFree"))
     const renderCat = () => {
         return categories.map((cat: any) => <SelectItem key={cat.id} value={cat.id.toString()}>{cat.name}</SelectItem>)
     }
@@ -57,8 +57,7 @@ export default function BookCreateInfos({ form, categories }: any) {
                 control={form.control}
                 name="isFree"
                 render={({ field }) => (
-
-                    <RadioGroup {...field} defaultValue="option-free" onValueChange={(event) => {
+                    <RadioGroup {...field} onValueChange={(event) => {
                         field.onChange(event);
                         if (event == "option-free") {
                             form.setValue("price", 0);
@@ -67,13 +66,13 @@ export default function BookCreateInfos({ form, categories }: any) {
                         }
                         setPriceDisabled(false);
                     }}>
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center gap-3">
                             <RadioGroupItem value="option-free" id="form-option-free" />
-                            <Label htmlFor="option-free">Je le donne / je le prête</Label>
+                            <Label htmlFor="form-option-free">Je le donne / je le prête</Label>
                         </div>
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center gap-3">
                             <RadioGroupItem value="option-not-free" id="form-option-not-free" />
-                            <Label htmlFor="option-not-free">Je le vends</Label>
+                            <Label htmlFor="form-option-not-free">Je le vends</Label>
                         </div>
 
                     </RadioGroup>

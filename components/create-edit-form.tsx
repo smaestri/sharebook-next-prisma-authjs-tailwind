@@ -28,7 +28,7 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [authorDisabled, setAuthorDisabled] = useState<boolean>(false);
   const [cover, setCover] = useState<string | undefined>(undefined);
-
+console.log('userBook', userBook)
   const form = useForm<BookType>({
     resolver: zodResolver(bookSchema),
     defaultValues: {
@@ -38,7 +38,8 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
       category: userBook?.book.categoryId?.toString() || "",
       description: userBook?.description || "",
       price: userBook?.price || 0,
-      isFree: (userBook && userBook.isFree) ? "option-free" : "option-not-free",
+      isFree: (userBook && !userBook.isFree) ? "option-not-free" : "option-free",
+      //isFree: "option-free",
       bookId: undefined
     },
   })
@@ -91,7 +92,9 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
                           form.setValue("author", author)
                           form.setValue("image", image)
                           setCover(image)
-                          form.setValue("bookId", id.toString())
+                          if(id) {
+                            form.setValue("bookId", id.toString())
+                          }
                         }} />
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />

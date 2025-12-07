@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { headers } from "next/headers";
 import MyBooksForm from "@/components/my-books-form";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
@@ -6,8 +7,9 @@ import Link from "next/link";
 import { UserBookWithBookAndUser } from "@/lib/DbSchemas";
 
 export default async function MyBooks() {
-  const session = await auth()
-
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
   if (!session?.user) return (
     <div>Please connect</div>
   )

@@ -1,13 +1,14 @@
-import { auth, signIn } from "@/auth"
-import SideBarPage from "@/components/sidebar/page"
+import { auth } from "@/auth"
+import { headers } from "next/headers";
 import prisma from "@/lib/prisma";
 import { User } from "./generated/prisma";
 import ModalCity from "./AdditionalUserInfos/ModalCity";
 
 export default async function SignIn() {
 
-  const session = await auth()
-
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
   if (!session?.user) return (
     <div>Please sign in.</div>
   )

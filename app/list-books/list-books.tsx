@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { headers } from "next/headers";
 import { ListBooksProps } from "./page";
 import prisma from "@/lib/prisma";
 import BookPage from "@/components/book-page";
@@ -6,8 +7,10 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 export type BookWithCategoryAndUser = any
 
 export default async function ListBooks({ searchParams }: ListBooksProps) {
-  const session = await auth()
-  const params = await searchParams;
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+    const params = await searchParams;
   const categoryId = params?.categoryId;
   const userId = params?.userId;
 

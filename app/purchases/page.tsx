@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { headers } from "next/headers";
 import ListSalesOrPurchases from "@/components/list-purchases";
 import { BORROW_STATUS } from "@/lib/constants";
 import prisma from "@/lib/prisma";
@@ -6,8 +7,9 @@ import prisma from "@/lib/prisma";
 export default async function Purchases({ searchParams }: any) {
   const params = await searchParams;
   const statusParam = params?.status;
-  const session = await auth()
-
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
   if (!session?.user) return (
     <div>Please connect</div>
   )

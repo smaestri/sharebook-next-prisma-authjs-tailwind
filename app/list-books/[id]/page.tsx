@@ -1,12 +1,12 @@
 import { auth } from "@/auth";
+import { headers } from "next/headers";
 import BookPage from "@/components/book-page";
 import prisma from "@/lib/prisma";
-import { id } from "date-fns/locale";
 
 export default async function DetailsBookPage({params, searchParams}: {params: Promise<{id: string | undefined, title: string, author: string, image: string}>, searchParams: any}) {
-  //const params = await searchParams;
-    const session = await auth()
-
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
     const theParams = await params;
     const theSearchedParams = await searchParams;
   

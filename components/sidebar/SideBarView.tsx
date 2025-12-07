@@ -1,8 +1,7 @@
 "use client"
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Input } from "../ui/input";
-
+import { useSession } from "@/auth-client";
 
 export interface Counter {
   id: number
@@ -11,9 +10,7 @@ export interface Counter {
 }
 
 export default function SideBarView({ categories }: { categories: Counter[] }) {
-  //const { userConnected }: any = useUserContext();
   const { data: session } = useSession()
-
   if (!session?.user) {
     return <div>Please login</div>
   }

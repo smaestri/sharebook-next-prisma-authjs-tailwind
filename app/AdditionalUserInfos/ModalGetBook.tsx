@@ -2,16 +2,12 @@
 
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { Controller, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { bookSchema, BookType } from "@/lib/ValidationSchemas"
 import { useState } from "react"
 import { createBook } from "@/lib/actions"
 import z from "zod"
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
 import FormButton from "./form-button"
 import BookCreateInfos from "@/components/book-create-infos"
 
@@ -28,7 +24,7 @@ const ModalGetBook = ({ categories, isOpen, onClose, book, setLoading }: { isOpe
       description: "",
       price: 0,
       bookId: undefined,
-      isFree: true
+      isFree: "option-free"
     },
   })
 
@@ -46,13 +42,10 @@ const ModalGetBook = ({ categories, isOpen, onClose, book, setLoading }: { isOpe
     <Dialog open={isOpen}>
       <DialogContent>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-
           <DialogHeader>
             <DialogTitle className="flex flex-col gap-1">J'ai ce livre</DialogTitle>
           </DialogHeader>
-
           <BookCreateInfos form={form} categories={categories} />
-
           <DialogFooter>
             <DialogClose>
               <FormButton>

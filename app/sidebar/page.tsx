@@ -1,12 +1,15 @@
 import prisma from "@/lib/prisma";
-import SideBarView, { Counter } from "./SideBarView";
+import SideBarView, { Counter } from "../../components/sidebar/SideBarView";
 import { BORROW_STATUS } from "@/lib/constants";
 import { Category, UserBook } from "@/app/generated/prisma";
 import { auth } from "@/auth";
+import { headers } from "next/headers";
+
 export default async function SideBarPage({ }) {
 
-  const session = await auth()
-
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
   if (!session?.user) return (
     <div>Please connect</div>
   )
@@ -15,8 +18,8 @@ export default async function SideBarPage({ }) {
 
   const countUserBookForCategory = async (category: Category, userId?: string) => {
     const countBooksForCategory = await prisma.book.count({
-       where: {
-          categoryId: category.id,
+      where: {
+        categoryId: category.id,
       }
     });
 

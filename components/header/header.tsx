@@ -1,6 +1,6 @@
 import Link from "next/link";
 import SearchInput from "./search-input";
-import UserMenuPage from "./user-menu-page";
+import UserMenuPage from "../../app/user-menu/page";
 
 export default async function Header() {
 

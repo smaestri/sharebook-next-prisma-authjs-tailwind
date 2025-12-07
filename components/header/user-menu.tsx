@@ -1,18 +1,16 @@
 "use client"
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation'
-// import { useUserContext } from '@/app/AuthProvider';
 import ModalSignin from './ModalSignin';
 import Image from 'next/image'
-// import ModalFriend from './ModalFriend';
-import { signOut, useSession } from 'next-auth/react';
 import { Button } from '../ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+
 import Link from 'next/link';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { Badge } from '../ui/badge';
+import { signOut, useSession } from '@/auth-client';
 
 
 interface AccountProps {
@@ -25,7 +23,12 @@ export default function UserMenu({ borrowsCount, lendsCount }: AccountProps) {
   //const { userConnected, loading }: any = useUserContext();
   const [modalSigninOpen, setModalSigninOpen] = useState(false);
   // const [modalFriendOpen, setModalFriendOpen] = useState(false);
-  const { data: session } = useSession()
+    const { 
+        data: session, 
+        isPending, //loading state
+        error, //error object
+        refetch //refetch the session
+    } = useSession() 
 
   async function signOutAndRedirect() {
     signOut()
