@@ -29,9 +29,6 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
   const [authorDisabled, setAuthorDisabled] = useState<boolean>(false);
   const [cover, setCover] = useState<string | undefined>(undefined);
 
-  const renderCat = () => {
-    return categories.map((cat) => <SelectItem key={cat.id} value={cat.id.toString()}>{cat.name}</SelectItem>)
-  }
   const form = useForm<BookType>({
     resolver: zodResolver(bookSchema),
     defaultValues: {
@@ -41,6 +38,7 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
       category: userBook?.book.categoryId?.toString() || "",
       description: userBook?.description || "",
       price: userBook?.price || 0,
+      isFree: (userBook && userBook.isFree) ? "option-free" : "option-not-free",
       bookId: undefined
     },
   })
@@ -86,10 +84,6 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
                           form.setValue("category", "")
                           form.setValue("image", "")
                           form.setValue("bookId", "")
-                          // const cover = await getBookInfoFromLib(title, []);
-                          // form.setValue("image", cover.image || "")
-                          // setCover(cover.image || undefined)
-                          // form.setValue("author", cover.author || "")
                         }}
                         callback={async (id: number, title: string, author: string, image: string) => {
                           setAuthorDisabled(true);

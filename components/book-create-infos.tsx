@@ -53,24 +53,31 @@ export default function BookCreateInfos({ form, categories }: any) {
                     </Field>
                 )}
             />
-            <RadioGroup defaultValue="option-one" onValueChange={(event) => {
-                form.setValue("isFree", event === "option-one" ? true : false);
-                if (event == "option-one") {
-                    form.setValue("price", 0);
-                    setPriceDisabled(true);
-                    return
-                }
-                setPriceDisabled(false);
-            }}>
-                <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="option-one" id="option-one" />
-                    <Label htmlFor="option-one">Je le donne / je le prête</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="option-two" id="option-two" />
-                    <Label htmlFor="option-two">Je le vends</Label>
-                </div>
-            </RadioGroup>
+            <Controller
+                control={form.control}
+                name="isFree"
+                render={({ field }) => (
+
+                    <RadioGroup {...field} defaultValue="option-free" onValueChange={(event) => {
+                        field.onChange(event);
+                        if (event == "option-free") {
+                            form.setValue("price", 0);
+                            setPriceDisabled(true);
+                            return
+                        }
+                        setPriceDisabled(false);
+                    }}>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="option-free" id="form-option-free" />
+                            <Label htmlFor="option-free">Je le donne / je le prête</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="option-not-free" id="form-option-not-free" />
+                            <Label htmlFor="option-not-free">Je le vends</Label>
+                        </div>
+
+                    </RadioGroup>
+                )} />
 
 
             <Controller

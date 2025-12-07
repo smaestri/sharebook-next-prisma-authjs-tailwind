@@ -131,6 +131,7 @@ export async function updateBook(id: number, formData: BookType): Promise<any> {
         data: {
             description: formData.description,
             price: formData.price,
+            isFree: formData.isFree,
 
         },
     })
