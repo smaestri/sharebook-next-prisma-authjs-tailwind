@@ -3,7 +3,7 @@
 import googleIcon from '../../public/google-icon.svg'
 import githubIcon from '../../public/github-icon-light.svg'
 import Image from "next/image"
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader } from '../ui/dialog'
+import { Dialog, DialogContent, DialogFooter, DialogHeader } from '../ui/dialog'
 import { Button } from '../ui/button'
 import { DialogTitle } from '@radix-ui/react-dialog'
 import { signIn } from '@/auth-client'
@@ -37,9 +37,7 @@ const ModalSignin = ({ isOpen, onClose }: { isOpen: boolean, onClose: any }) => 
           className='cursor-pointer '
         />
         <DialogFooter>
-          <DialogClose asChild>
             <Button variant="outline" onClick={onClose}>Cancel</Button>
-          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>)

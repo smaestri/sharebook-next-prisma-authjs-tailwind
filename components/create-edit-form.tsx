@@ -27,6 +27,7 @@ export interface CreateEditBookFormProps {
 export default function CreateEditBookForm({ categories, userBook }: CreateEditBookFormProps) {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [authorDisabled, setAuthorDisabled] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [cover, setCover] = useState<string | undefined>(undefined);
 console.log('userBook', userBook)
   const form = useForm<BookType>({
@@ -44,8 +45,14 @@ console.log('userBook', userBook)
     },
   })
 
+  console.log('isDirty', form.formState.isDirty)
+  console.log('isSubmitting', form.formState.isSubmitting)
+  console.log('isLoading', form.formState.isLoading)
+  console.log('isValidating', form.formState.isValidating)
+
   async function onSubmit(values: z.infer<typeof bookSchema>) {
     console.log("onSubmit ", values)
+    setLoading(true)
     setErrorMessage("")
 
     let response = null
@@ -57,6 +64,7 @@ console.log('userBook', userBook)
     if (response?.error) {
       setErrorMessage(response.error)
     }
+    setLoading(false)
   }
 
   const renderBookForm = () => {
@@ -123,7 +131,7 @@ console.log('userBook', userBook)
               <BookCreateInfos form={form} categories={categories} />
             
           </FieldGroup>
-          <FormButton>Save</FormButton>
+          <FormButton pending={form.formState.isSubmitting || loading}>Save</FormButton>
           {errorMessage ? <div className="p-2 bg-red-200 border border-red-400">{errorMessage}</div> : null}
           {/* <div>
         {loadin ? <div>Loading book info...</div> : null}

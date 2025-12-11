@@ -1,14 +1,16 @@
 "use client"
 import { deleteBook } from "@/lib/actions";
 import { useActionState, useEffect, useState } from "react";
-import FormButton from "./form-button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader } from "./ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from "./ui/dialog";
 import { Button } from "./ui/button";
+import FormButtonActionState from "./form-button-action-state";
 
 export function DeleteBook({ userBookId }: { userBookId: number }) {
   const deleteBookAction = deleteBook.bind(null, userBookId)
 
   const [formState, action] = useActionState(deleteBookAction, { message: '' })
+
+  console.log('formState in DeleteBook', formState)
 
   const [showBorrowModal, setShowBorrowModal] = useState(false);
   const onOpenChange = () => { setShowBorrowModal(modal => !modal)}
@@ -20,7 +22,7 @@ export function DeleteBook({ userBookId }: { userBookId: number }) {
 
   return (<>
     <form action={action}>
-      <FormButton>Delete</FormButton>
+      <FormButtonActionState>Delete</FormButtonActionState>
     </form>
     <Dialog open={showBorrowModal} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -29,13 +31,9 @@ export function DeleteBook({ userBookId }: { userBookId: number }) {
           <p>
             Le livre ne peut pas être supprimé car il est actuellement emprunté.
           </p>
-
         </DialogDescription>
-
         <DialogFooter>
-          <DialogClose asChild>
             <Button variant="outline" onClick={() => { }}>Fermer</Button>
-          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

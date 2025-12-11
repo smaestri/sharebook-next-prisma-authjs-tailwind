@@ -28,8 +28,6 @@ export default async function MyBooks() {
     }
   });
 
-  console.log('userBooks', JSON.stringify(books))
-
   return (
 
     <div className="flex justify-center">

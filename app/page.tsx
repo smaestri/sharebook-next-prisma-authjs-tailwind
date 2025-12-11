@@ -14,20 +14,18 @@ export default async function SignIn() {
   )
 
   // fetchu user from DB to get address
-  const user= await prisma.user.findFirst({
-      where: {
-        id: session?.user.id,
-      }
-    });
-
-console.log('user from db', user)
+  const user = await prisma.user.findFirst({
+    where: {
+      id: session?.user.id,
+    }
+  });
 
   return (
-<>
+    <>
 
-    {(!user?.cp || !user.city) && <ModalCity email={user?.email || ""} isOpen={true} />}
+      {(!user?.cp || !user.city) && <ModalCity email={user?.email || ""} isOpen={true} />}
 
-    <div>Bienvenue</div>
+      <div>Bienvenue</div>
     </>
 
   )

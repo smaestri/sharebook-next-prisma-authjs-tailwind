@@ -19,6 +19,7 @@ model User {
   id            String    @id
   name          String
   email         String
+  pseudo        String?
   emailVerified Boolean   @default(false)
   image         String?
   sessions      Session[]

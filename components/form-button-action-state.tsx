@@ -3,6 +3,7 @@
 import { ReactNode } from "react"
 import { Button } from "./ui/button"
 import { Spinner } from "./ui/spinner"
+import { useFormStatus } from "react-dom"
 
 interface FormButtonProps {
   children: ReactNode
@@ -11,8 +12,8 @@ interface FormButtonProps {
   toggleBorrowModal?: any
 }
 
-export default function FormButton({ children, className, pending = false }: FormButtonProps) {
- // const { pending } = useFormStatus();
+export default function FormButtonActionState({ children, className }: FormButtonProps) {
+  const { pending } = useFormStatus();
   console.log('pending', pending)
   return <Button
             type="submit" className={className} disabled={pending}>

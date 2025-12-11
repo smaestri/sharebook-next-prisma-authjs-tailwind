@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link";
-import { Input } from "../ui/input";
 import { useSession } from "@/auth-client";
+import UserSearch from "../header/user-search";
 
 export interface Counter {
   id: number
@@ -27,7 +27,7 @@ export default function SideBarView({ categories }: { categories: Counter[] }) {
     {renderCategories}
     <div className="mt-3"><b>Chercher par utilisateur</b></div>
     <div>
-    <Input style={{"width": "80%"}}  type="text" placeholder="Nom d'utilisateur"  />
+      <UserSearch />
     </div>
   </div>
   )

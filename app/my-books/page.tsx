@@ -1,7 +1,6 @@
 import BookCreateLoading from "@/components/book-create-loading";
 import { Suspense } from "react";
 import MyBooks from "./my-books";
-import { Category } from "@/components/create-edit-form";
 
 export default async function MyBooksPage() {
   console.log('my books page')

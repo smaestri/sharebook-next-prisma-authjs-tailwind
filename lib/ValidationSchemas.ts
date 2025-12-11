@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const bookSchema = z.object({
-  bookId: z.string().optional(),
+  bookId: z.number().optional(),
   image: z.string(),
   title: z.string().min(2, {
     message: "Le titre du livre doit avoir au moins 2 caractères.",
@@ -17,12 +17,12 @@ export const bookSchema = z.object({
   }),
   price: z.number(),
   isFree: z.string(),
-  // .min(1, {
-  //   message: "Le prix est requis.",
-  // }),
 })
 
 export const userInfoSchema = z.object({
+  pseudo: z.string().min(4, {
+    message: "Mercid'indiquer un pseudo avec au moins 4 charactères.",
+  }),
   city: z.string().min(2, {
     message: "Mercid'indiquer la ville",
   }),

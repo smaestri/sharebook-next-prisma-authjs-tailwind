@@ -16,11 +16,10 @@ export const updateUser = async (email: string, cp: string, formData: UserInfoTy
         data: {
             city: formData.city,
             cp: cp,
-            street: formData.street
+            street: formData.street,
+            pseudo: formData.pseudo,
         }
     })
-
-    // console.log('user updated', test)
     revalidatePath('/')
     redirect('/')
 }
@@ -44,7 +43,7 @@ const saveBook = async (formData: BookType): Promise<Book> => {
 
     // if (!book) {
     console.log("saving book with title:", title, " author" + author, " category " + category)
-   // const cover = await coverFor(title)
+    // const cover = await coverFor(title)
     const book = await prisma.book.create({
         data: {
             title,
@@ -155,10 +154,10 @@ export async function createBook(formData: BookType): Promise<any> {
             error: errorMessage
         }
     }
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
-      if (!session?.user?.id) {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+    if (!session?.user?.id) {
         console.error('error no user')
         return
     }
@@ -174,7 +173,7 @@ export async function createBook(formData: BookType): Promise<any> {
         })
     }
     await saveUserBook(book, session.user.id, formData.description, formData.price, formData.isFree == "option-free" ? true : false,
-)
+    )
 
     revalidatePath('/my-books')
     redirect('/my-books')
@@ -258,9 +257,9 @@ export async function cancelPurchase(purchaseId: number) {
 export async function purchaseBook(userBookId: string, rdvDate: any, message?: string) {
 
     console.log('purchaseBook bookId: ', userBookId, " rdvDate ", rdvDate, "message:", message)
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
     const userConnectedId = session?.user?.id
     if (!userConnectedId) {
         console.error('error no user')
@@ -329,9 +328,9 @@ export async function search(formData: FormData) {
 
 export async function addMessage(borrowId: any, isPurchase: any, message?: string) {
     console.log('addMessage with borrowId', borrowId), "ispurchase" + isPurchase + " message " + message
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
 
     const userConnectedId = session?.user?.id
     if (!userConnectedId) {

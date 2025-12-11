@@ -8,11 +8,12 @@ import { bookSchema, BookType } from "@/lib/ValidationSchemas"
 import { useState } from "react"
 import { createBook } from "@/lib/actions"
 import z from "zod"
-import FormButton from "./form-button"
 import BookCreateInfos from "@/components/book-create-infos"
+import FormButton from "@/components/form-button"
 
-const ModalGetBook = ({ categories, isOpen, onClose, book, setLoading }: { isOpen: any, categories: any, onClose: any, book: any, setLoading: any}) => {
+const ModalGetBook = ({ categories, isOpen, onClose, book }: { isOpen: any, categories: any, onClose: any, book: any}) => {
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm<BookType>({
     resolver: zodResolver(bookSchema),
@@ -23,7 +24,7 @@ const ModalGetBook = ({ categories, isOpen, onClose, book, setLoading }: { isOpe
       category: "",
       description: "",
       price: 0,
-      bookId: undefined,
+      bookId: book.id,
       isFree: "option-free"
     },
   })
@@ -35,7 +36,7 @@ const ModalGetBook = ({ categories, isOpen, onClose, book, setLoading }: { isOpe
     if (response?.error) {
       setErrorMessage(response.error)
     }
-        setLoading(false)
+    setLoading(false)
   }
 
   return (
@@ -46,15 +47,13 @@ const ModalGetBook = ({ categories, isOpen, onClose, book, setLoading }: { isOpe
             <DialogTitle className="flex flex-col gap-1">J'ai ce livre</DialogTitle>
           </DialogHeader>
           <BookCreateInfos form={form} categories={categories} />
-          <DialogFooter>
-            <DialogClose>
-              <FormButton>
+          <DialogFooter className="mt-2">
+              <FormButton pending={form.formState.isSubmitting || loading}>
                 Valider
               </FormButton>
               <Button type="button" variant="secondary" onClick={onClose}>
                 Fermer
               </Button>
-            </DialogClose>
           </DialogFooter>
         </form>
 

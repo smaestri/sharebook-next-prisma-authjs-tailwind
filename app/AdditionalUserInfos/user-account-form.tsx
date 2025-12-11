@@ -1,55 +1,42 @@
 "use client"
 import { updateUser } from "@/lib/actions";
 import axios from "axios";
-import { useActionState, useEffect, useState } from "react";
-import FormButton from "./form-button";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { userInfoSchema, UserInfoType } from "@/lib/ValidationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
+import FormButton from "@/components/form-button";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 
-export default function UserAccountForm({ email, userInfo, onClose }: { email: string, userInfo?: any, onClose?: any }) {
-
-
+export default function UserAccountForm({ email, userInfo }: { email: string, userInfo?: any }) {
     console.log('userInfo in form', userInfo)
-
     const [loading, setLoading] = useState<boolean>();
     const [cities, setCities] = useState<[string] | []>([]);
     const [cp, setCp] = useState<string>("");
-    const { push } = useRouter();
 
     useEffect(() => {
         const refreshCitiesFromCp = async () => {
             await refreshCities(userInfo.cp)
         }
-
         if (userInfo && userInfo.cp) {
             refreshCitiesFromCp()
-            console.log('set city', userInfo.city)
-            // setSelectedCity(userInfo.city)
         }
     }, [userInfo])
 
-
     const refreshCities = async (cp: any) => {
-        console.log('event.target.value', cp)
         const url = `http://localhost:3000/api/geo?cp=${cp}`
-
         try {
             setLoading(true)
             const response = await axios.get(url)
-            console.log('response 2', response)
             if (response && response.data && response.data.cities) {
                 const theCities = response.data.cities.map((item: any) => (item.nomCommune))
-                console.log('theCities', theCities)
                 setCities(theCities)
                 setCp(cp)
-
             }
         } catch (error) {
             console.log('err' + JSON.stringify(error))
@@ -67,46 +54,46 @@ export default function UserAccountForm({ email, userInfo, onClose }: { email: s
     const form = useForm<UserInfoType>({
         resolver: zodResolver(userInfoSchema),
         defaultValues: {
+            pseudo: userInfo?.pseudo ? userInfo.pseudo : "",
             city: userInfo?.city ? userInfo.city : "",
             street: userInfo?.street ? userInfo.street : "",
         },
     })
 
-  async function onSubmit(values: z.infer<typeof userInfoSchema>) {
-    console.log("onSubmit ", values)
-    await updateUser(email, cp, values)
-  }
+    async function onSubmit(values: z.infer<typeof userInfoSchema>) {
+        setLoading(true)
+        await updateUser(email, cp, values)
+        setLoading(false)
+    }
+
+    console.log('form errors', form.formState.errors)
 
     return (
         <Form {...form}>
-
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <div className="flex justify-center">
                     <div className="flex flex-col gap-2">
                         <div>
                             Merci de renseigner votre pseudo et votre adresse précise SVP, qui sera le lieu de la vente avec votre acheteur.
                         </div>
-                        {/* <div>
-                        <Input name="pseudo" placeholder="Pseudo" required defaultValue={pseudo} />
-                    </div> */}
                         <div>
-
-                            {/* <FormField
+                            <Controller
                                 control={form.control}
-                                name="cp"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Code postal</FormLabel>
-                                        <FormControl> */}
-                                            <Input defaultValue={userInfo?.cp} name="cp" placeholder="code postal" onChange={cpChanged} />
-                                        {/* </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            /> */}
-
+                                name="pseudo"
+                                render={({ field, fieldState }) => (
+                                    <Field>
+                                        <FieldLabel>Pseudo</FieldLabel>
+                                        <Input {...field} name="pseudo" placeholder="Pseudo" required />
+                                        {fieldState.invalid && (
+                                            <FieldError errors={[fieldState.error]} />
+                                        )}
+                                    </Field>
+                                )} />
                         </div>
-                        {loading && <div>Loading...</div>}
+                        <div>
+                            <Input defaultValue={userInfo?.cp} name="cp" placeholder="code postal" onChange={cpChanged} />
+                        </div>
+                        {loading && <div>Chargement...</div>}
                         {!loading && <FormField
                             disabled={cities.length === 0}
                             control={form.control}
@@ -141,7 +128,7 @@ export default function UserAccountForm({ email, userInfo, onClose }: { email: s
                                         <FormLabel>Description</FormLabel>
                                         <FormControl>
                                             <Textarea
-                                                {...field} 
+                                                {...field}
                                                 required
                                                 placeholder="Numéro et nom de la rue"
                                             />
@@ -152,7 +139,7 @@ export default function UserAccountForm({ email, userInfo, onClose }: { email: s
                             />
                         </div>
                         <div>
-                            <FormButton>
+                            <FormButton pending={form.formState.isSubmitting || loading}>
                                 Valider
                             </FormButton>
                         </div>
@@ -160,7 +147,5 @@ export default function UserAccountForm({ email, userInfo, onClose }: { email: s
                 </div>
             </form>
         </Form>
-
-
     )
 }

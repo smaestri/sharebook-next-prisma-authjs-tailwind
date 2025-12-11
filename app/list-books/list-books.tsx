@@ -10,11 +10,11 @@ export default async function ListBooks({ searchParams }: ListBooksProps) {
   const session = await auth.api.getSession({
     headers: await headers()
   })
-    const params = await searchParams;
+  const params = await searchParams;
   const categoryId = params?.categoryId;
   const userId = params?.userId;
 
-    console.log('ListBooks', categoryId, userId)
+  console.log('ListBooks', categoryId, userId)
 
   const pageParam = params?.page;
   let page = Number(pageParam);
@@ -72,9 +72,6 @@ export default async function ListBooks({ searchParams }: ListBooksProps) {
       },
     });
   }
-  console.log('books found', books.length)
-  console.log('count', total)
-
   const numberOfPages = Math.ceil(total / COUNT_ITEMS_PER_PAGE);
   // helper to build links preserving categoryId
   const buildHref = (p: number) => {
@@ -88,7 +85,7 @@ export default async function ListBooks({ searchParams }: ListBooksProps) {
   for (let i = 1; i <= numberOfPages; i++) pageNumbers.push(i);
 
   return (<>
-  
+
     <div className="flex flex-wrap gap-4">
       {books?.map((book: any) => (
         <BookPage key={book.id} book={book} email={email} displayLinkToDetail={true} />

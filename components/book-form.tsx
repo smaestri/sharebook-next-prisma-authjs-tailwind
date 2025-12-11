@@ -5,16 +5,8 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 import ModalGetBook from "@/app/AdditionalUserInfos/ModalGetBook";
 
-export default function BookForm({ book, userBooks, email, displayLinkToDetail = false, categories }: any) {
-
+export default function BookForm({ book, userBooks, email, displayLinkToDetail = false, categories, iHaveThisBook = false }: any) {
     const [modalOpen, setModalOpen] = useState(false);
-    const [loading, setLoading] = useState<boolean>(false);
-
-
-    if (loading) {
-        return <div>Loading...</div>
-    }
-
     return (
         <div
             key={book.id}
@@ -71,16 +63,19 @@ export default function BookForm({ book, userBooks, email, displayLinkToDetail =
                         {userBooks.length == 1 && <Link href={`/purchases/new?userBookId=${userBooks[0].id}`}>
                             <Button>Demander</Button>
                         </Link>}
-
                     </div>
+                    
                 </>
             }
-            {book.id == 0 && categories && categories.length > 0 &&
-                <Button onClick={() => setModalOpen(true)}>Je possède ce livre!</Button>}
+            <div className="flex justify-center gap-2 mt-3">
+                        {!iHaveThisBook && categories && categories.length > 0 &&
+                            <Button onClick={() => setModalOpen(true)}>Je possède ce livre!</Button>}
+                    </div>
+
             <div>
                 {!email && <div>Connectez-vous pour emprunter!{email}</div>}
             </div>
-            {book.id == 0 && categories && categories.length > 0 && <ModalGetBook onClose={() => setModalOpen(false)} categories={categories} isOpen={modalOpen} book={book} setLoading={setLoading} />}
+            {!iHaveThisBook && categories && categories.length > 0 && <ModalGetBook onClose={() => setModalOpen(false)} categories={categories} isOpen={modalOpen} book={book} />}
         </div>
     )
 }
