@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useActionState, useState } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import { Button } from "./ui/button"
 import { ChevronDownIcon } from "lucide-react"
@@ -8,23 +8,19 @@ import { purchaseBook } from "@/lib/actions"
 import { Calendar } from "./ui/calendar"
 import { Textarea } from "./ui/textarea"
 import FormButton from "./form-button"
+import FormButtonActionState from "./form-button-action-state"
 
 
 export default function PurchaseForm({ userBook }: any) {
 
   const [message, setMessage] = useState<string>();
-  // const [rdvDate, setRdvDate] = useState<any>({
-  //   day: "",
-  //   month: "",
-  //   year: ""
-  // })
+  const [loading, setLoading] = useState<boolean>(false);
   const [date, setDate] = useState<Date | undefined>(undefined)
-  console.log('date', date)
-  // const rdv = new Date(rdvDate.year, rdvDate.month - 1, rdvDate.day).toDateString();
+  const [formState, action] = useActionState(purchaseBook.bind(null, userBook.id, date, message), { message: '' })
+  console.log('loading', loading)
 
   return (
-    <form action={purchaseBook.bind(null, userBook.id, date, message)}>
-
+    <form action={action} className="p-4">
       <div className="flex justify-center">
         <div className="flex flex-col gap-2">
           <h1 className="">Achat du livre "{userBook.book.title}"</h1>
@@ -44,7 +40,7 @@ export default function PurchaseForm({ userBook }: any) {
             />
           </div>
           <div>
-            <FormButton>Valider ma demande</FormButton>
+            <FormButtonActionState>Valider ma demande</FormButtonActionState>
           </div>
 
         </div>

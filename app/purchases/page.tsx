@@ -2,10 +2,12 @@ import { Suspense } from "react";
 import BookCreateLoading from "@/components/book-create-loading";
 import PurchasesPage from "./PurchasesPage";
 
-export default async function Purchases() {
+export default async function Purchases({ searchParams }: any) {
+  const params = await searchParams;
+  const statusParam = params?.status;
   return (<>
     <Suspense fallback={<BookCreateLoading />}>
-      <PurchasesPage />
+      <PurchasesPage status={statusParam} />
     </Suspense>
   </>
   )

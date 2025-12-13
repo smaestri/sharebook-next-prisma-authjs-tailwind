@@ -1,14 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useActionState, useState } from "react"
 import { addMessage } from "@/lib/actions"
 import { BorrowDate } from "@/app/purchase/page"
 import { formatDate } from "@/lib/utils"
 import { Textarea } from "./ui/textarea"
 import { Button } from "./ui/button"
+import FormButtonActionState from "./form-button-action-state"
 
 const Messages = ({ messages, borrowId, isPurchase, borrowDate }: { messages: any, borrowId: any, isPurchase: any, borrowDate: BorrowDate}) => {
   const [message, setMessage] = useState<string>();
+  const [loading, setLoading] = useState<boolean>();
   let firstUserMessage = ""
   if (messages && messages.length > 0) {
     firstUserMessage = messages[0].user.pseudo
@@ -31,6 +33,9 @@ const Messages = ({ messages, borrowId, isPurchase, borrowDate }: { messages: an
     })
 
   }
+
+   const [formState, action] = useActionState(addMessage.bind(null, borrowId, isPurchase, message), { message: '' })
+
   return (
   <div className="flex flex-col">
     <div>
@@ -42,7 +47,7 @@ const Messages = ({ messages, borrowId, isPurchase, borrowDate }: { messages: an
       Messages
     </div>
     {renderMessages()}
-    <form>
+    <form action={action} className="p-4">
       <div>
         <Textarea
           name="message"
@@ -51,7 +56,7 @@ const Messages = ({ messages, borrowId, isPurchase, borrowDate }: { messages: an
         />
       </div>
       <div className="mt-5">
-        <Button formAction={addMessage.bind(null, borrowId, isPurchase, message)}>Ajouter message</Button>
+        <FormButtonActionState >Ajouter message</FormButtonActionState>
       </div>
     </form>
   </div>)

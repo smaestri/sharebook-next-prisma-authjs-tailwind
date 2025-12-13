@@ -3,7 +3,8 @@ import prisma from "@/lib/prisma";
 
 const Borrow = async ({ searchParams }: { searchParams: any }) => {
 
-  const userBookId = await searchParams.userBookId;
+  const searchParamsList = await searchParams;
+  const userBookId = searchParamsList.userBookId
   console.log('userBookId', userBookId)
   const userBook = await prisma.userBook.findUnique({
     where: { id: parseInt(userBookId) },

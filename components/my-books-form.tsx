@@ -3,6 +3,7 @@ import { DeleteBook } from "./delete-book-button";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { UserBookWithBookAndUser } from "@/lib/DbSchemas";
+import { useState } from "react";
 
 interface MyBooksFormProps {
   books: UserBookWithBookAndUser[]
@@ -10,6 +11,8 @@ interface MyBooksFormProps {
 }
 
 export default function MyBooksForm({ books, email }: MyBooksFormProps) {
+    const [loading, setLoading] = useState(false);
+  
   if (!books || books.length === 0) {
     return <div className="flex">Vous n'avez pas déclaré de livres pour le moment.</div>
   }
@@ -45,7 +48,7 @@ export default function MyBooksForm({ books, email }: MyBooksFormProps) {
                   <DeleteBook userBookId={userBook.id} />
                 </div>
                 <div>
-                  <Link href={`/my-books/new?userBookId=${userBook.id}`}><Button>Modifier</Button></Link>
+                  <Link onNavigate={()=>{setLoading(true)}} href={`/my-books/new?userBookId=${userBook.id}`}><Button>Modifier</Button></Link>
                 </div>
               </div>
             }

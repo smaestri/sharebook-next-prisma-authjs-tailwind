@@ -4,10 +4,7 @@ import ListSalesOrPurchases from "@/components/list-purchases";
 import { BORROW_STATUS } from "@/lib/constants";
 import prisma from "@/lib/prisma";
 
-export default async function PurchasesPage({ searchParams }: any) {
-  const params = await searchParams;
-  const statusParam = params?.status;
-    console.log('statusParam', statusParam)
+export default async function PurchasesPage({ status }: any) {
 
   const session = await auth.api.getSession({
     headers: await headers()
@@ -17,14 +14,13 @@ export default async function PurchasesPage({ searchParams }: any) {
   )
   const borrowerId = session.user.id
 
-  console.log('statusParam', statusParam)
   const purchases: any = await prisma.borrow.findMany({
     include: {
       userBook: { include: { user: true, book: { include: { category: true } } } },
     },
     where: {
       borrowerId,
-      status: !statusParam || statusParam === 'ongoing' ?
+      status: !status || status === 'ongoing' ?
         { in: [BORROW_STATUS.PENDING, BORROW_STATUS.VALIDATED] } :
         { in: [BORROW_STATUS.CANCELLED, BORROW_STATUS.CLOSED, BORROW_STATUS.REFUSED] }
     },

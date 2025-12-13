@@ -72,6 +72,21 @@ export default async function ListBooks({ searchParams }: ListBooksProps) {
       },
     });
   }
+
+  const myBooks = await prisma.userBook.findMany({
+    include: {
+      user: true,
+      book: true,
+    },
+    where: {
+      user: {
+        email: email,
+      },
+      deleted: false,
+    }
+  })
+
+  const categories = await prisma.category.findMany();
   const numberOfPages = Math.ceil(total / COUNT_ITEMS_PER_PAGE);
   // helper to build links preserving categoryId
   const buildHref = (p: number) => {
@@ -88,7 +103,7 @@ export default async function ListBooks({ searchParams }: ListBooksProps) {
 
     <div className="flex flex-wrap gap-4">
       {books?.map((book: any) => (
-        <BookPage key={book.id} book={book} email={email} displayLinkToDetail={true} />
+        <BookPage key={book.id} book={book} myBooks={myBooks} categories={categories} email={email} displayLinkToDetail={true} />
       ))}
     </div>
     <Pagination>

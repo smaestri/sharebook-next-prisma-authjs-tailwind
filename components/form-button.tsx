@@ -9,12 +9,13 @@ interface FormButtonProps {
   pending?: boolean
   className?: string
   toggleBorrowModal?: any
+  onClick?: () => void
 }
 
-export default function FormButton({ children, className, pending = false }: FormButtonProps) {
+export default function FormButton({ children, className, pending = false, onClick }: FormButtonProps) {
  // const { pending } = useFormStatus();
   console.log('pending', pending)
-  return <Button
+  return <Button onClick={()=> {if (onClick) onClick()}}
             type="submit" className={className} disabled={pending}>
               {pending && <Spinner />}
               {pending && "Chargement"}

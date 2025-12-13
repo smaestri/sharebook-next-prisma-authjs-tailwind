@@ -13,9 +13,7 @@ export default async function SideBarPage({ }) {
   if (!session?.user) return (
     <div>Please connect</div>
   )
-
   const categories: Category[] = await prisma.category.findMany();
-
   const countUserBookForCategory = async (category: Category, userId?: string) => {
     const countBooksForCategory = await prisma.book.count({
       where: {
@@ -23,32 +21,10 @@ export default async function SideBarPage({ }) {
       }
     });
 
-    console.log('countBooksForCategory for cat ' + countBooksForCategory)
-    // let res = 0
-    // for (const ub of userBooks) {
-    //   if (await isUSerBookAvailable(ub)) {
-    //     res++;
-    //   }
-    // }
     return countBooksForCategory;
   }
 
-  const isUSerBookAvailable = async (ub: UserBook) => {
-    console.log('ub id', ub.id)
-    const borrows = await prisma.borrow.findMany({
-      where: {
-        userBookId: ub.id,
-        status: { in: [BORROW_STATUS.PENDING, BORROW_STATUS.VALIDATED] }
-      }
-    })
-    if (borrows.length > 0) {
-      return false
-    }
-    return true
-  }
-
   const resCat: Counter[] = []
-  console.log('test')
   // for each category, get counter of books not borrowed
   for (const category of categories) {
     const result = await countUserBookForCategory(category, session?.user?.id)

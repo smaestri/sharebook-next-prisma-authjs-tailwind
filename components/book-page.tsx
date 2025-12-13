@@ -1,10 +1,39 @@
 import prisma from "@/lib/prisma";
 import BookForm from "./book-form";
+import { auth } from "@/auth";
+import { headers } from "next/headers";
+import { BORROW_STATUS } from "@/lib/constants";
 
-export default async function BookPage({ book, email, displayLinkToDetail }: any) {
+export default async function BookPage({ book, email, displayLinkToDetail, myBooks, categories }: any) {
+
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  const myPurchases: any = await prisma.borrow.findMany({
+    include: {
+      userBook: { include: { user: true, book: { include: { category: true } } } },
+    },
+    where: {
+      borrowerId: session?.user?.id,
+      status:
+        { in: [BORROW_STATUS.PENDING, BORROW_STATUS.VALIDATED] },
+      userBook: {
+        book: {
+          id: book.id,
+        }
+      }
+    },
+    orderBy: {
+      createdAt: 'desc'
+    }
+  })
+
+  const iHavePurchasedThisBook = myPurchases?.length > 0
+
   // pour chaque book, regarder le nombre d'utilisateur qui le possedent
   let userBooks: any = []
-  let myBooks: any = []
+
   if (book.id) {
     userBooks = await prisma.userBook.findMany({
       include: {
@@ -23,38 +52,10 @@ export default async function BookPage({ book, email, displayLinkToDetail }: any
         deleted: false,
       }
     })
-    console.log('book id', book.id, 'has', userBooks.length, 'userBooks')
   }
-
-  // si je possde le livre, ne pas proposer de le recuperer
-  myBooks = await prisma.userBook.findMany({
-    include: {
-      user: true,
-      book: true,
-    },
-    where: {
-      user: {
-        email: email,
-      },
-      deleted: false,
-    }
-  })
-
-    console.log('my books', myBooks)
-    console.log('book.id', book.id)
-
 
   const iHaveThisBook = myBooks.filter((myBook: any) => {
     return myBook.book.id === book.id
   })?.length > 0
-
-
-
-  let categories: any = []
-console.log('iHaveThisBook', iHaveThisBook)
-  if (!iHaveThisBook) {
-    categories = await prisma.category.findMany();
-  }
-
-  return (<BookForm book={book} userBooks={userBooks} email={email} displayLinkToDetail={displayLinkToDetail} categories={categories} iHaveThisBook={iHaveThisBook} />)
+  return (<BookForm book={book} userBooks={userBooks} email={email} displayLinkToDetail={displayLinkToDetail} categories={categories} iHaveThisBook={iHaveThisBook} iHavePurchasedThisBook={iHavePurchasedThisBook} />)
 }

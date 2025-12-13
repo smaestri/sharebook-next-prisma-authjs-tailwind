@@ -1,11 +1,13 @@
-import { auth } from "@/auth";
 import PurchaseClient from "./purchase-client";
 import prisma from "@/lib/prisma";
 import { Borrow } from "@/app/generated/prisma";
+import { auth } from "@/auth";
+import { headers } from "next/headers";
 
 export default async function PurchasePage({ sale, isPurchase }: { sale: Borrow, isPurchase: boolean }) {
-  const session = await auth()
-
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
   if (!session?.user) return (
     <div>Please connect</div>
   )

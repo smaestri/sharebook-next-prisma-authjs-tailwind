@@ -5,9 +5,10 @@ import Link from "next/link";
 import { BORROW_STATUS } from "@/lib/constants";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
+import FormButton from "./form-button";
 
 export default function PurchaseClient({ sale, isPurchase, buyerName, isItem }: { buyerName: any, sale: any, isPurchase: boolean, isItem?: boolean }) {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   return (
     <>
@@ -78,10 +79,10 @@ export default function PurchaseClient({ sale, isPurchase, buyerName, isItem }: 
         <div className="flex flex-col mt-3 gap-2 items-center">
           {sale.status === BORROW_STATUS.PENDING && isPurchase && <Badge variant="outline">Attente de validation du vendeur</Badge>}
           <div className="flex flex-row gap-2">
-            {sale.status === BORROW_STATUS.PENDING && !isPurchase && <div><Button onClick={() => validatePurchase(sale.id)}>Accepter</Button></div>}
-            {sale.status === BORROW_STATUS.PENDING && !isPurchase && <div><Button onClick={() => refusePurchase(sale.id)}>Refuser</Button></div>}
-            {sale.status === BORROW_STATUS.PENDING && isPurchase && <div><Button onClick={() => cancelPurchase(sale.id)}>Annuler ma demande</Button></div>}
-            {sale.status === BORROW_STATUS.VALIDATED && isPurchase && <div><Button onClick={() => closePurchase(sale.id)}>Cloturer</Button></div>}
+            {sale.status === BORROW_STATUS.PENDING && !isPurchase && <div><FormButton pending={loading} onClick={() => {setLoading(true);validatePurchase(sale.id)}}>Accepter</FormButton></div>}
+            {sale.status === BORROW_STATUS.PENDING && !isPurchase && <div><FormButton pending={loading} onClick={() => {setLoading(true);refusePurchase(sale.id)}}>Refuser</FormButton></div>}
+            {sale.status === BORROW_STATUS.PENDING && isPurchase && <div><FormButton pending={loading} onClick={() => {setLoading(true);cancelPurchase(sale.id)}}>Annuler ma demande</FormButton></div>}
+            {sale.status === BORROW_STATUS.VALIDATED && isPurchase && <div><FormButton pending={loading} onClick={() => {setLoading(true);closePurchase(sale.id)}}>Cloturer</FormButton></div>}
           </div>
 
           {sale.status === BORROW_STATUS.REFUSED && <Badge variant="outline">Demande refusée le {new Date(sale.closedDate).toLocaleDateString("fr-FR")}</Badge>}

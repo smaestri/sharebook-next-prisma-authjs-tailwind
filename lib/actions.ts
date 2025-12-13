@@ -169,7 +169,7 @@ export async function createBook(formData: BookType): Promise<any> {
     } else {
         console.log('book found')
         book = await prisma.book.findUniqueOrThrow({
-            where: { id: parseInt(bookId) }
+            where: { id: bookId }
         })
     }
     await saveUserBook(book, session.user.id, formData.description, formData.price, formData.isFree == "option-free" ? true : false,
@@ -263,7 +263,7 @@ export async function purchaseBook(userBookId: string, rdvDate: any, message?: s
     const userConnectedId = session?.user?.id
     if (!userConnectedId) {
         console.error('error no user')
-        return
+        return { message: "error no user" }
     }
     console.log('userConnectedId', userConnectedId)
 
@@ -272,7 +272,7 @@ export async function purchaseBook(userBookId: string, rdvDate: any, message?: s
     })
     if (!userBook) {
         console.error('error book not found')
-        return
+        return { message: "error book not found" }
     }
 
     console.log('userBook found:', userBook)
@@ -335,16 +335,14 @@ export async function addMessage(borrowId: any, isPurchase: any, message?: strin
     const userConnectedId = session?.user?.id
     if (!userConnectedId) {
         console.error('error no user')
-        return
+        return {message: "error no user"}
     }
 
     if (!message || message.trim().length === 0) {
         console.error('error no message')
-        return
+        return {message: "error no message"}
     }
     console.log('userConnectedId', userConnectedId)
-
-
     await prisma.messages.create({
         data: {
             borrowId: borrowId,
@@ -356,9 +354,4 @@ export async function addMessage(borrowId: any, isPurchase: any, message?: strin
     const path = `/purchase?id=${borrowId}&isPurchase=${isPurchase}`
     revalidatePath(path)
     redirect(path)
-}
-
-export async function updateAccount() {
-
-    console.log('todo')
 }
