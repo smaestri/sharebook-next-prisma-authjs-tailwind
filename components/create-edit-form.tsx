@@ -1,18 +1,18 @@
 "use client"
-import React, { useState } from "react";
+import { useState } from "react";
+import Image from 'next/image'
 import { createBook, updateBook } from "@/lib/actions";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import FormButton from "./form-button";
 import { Controller, useForm } from "react-hook-form"
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
 import { bookSchema, BookType } from "@/lib/ValidationSchemas";
 import { UserBookWithBookAndUser } from "@/lib/DbSchemas";
 import SearchInput from "./header/search-input";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
 import BookCreateInfos from "./book-create-infos";
+import ImageWithLoading from "./ImageWithLoading";
 
 export interface Category {
   id: string;
@@ -29,7 +29,7 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
   const [authorDisabled, setAuthorDisabled] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [cover, setCover] = useState<string | undefined>(undefined);
-console.log('userBook', userBook)
+  console.log('userBook', userBook)
   const form = useForm<BookType>({
     resolver: zodResolver(bookSchema),
     defaultValues: {
@@ -70,7 +70,6 @@ console.log('userBook', userBook)
   const renderBookForm = () => {
     return (
       <div className="w-300">
-        {/* <FormProvider {...form} > */}
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
@@ -92,7 +91,7 @@ console.log('userBook', userBook)
                           form.setValue("author", "")
                           form.setValue("category", "")
                           form.setValue("image", "")
-                          form.setValue("bookId", "")
+                          form.setValue("bookId", undefined)
                         }}
                         callback={async (id: number, title: string, author: string, image: string) => {
                           setAuthorDisabled(true);
@@ -100,8 +99,8 @@ console.log('userBook', userBook)
                           form.setValue("author", author)
                           form.setValue("image", image)
                           setCover(image)
-                          if(id) {
-                            form.setValue("bookId", id.toString())
+                          if (id) {
+                            form.setValue("bookId", id)
                           }
                         }} />
                       {fieldState.invalid && (
@@ -109,7 +108,9 @@ console.log('userBook', userBook)
                       )}
                     </div>
                     <div>
-                      {cover && <img src={cover} alt={form.getValues("title")} width={100} height={150} />}
+                      {cover &&
+                        <ImageWithLoading title={form.getValues("title")} src={cover} />
+                      }
                     </div>
                   </div>
                 </Field>
@@ -128,32 +129,13 @@ console.log('userBook', userBook)
                 </Field>
               )} />
 
-              <BookCreateInfos form={form} categories={categories} />
-            
+            <BookCreateInfos form={form} categories={categories} />
+
           </FieldGroup>
           <FormButton pending={form.formState.isSubmitting || loading}>Save</FormButton>
           {errorMessage ? <div className="p-2 bg-red-200 border border-red-400">{errorMessage}</div> : null}
-          {/* <div>
-        {loadin ? <div>Loading book info...</div> : null}
-                            <Image
-                                src={form.getValues("image")}
-                                alt={form.getValues("title")}
-                                width={100}
-                                height={100}
-                            />
-      </div> */}
         </form>
-        {/* </FormProvider> */}
-        {/* <button
-          type="button"
-          onClick={() => {
-            const values = form.getValues();
-            console.log("Current form values:", values);
 
-          }}
-        >
-          Get Values
-        </button> */}
       </div>)
   }
   return (

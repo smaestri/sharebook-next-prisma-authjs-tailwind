@@ -23,9 +23,13 @@ export default function PurchaseForm({ userBook }: any) {
     <form action={action} className="p-4">
       <div className="flex justify-center">
         <div className="flex flex-col gap-2">
-          <h1 className="">Achat du livre "{userBook.book.title}"</h1>
-          <div className="flex flex-row gap-2 items-center">
-            <div>Date de rencontre avec le vendeur souhaitée</div>
+          <div className="max-w-full">
+            <h1 className="text-lg font-semibold text-gray-900 truncate max-w-[60ch]" title={userBook.book.title}>
+              {`"${userBook.book.title}"`} <span className="text-sm text-muted-foreground">— {userBook.user.pseudo}</span>
+            </h1>
+          </div> 
+            <div className="flex flex-row gap-2 items-center">
+            <div>Date de rencontre souhaitée</div>
             <div className="flex justify-center gap-2">
               <Choice date={date} setDate={setDate} />
             </div>

@@ -4,6 +4,7 @@ import DialogUser from "./DialogUser";
 import Link from "next/link";
 import ModalGetBook from "@/app/AdditionalUserInfos/ModalGetBook";
 import FormButton from "./form-button";
+import ImageWithLoading from "./ImageWithLoading";
 
 export default function BookForm({ book, userBooks, email, displayLinkToDetail = false, categories, iHaveThisBook = false, iHavePurchasedThisBook= false }: any) {
     const [modalOpen, setModalOpen] = useState(false);
@@ -15,14 +16,9 @@ export default function BookForm({ book, userBooks, email, displayLinkToDetail =
         >
             <div className="flex flex-col items-center">
                 <div className="h-[150px] mb-3">
-                    <img
-                        src={book.image}
-                        alt={`${book.title}`}
-                        width={100}
-                        height={100}
-                    />
+                    <ImageWithLoading title={book.title} src={book.image} />
                 </div>
-                <div className="h-[65px] mb-5">
+                <div className="mb-5">
                     {displayLinkToDetail && <Link href={`/list-books/${book.id}`}>
                         <p title={book.title} className="line-clamp-3 italic">{book.title} - {book.author}</p>
                     </Link>}
@@ -60,10 +56,9 @@ export default function BookForm({ book, userBooks, email, displayLinkToDetail =
                     </div>}
                     <div className="flex justify-center gap-2 mt-3">
                         {userBooks.length > 1 && <DialogUser book={book} userBooks={userBooks} />}
-                        {userBooks.length == 1 && !iHaveThisBook && !iHavePurchasedThisBook &&  <Link onNavigate={() => {
-                            setLoading(true);
-                        }} href={`/purchases/new?userBookId=${userBooks[0].id}`}>
-                            <FormButton pending={loading}>Demander</FormButton>
+                        {userBooks.length == 1 && !iHaveThisBook && !iHavePurchasedThisBook && 
+                            <Link onNavigate={() => {setLoading(true);}} href={`/purchases/new?userBookId=${userBooks[0].id}`}>
+                                <FormButton pending={loading}>Demander</FormButton>
                         </Link>}
                     </div>
 

@@ -1,10 +1,13 @@
 "use client"
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { useState } from "react";
+import FormButton from "./form-button";
 
 const DialogUser = ({ userBooks, book }: { userBooks: any, book: any }) => {
 
+  const [loading, setLoading] = useState(false);
 
   console.log('userBooks in dialog', userBooks)
 
@@ -32,8 +35,8 @@ const DialogUser = ({ userBooks, book }: { userBooks: any, book: any }) => {
                 <div className="flex flex-row gap-3 items-center">
                   <div>{userBook.user.name}</div>
                   <div>{userBook.user.city} ({userBook.user.cp})</div>
-                  <div><Link href={`/purchases/new?userBookId=${userBook.id}`}>
-                    <Button>Acheter</Button>
+                  <div><Link href={`/purchases/new?userBookId=${userBook.id}`} onNavigate={() => { setLoading(true); }}>
+                    <FormButton pending={loading}>Demander</FormButton>
                   </Link></div>
                 </div>
               ))}
@@ -50,36 +53,6 @@ const DialogUser = ({ userBooks, book }: { userBooks: any, book: any }) => {
       </form>
     </Dialog>
 
-    //  <Dialog>
-    //       <form>
-    //         <DialogTrigger asChild>
-    //           <Button variant="outline">Open Dialog</Button>
-    //         </DialogTrigger>
-    //         <DialogContent className="sm:max-w-[425px]">
-    //           <DialogHeader>
-    //             <DialogTitle>Edit profile</DialogTitle>
-    //             <DialogDescription>
-    //               Make changes to your profile here. Click save when you&apos;re
-    //               done.
-    //             </DialogDescription>
-    //           </DialogHeader>
-    //           <div className="grid gap-4">
-    //             <div className="grid gap-3">
-
-    //             </div>
-    //             <div className="grid gap-3">
-
-    //             </div>
-    //           </div>
-    //           <DialogFooter>
-    //             <DialogClose asChild>
-    //               <Button variant="outline">Cancel</Button>
-    //             </DialogClose>
-    //             <Button type="submit">Save changes</Button>
-    //           </DialogFooter>
-    //         </DialogContent>
-    //       </form>
-    //     </Dialog>
   )
 }
 

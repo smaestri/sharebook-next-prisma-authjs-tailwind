@@ -4,36 +4,19 @@ import { auth } from "@/auth";
 import { headers } from "next/headers";
 import { BORROW_STATUS } from "@/lib/constants";
 
-export default async function BookPage({ book, email, displayLinkToDetail, myBooks, categories }: any) {
+export default async function BookPage({ book, email, displayLinkToDetail, myBooks, myPurchases, categories }: any) {
 
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
+  const iHavePurchasedThisBook = myPurchases?.filter((purchase: any) => {
+    return purchase.userBook.book.id === book.id
+  })?.length > 0
 
-  const myPurchases: any = await prisma.borrow.findMany({
-    include: {
-      userBook: { include: { user: true, book: { include: { category: true } } } },
-    },
-    where: {
-      borrowerId: session?.user?.id,
-      status:
-        { in: [BORROW_STATUS.PENDING, BORROW_STATUS.VALIDATED] },
-      userBook: {
-        book: {
-          id: book.id,
-        }
-      }
-    },
-    orderBy: {
-      createdAt: 'desc'
-    }
-  })
-
-  const iHavePurchasedThisBook = myPurchases?.length > 0
+  console.log('iHavePurchasedThisBook', book.title, iHavePurchasedThisBook);
 
   // pour chaque book, regarder le nombre d'utilisateur qui le possedent
   let userBooks: any = []
 
+
+  //TO OPTIMIZE 
   if (book.id) {
     userBooks = await prisma.userBook.findMany({
       include: {

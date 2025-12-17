@@ -4,6 +4,7 @@ import { ListBooksProps } from "./page";
 import prisma from "@/lib/prisma";
 import BookPage from "@/components/book-page";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { BORROW_STATUS } from "@/lib/constants";
 export type BookWithCategoryAndUser = any
 
 export default async function ListBooks({ searchParams }: ListBooksProps) {
@@ -20,7 +21,7 @@ export default async function ListBooks({ searchParams }: ListBooksProps) {
   let page = Number(pageParam);
   if (!Number.isFinite(page) || page < 1) page = 1;
   console.log('page', page)
-  const COUNT_ITEMS_PER_PAGE = 20
+  const COUNT_ITEMS_PER_PAGE = 10
   const skip = (page - 1) * COUNT_ITEMS_PER_PAGE;
   console.log('skip', skip)
 
@@ -86,6 +87,20 @@ export default async function ListBooks({ searchParams }: ListBooksProps) {
     }
   })
 
+  const myPurchases: any = await prisma.borrow.findMany({
+      include: {
+        userBook: { include: { user: true, book: { include: { category: true } } } },
+      },
+      where: {
+        borrowerId: session?.user?.id,
+        status:
+          { in: [BORROW_STATUS.PENDING, BORROW_STATUS.VALIDATED] },
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
   const categories = await prisma.category.findMany();
   const numberOfPages = Math.ceil(total / COUNT_ITEMS_PER_PAGE);
   // helper to build links preserving categoryId
@@ -103,7 +118,7 @@ export default async function ListBooks({ searchParams }: ListBooksProps) {
 
     <div className="flex flex-wrap gap-4">
       {books?.map((book: any) => (
-        <BookPage key={book.id} book={book} myBooks={myBooks} categories={categories} email={email} displayLinkToDetail={true} />
+        <BookPage key={book.id} book={book} myBooks={myBooks} myPurchases={myPurchases} categories={categories} email={email} displayLinkToDetail={true} />
       ))}
     </div>
     <Pagination>

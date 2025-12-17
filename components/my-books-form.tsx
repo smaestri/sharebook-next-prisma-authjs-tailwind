@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { UserBookWithBookAndUser } from "@/lib/DbSchemas";
 import { useState } from "react";
+import ImageWithLoading from './ImageWithLoading';
 
 interface MyBooksFormProps {
   books: UserBookWithBookAndUser[]
@@ -25,9 +26,9 @@ export default function MyBooksForm({ books, email }: MyBooksFormProps) {
         >
           <div className="flex flex-col items-center">
             <div className="h-[150px] mb-3">
-              <img src={userBook.book.image || ""} alt={userBook.book.title} width={100} height={150} />
+                <ImageWithLoading title={userBook.book.title} src={userBook.book.image || ""} />
             </div>
-            <div className="h-[65px] mb-5">
+            <div className="mb-5">
               <p title={userBook.book.title} className="line-clamp-3 font-sans">{userBook.book.title} - {userBook.book.author}</p>
             </div>
           </div>

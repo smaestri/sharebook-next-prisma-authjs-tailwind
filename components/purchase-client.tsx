@@ -6,6 +6,7 @@ import { BORROW_STATUS } from "@/lib/constants";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import FormButton from "./form-button";
+import ImageWithLoading from "./ImageWithLoading";
 
 export default function PurchaseClient({ sale, isPurchase, buyerName, isItem }: { buyerName: any, sale: any, isPurchase: boolean, isItem?: boolean }) {
   const [loading, setLoading] = useState(false);
@@ -15,16 +16,10 @@ export default function PurchaseClient({ sale, isPurchase, buyerName, isItem }: 
       <div className="flex flex-col w-[300px] bg-slate-50 rounded-lg ">
         <div className="flex flex-col items-center">
           <div className="h-[150px]" title={sale.userBook.book.title}>
-            {/* <Image
-              src={sale.userBook.book.image}
-              alt={`${sale.userBook.book.title}`}
-              width={100}
-              height={100}
-            /> */}
-
-            {/* <div>    
-              <Link href={`/list-books?userId=${isPurchase ? sale.userBook.user.user_id : buyer.user_id}`}>Voir tous les livres de {isPurchase ? `${sale.userBook.user.user_name}` : `Acheteur: ${buyer}`}</Link>
-            </div> */}
+              <ImageWithLoading 
+                title={sale.userBook.book.title}
+                src={sale.userBook.book.image} 
+              />
           </div>
           <div>
             <p title={sale.userBook.book.title} className="line-clamp-3 font-sans italic">{sale.userBook.book.title}</p>
