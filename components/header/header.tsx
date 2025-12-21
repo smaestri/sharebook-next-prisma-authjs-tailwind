@@ -14,7 +14,7 @@ export default async function Header() {
     </div>
     <div className="flex-1">
       <div>
-        <SearchInput redirect={true}/>
+        <SearchInput />
       </div>
     </div>
     <div className="flex-1">

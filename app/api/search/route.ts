@@ -1,6 +1,6 @@
 import { search } from "@/app/generated/prisma/sql";
 import prisma from "@/lib/prisma";
-import { getBookInfoFromLib } from "@/lib/utils-search";
+import { getBookInfoFromLibForBookCreation } from "@/lib/utils-search";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -16,7 +16,7 @@ export async function GET(request: Request) {
   //result.push(...books)
 
   //if (!books || books.length === 0) {
-    const booksFromLib = await getBookInfoFromLib(value)
+    const booksFromLib = await getBookInfoFromLibForBookCreation(value)
     result.push(...booksFromLib)
     // for (const bookFromLib of booksFromLib) {
     //   console.log('bookFromLib in loop', bookFromLib)

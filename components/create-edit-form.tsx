@@ -1,6 +1,5 @@
 "use client"
 import { useState } from "react";
-import Image from 'next/image'
 import { createBook, updateBook } from "@/lib/actions";
 import FormButton from "./form-button";
 import { Controller, useForm } from "react-hook-form"
@@ -9,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "./ui/input";
 import { bookSchema, BookType } from "@/lib/ValidationSchemas";
 import { UserBookWithBookAndUser } from "@/lib/DbSchemas";
-import SearchInput from "./header/search-input";
+import SearchInputAutoComplete from "./header/search-input-autocomplete";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
 import BookCreateInfos from "./book-create-infos";
 import ImageWithLoading from "./ImageWithLoading";
@@ -80,7 +79,7 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
                   <FieldLabel>Titre</FieldLabel>
                   <div className="flex items-center">
                     <div>
-                      <SearchInput
+                      <SearchInputAutoComplete
                         defaultValue={userBook?.book.title} field={field}
                         callbackChange={(title: string) => {
                           form.setValue("title", title)

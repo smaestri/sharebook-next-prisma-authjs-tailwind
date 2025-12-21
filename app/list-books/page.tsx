@@ -8,6 +8,7 @@ export interface ListBooksProps{
   searchParams: Promise<{
       categoryId?: string,
       userId?: string,
+      search?: string
       page?: number,
   }>
 }

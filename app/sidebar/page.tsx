@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
 import SideBarView, { Counter } from "../../components/sidebar/SideBarView";
-import { BORROW_STATUS } from "@/lib/constants";
-import { Category, UserBook } from "@/app/generated/prisma";
+import { Category } from "@/app/generated/prisma";
 import { auth } from "@/auth";
 import { headers } from "next/headers";
 
