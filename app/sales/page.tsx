@@ -16,9 +16,6 @@ export default async function Sellings({ searchParams }: any) {
   )
   const user = session.user
 
-  console.log('searchParams' + JSON.stringify(params))
-
-
   const sales: any = await prisma.borrow.findMany({
     include: {
       userBook: { include: { user: true, book: { include: { category: true } } } },
@@ -33,9 +30,6 @@ export default async function Sellings({ searchParams }: any) {
       createdAt: 'desc'
     }
   })
-
-  console.log('sales', JSON.stringify(sales))
-
   return <ListSalesOrPurchases sales={sales} isPurchase={false} />
 
 }

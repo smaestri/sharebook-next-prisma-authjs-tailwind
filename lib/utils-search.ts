@@ -16,21 +16,20 @@ export type BookInfo = {
 }
 
 
-export const getBookInfoFromLib = async (search: string, page?: number, numberOfItemsPerPage?: number): Promise<ResultBookInfo> => {
+export const getBookInfoFromLib = async (search: string, page?: number, numberOfItemsPerPage?: number, searchType?: string): Promise<ResultBookInfo> => {
   let author = ""
   let coverId = ""
   let title = ""
   const q = (search || "").trim().replace(/\s+/g, '+');
-  console.log('new q', q)
-  const searchRes: any = await fetch(`https://openlibrary.org/search.json?title=${q}&limit=${numberOfItemsPerPage}&page=${page}&lang=fre`);
+  const url = `https://openlibrary.org/search.json?${searchType}=${q}&limit=${numberOfItemsPerPage}&page=${page}&lang=fre`
+  console.log('Fetching from OpenLibrary URL: ', url)
+  const searchRes: any = await fetch(url);
   let result: ResultBookInfo
 
   const booksInfo: BookInfo[] = []
   if (searchRes.ok) {
     const sjson = await searchRes.json();
-    console.log('sjson', sjson)
     const docs = sjson.docs;
-    console.log('found' + docs.length + ' docs for search ' + search)
     result = {
       numFound: sjson.numFound,
       start: sjson.start,
@@ -40,7 +39,6 @@ export const getBookInfoFromLib = async (search: string, page?: number, numberOf
       if (doc) {
         title = doc["title"]
         const isbns = doc["isbn"]
-        console.log('title', title)
         const authors = doc["author_name"]
         if (authors && authors.length > 0) {
           author = authors[0]
@@ -51,7 +49,7 @@ export const getBookInfoFromLib = async (search: string, page?: number, numberOf
             booksInfo.push({
               image: `https://covers.openlibrary.org/b/isbn/${encodeURIComponent(isbns[0])}-M.jpg?default=false`,
               author: author || "Unknown Author",
-              title
+              title,
             })
           } else {
             booksInfo.push({
@@ -62,8 +60,6 @@ export const getBookInfoFromLib = async (search: string, page?: number, numberOf
 
           }
         } else {
-          console.log('found coverId', coverId)
-
           booksInfo.push({
             image: "https://covers.openlibrary.org/a/id/" + coverId + "-M.jpg",
             author,
@@ -75,7 +71,7 @@ export const getBookInfoFromLib = async (search: string, page?: number, numberOf
       }
       /// if boos exists in DB with this title, place it at the top
       const titlesFromLibFound: string[] = booksInfo.map(item => item.title ? item.title : "");
-      console.log('titlesFound', titlesFromLibFound);
+     
       if (titlesFromLibFound.length > 0) {
         //if book already exist in DB, place it at the top
         const booksinDb = await prisma.book.findMany({
@@ -87,11 +83,9 @@ export const getBookInfoFromLib = async (search: string, page?: number, numberOf
         })
 
         const titlesInDb: string[] = booksinDb.map(book => book.title);
-        console.log('titlesInDb', titlesInDb);
 
         for (const bookItem of booksInfo) {
           if (bookItem.title && titlesInDb.includes(bookItem.title)) {
-            console.log('book found in DB for title', bookItem.title)
             bookItem.foundInDb = true
             bookItem.id = booksinDb.find(b => b.title === bookItem.title)?.id
           }
@@ -103,7 +97,6 @@ export const getBookInfoFromLib = async (search: string, page?: number, numberOf
       }
 
     }
-    console.log('result length from OpenLibrary for search ', search, booksInfo.length)
     result.booksFound = booksInfo
 
     return result
@@ -124,18 +117,15 @@ export const getBookInfoFromLibForBookCreation = async (search: string): Promise
   let coverId = ""
   let title = ""
   const q = (search || "").trim().replace(/\s+/g, '+');
-  console.log('new q', q)
   const searchRes = await fetch(`https://openlibrary.org/search.json?title=${q}&limit=20&lang=fre`);
   const result: BookInfo[] = []
   if (searchRes.ok) {
     const sjson = await searchRes.json();
     const docs = sjson.docs;
-    console.log('found' + docs.length + ' docs for search ' + search)
     for (const doc of docs) {
       if (doc) {
         title = doc["title"]
         const isbns = doc["isbn"]
-        console.log('title', title)
         const authors = doc["author_name"]
         if (authors && authors.length > 0) {
           author = authors[0]
@@ -157,8 +147,6 @@ export const getBookInfoFromLibForBookCreation = async (search: string): Promise
 
           }
         } else {
-          console.log('found coverId', coverId)
-
           result.push({
             image: "https://covers.openlibrary.org/a/id/" + coverId + "-M.jpg",
             author,
@@ -170,7 +158,6 @@ export const getBookInfoFromLibForBookCreation = async (search: string): Promise
       }
 
       const titlesFromLibFound: string[] = result.map(item => item.title ? item.title : "");
-      console.log('titlesFound', titlesFromLibFound);
       if (titlesFromLibFound.length > 0) {
         //if book already exist in DB, place it at the top
         const booksinDb = await prisma.book.findMany({
@@ -182,16 +169,12 @@ export const getBookInfoFromLibForBookCreation = async (search: string): Promise
         })
 
         const titlesInDb: string[] = booksinDb.map(book => book.title);
-        console.log('titlesInDb', titlesInDb);
-
         for (const bookItem of result) {
           if (bookItem.title && titlesInDb.includes(bookItem.title)) {
-            console.log('book found in DB for title', bookItem.title)
             bookItem.foundInDb = true
             bookItem.id = booksinDb.find(b => b.title === bookItem.title)?.id
           }
         }
-        // filter
         result.sort(item => {
           return item.foundInDb ? -1 : 1
         })

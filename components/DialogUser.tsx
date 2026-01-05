@@ -9,8 +9,6 @@ const DialogUser = ({ userBooks, book }: { userBooks: any, book: any }) => {
 
   const [loading, setLoading] = useState(false);
 
-  console.log('userBooks in dialog', userBooks)
-
   return (
     <Dialog>
       <form>

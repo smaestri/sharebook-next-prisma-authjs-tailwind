@@ -17,9 +17,6 @@ const ModalRefus = ({ isOpen, onClose, sale }: { isOpen: boolean, onClose: any, 
 
   const [motif, setMotif] = useState();
   const [slot, setSlot] = useState<any>();
-  console.log('motif', motif)
-
-  console.log('slot', slot)
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

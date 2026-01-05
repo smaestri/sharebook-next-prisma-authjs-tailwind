@@ -10,8 +10,6 @@ export function DeleteBook({ userBookId }: { userBookId: number }) {
 
   const [formState, action] = useActionState(deleteBookAction, { message: '' })
 
-  console.log('formState in DeleteBook', formState)
-
   const [showBorrowModal, setShowBorrowModal] = useState(false);
   const onOpenChange = () => { setShowBorrowModal(modal => !modal)}
   useEffect(() => {

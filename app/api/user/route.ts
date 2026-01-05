@@ -15,8 +15,6 @@ export async function GET(request: Request) {
     })
     const email = session?.user.email
 
-
-  console.log('api SEARCH called with value' + pseudo)
   const users = await prisma.user.findMany({
     where: {
       pseudo: {
@@ -33,7 +31,5 @@ export async function GET(request: Request) {
     pseudo: user.pseudo,
   }))
 
-  console.log('result', result)
   return Response.json(result)
-  // }
 }

@@ -21,8 +21,6 @@ export default async function PurchasePage({ searchParams }: any) {
   const borrowerId = session.user.id
   const id = params.id
   const isPurchase = params.isPurchase === "true" ? true : false
-  console.log('id', id)
-
   const borrowWithMessage: any = await prisma.borrow.findFirst({
     include: {
       userBook: { include: { user: true, book: { include: { category: true } } } },

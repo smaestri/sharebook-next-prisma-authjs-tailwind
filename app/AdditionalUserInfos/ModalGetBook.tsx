@@ -25,12 +25,10 @@ const ModalGetBook = ({ categories, isOpen, onClose, book }: { isOpen: any, cate
       description: "",
       price: 0,
       bookId: book.id,
-      isFree: "option-free"
     },
   })
 
   async function onSubmit(values: z.infer<typeof bookSchema>) {
-    console.log("onSubmit ", values)
     setLoading(true)
     const response = await createBook(values)
     if (response?.error) {

@@ -2,7 +2,6 @@ import PurchasePage from "./purchase-item";
 import PurchaseSelector from "./PuchaseSelector";
 
 export default function ListSalesOrPurchases({ sales, isPurchase }: { sales: any, isPurchase: boolean }) {
-  console.log('sales', sales)
 
   return (
     <div className="flex">

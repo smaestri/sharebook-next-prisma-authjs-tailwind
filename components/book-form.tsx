@@ -6,7 +6,7 @@ import ModalGetBook from "@/app/AdditionalUserInfos/ModalGetBook";
 import FormButton from "./form-button";
 import ImageWithLoading from "./ImageWithLoading";
 
-export default function BookForm({ book, userBooks, email, displayLinkToDetail = false, categories, iHaveThisBook = false, iHavePurchasedThisBook= false }: any) {
+export default function BookForm({ book, email, displayLinkToDetail = false, categories, iHaveThisBook = false, iHavePurchasedThisBook = false }: any) {
     const [modalOpen, setModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     return (
@@ -27,14 +27,12 @@ export default function BookForm({ book, userBooks, email, displayLinkToDetail =
                     }
                 </div>
             </div>
-            {userBooks?.length === 0 || iHavePurchasedThisBook ?
+            {!book.UserBook || book.UserBook?.length === 0 || iHavePurchasedThisBook || iHaveThisBook ?
                 <div>Pas de dispo pour le moment</div>
                 : <>
                     <div className="flex flex-row gap-2">
-
-                        {userBooks?.length === 1 && <div>
-                            {userBooks[0].isFree && !iHavePurchasedThisBook && <span>Prêt ou don</span>}
-                            {!userBooks[0].isFree && <span>Prix: {userBooks[0].price}</span>}
+                        {book.UserBook?.length?.length === 1 && <div>
+                            <span>Prix: {book.UserBook[0].price}</span>
                         </div>}
                     </div>
                     <div className="flex flex-row gap-2">
@@ -45,32 +43,34 @@ export default function BookForm({ book, userBooks, email, displayLinkToDetail =
                             </svg>
                         </div>}
                         <div>
-                            {userBooks?.length > 1 && <span>{userBooks?.length} utilisateurs possèdent ce livres</span>}
-                            {userBooks?.length === 1 && !iHavePurchasedThisBook && <span><Link href={`/list-books?userId=${userBooks[0].user.id}`}>{userBooks[0].user.name}</Link> possède ce livre</span>}
+                            {book.UserBook?.length > 1 && <span>{book.UserBook?.length} utilisateurs possèdent ce livres</span>}
+                            {book.UserBook?.length === 1 && !iHavePurchasedThisBook && <span><Link href={`/list-books?userId=${book.UserBook[0].user.id}`}>{book.UserBook[0].user.name}</Link> possède ce livre</span>}
                         </div>
                     </div>
-                    {userBooks?.length === 1 && !iHavePurchasedThisBook && <div className="flex flex-row gap-2">
+                    {book.UserBook?.length === 1 && !iHaveThisBook && !iHavePurchasedThisBook && <div className="flex flex-row gap-2">
                         <div>
-                            Habite à <span>{userBooks[0].user.city} ({userBooks[0].user.cp})</span>
+                            Habite à <span>{book.UserBook[0].user.city} ({book.UserBook[0].user.cp})</span>
                         </div>
                     </div>}
                     <div className="flex justify-center gap-2 mt-3">
-                        {userBooks.length > 1 && <DialogUser book={book} userBooks={userBooks} />}
-                        {userBooks.length == 1 && !iHaveThisBook && !iHavePurchasedThisBook && 
-                            <Link onNavigate={() => {setLoading(true);}} href={`/purchases/new?userBookId=${userBooks[0].id}`}>
+                        {book.UserBook?.length > 1 && <DialogUser book={book} userBooks={book.UserBook} />}
+                        {book.UserBook?.length == 1 && !iHaveThisBook && !iHavePurchasedThisBook &&
+                            <Link onNavigate={() => { setLoading(true); }} href={`/purchases/new?userBookId=${book.UserBook[0].id}`}>
                                 <FormButton pending={loading}>Demander</FormButton>
-                        </Link>}
+                            </Link>}
                     </div>
 
                 </>
             }
             <div className="flex justify-center gap-2 mt-3">
-                {!iHaveThisBook && !iHavePurchasedThisBook && categories && categories.length > 0 &&
+                {iHaveThisBook && <div>Vous possédez déjà ce livre</div>}
+                {iHavePurchasedThisBook && <div>Vous avez déjà acheté/emprunté ce livre</div>}
+                {!iHaveThisBook && !iHavePurchasedThisBook &&
                     <FormButton pending={loading} onClick={() => setModalOpen(true)}>Je possède ce livre!</FormButton>}
             </div>
 
             <div>
-                {!email && <div>Connectez-vous pour emprunter!{email}</div>}
+                {!email && <div>Connectez-vous pourType emprunter!{email}</div>}
             </div>
             {!iHaveThisBook && categories && categories.length > 0 && <ModalGetBook onClose={() => setModalOpen(false)} categories={categories} isOpen={modalOpen} book={book} />}
         </div>

@@ -14,19 +14,13 @@ export default async function DetailsBookPage({ params, searchParams }: { params
   )
   const email = session.user.email
   let book = null;
-
-  console.log('params in details book page', params.id, searchParams.title)
-
   if (!searchParams.title && params.id) {
     book = await prisma.book.findFirst({
       where: {
         id: parseInt(params.id),
       }
     });
-    console.log('book found by id', book)
   } else {
-    console.log('book found by URL')
-
     book = {
       id: 0,
       title: searchParams.title,

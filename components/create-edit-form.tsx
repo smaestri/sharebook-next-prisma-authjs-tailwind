@@ -28,7 +28,6 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
   const [authorDisabled, setAuthorDisabled] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [cover, setCover] = useState<string | undefined>(undefined);
-  console.log('userBook', userBook)
   const form = useForm<BookType>({
     resolver: zodResolver(bookSchema),
     defaultValues: {
@@ -38,19 +37,11 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
       category: userBook?.book.categoryId?.toString() || "",
       description: userBook?.description || "",
       price: userBook?.price || 0,
-      isFree: (userBook && !userBook.isFree) ? "option-not-free" : "option-free",
-      //isFree: "option-free",
       bookId: undefined
     },
   })
 
-  console.log('isDirty', form.formState.isDirty)
-  console.log('isSubmitting', form.formState.isSubmitting)
-  console.log('isLoading', form.formState.isLoading)
-  console.log('isValidating', form.formState.isValidating)
-
   async function onSubmit(values: z.infer<typeof bookSchema>) {
-    console.log("onSubmit ", values)
     setLoading(true)
     setErrorMessage("")
 

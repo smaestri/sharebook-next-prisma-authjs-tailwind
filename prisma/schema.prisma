@@ -141,7 +141,6 @@ model UserBook {
   bookId      Int
   userId      String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  isFree      Boolean   @default(false)
   deleted     Boolean   @default(false)
   Borrow      Borrow[]
 }

@@ -8,7 +8,6 @@ export default function PurchaseSelector({ isPurchase }: any) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const status = searchParams.get('status') || "ongoing"
-  console.log('status', status)
   return (
     
     <div className="flex items-center space-x-2">

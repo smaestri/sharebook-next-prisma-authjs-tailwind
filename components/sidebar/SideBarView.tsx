@@ -1,7 +1,6 @@
 "use client"
 import Link from "next/link";
 import { useSession } from "@/auth-client";
-import UserSearch from "../header/user-search";
 
 export interface Counter {
   id: number
@@ -19,16 +18,12 @@ export default function SideBarView({ categories }: { categories: Counter[] }) {
       <div key={cat.name}>
         <Link href={{ pathname: `/list-books`, query: { categoryId: cat.id } }} >
           {cat.name}({cat.count})
-          {/* (<Counter categoryId={cat.id} />) */}
         </Link></div>)
   })
   return (<div className="flex flex-col">
     <div><b>Filtrer par catégorie</b></div>
     {renderCategories}
-    <div className="mt-3"><b>Chercher par utilisateur</b></div>
-    <div>
-      <UserSearch />
-    </div>
+    
   </div>
   )
 }

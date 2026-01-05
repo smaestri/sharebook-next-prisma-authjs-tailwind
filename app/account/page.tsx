@@ -14,8 +14,6 @@ export default async function Account() {
     )
 
     const user = session?.user
-
-    console.log('user in account', user)
     if (!user?.id) {
       return <div>Please connect</div>
     }
@@ -29,8 +27,6 @@ export default async function Account() {
     const userInfo = await prisma.user.findFirst({
       where: { email }
     })
-
-    console.log('userInfo', JSON.stringify(userInfo))
     if(!userInfo) {
         console.error('failed to retrieve user')
         return

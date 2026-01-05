@@ -5,7 +5,6 @@ import CreateBook from "./create-book";
 export default async function CreateBookPage({ searchParams }: { searchParams?: Promise<Record<string, string>> }) {
   const params = await searchParams;
   const myParam = params?.userBookId;
-  console.log('myParam', params)
   return (<>
     <Suspense fallback={<BookCreateLoading />}>
       <CreateBook bookId={myParam} />

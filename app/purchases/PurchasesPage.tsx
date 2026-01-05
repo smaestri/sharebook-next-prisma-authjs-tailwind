@@ -28,8 +28,6 @@ export default async function PurchasesPage({ status }: any) {
       createdAt: 'desc'
     }
   })
-
-  console.log('purchases', JSON.stringify(purchases))
   return <ListSalesOrPurchases sales={purchases} isPurchase={true} />
 
 }

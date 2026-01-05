@@ -16,7 +16,6 @@ export const bookSchema = z.object({
     message: "La description est requise.",
   }),
   price: z.number(),
-  isFree: z.string(),
 })
 
 export const userInfoSchema = z.object({

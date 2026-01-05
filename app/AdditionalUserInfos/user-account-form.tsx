@@ -14,7 +14,6 @@ import FormButton from "@/components/form-button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 
 export default function UserAccountForm({ email, userInfo }: { email: string, userInfo?: any }) {
-    console.log('userInfo in form', userInfo)
     const [loading, setLoading] = useState<boolean>();
     const [cities, setCities] = useState<[string] | []>([]);
     const [cp, setCp] = useState<string>("");
@@ -65,8 +64,6 @@ export default function UserAccountForm({ email, userInfo }: { email: string, us
         await updateUser(email, cp, values)
         setLoading(false)
     }
-
-    console.log('form errors', form.formState.errors)
 
     return (
         <Form {...form}>

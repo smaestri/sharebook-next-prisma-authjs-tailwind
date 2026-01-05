@@ -10,7 +10,6 @@ import { bookSchema, BookType, UserInfoType } from "./ValidationSchemas";
 import { UserBooksWithBorrow } from "./DbSchemas";
 
 export const updateUser = async (email: string, cp: string, formData: UserInfoType) => {
-    console.log('update user with formData ' + JSON.stringify(formData) + " and cp" + cp + " and mail" + email)
     await prisma.user.update({
         where: { email: email },
         data: {
@@ -42,7 +41,6 @@ const saveBook = async (formData: BookType): Promise<Book> => {
     // })
 
     // if (!book) {
-    console.log("saving book with title:", title, " author" + author, " category " + category)
     // const cover = await coverFor(title)
     const book = await prisma.book.create({
         data: {
@@ -59,7 +57,7 @@ const saveBook = async (formData: BookType): Promise<Book> => {
     return book;
 }
 
-const saveUserBook = async (book: Book, userId: string, description: string, price: number, isFree: boolean) => {
+const saveUserBook = async (book: Book, userId: string, description: string, price: number) => {
 
     // does the user already declared this book?
     let userBook: UserBook | null = await prisma.userBook.findFirst({
@@ -76,7 +74,6 @@ const saveUserBook = async (book: Book, userId: string, description: string, pri
                 price,
                 bookId: book.id,
                 userId,
-                isFree
             }
         })
         console.log('userBook created:', userBook)
@@ -129,7 +126,6 @@ export async function updateBook(id: number, formData: BookType): Promise<any> {
         data: {
             description: formData.description,
             price: formData.price,
-            isFree: formData.isFree == "option-free" ? true : false,
 
         },
     })
@@ -172,8 +168,7 @@ export async function createBook(formData: BookType): Promise<any> {
             where: { id: bookId }
         })
     }
-    await saveUserBook(book, session.user.id, formData.description, formData.price, formData.isFree == "option-free" ? true : false,
-    )
+    await saveUserBook(book, session.user.id, formData.description, formData.price)
 
     revalidatePath('/my-books')
     redirect('/my-books')

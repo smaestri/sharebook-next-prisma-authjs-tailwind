@@ -15,7 +15,6 @@ export default async function MyBooks() {
   )
 
   const email = session.user.email
-  console.log('email', email)
 
   const books: UserBookWithBookAndUser[] = await prisma.userBook.findMany({
     include: {
@@ -27,7 +26,6 @@ export default async function MyBooks() {
       userId: session?.user?.id
     }
   });
-
   return (
 
     <div className="flex justify-center">

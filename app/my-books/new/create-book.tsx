@@ -22,8 +22,6 @@ export default async function CreateBook({ bookId }: { bookId?: string }) {
       include: { book: true, user: true },
     });
 
-    console.log('userBook to edit', userBook)
-
     if (!userBook) {
       return <div>Livre introuvable</div>
     }
