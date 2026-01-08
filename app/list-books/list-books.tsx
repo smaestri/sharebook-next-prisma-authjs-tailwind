@@ -78,28 +78,22 @@ export default async function ListBooks({ props }: any) {
     });
   } else if (search) {
 
-    totalUsers = await prisma.book.count({
-        where: {
-          UserBook: {
-            some: {
-              deleted: false,
-              user: {
-                OR: [{
-                  pseudo: {
-                    contains: search,
-                    mode: 'insensitive'
-                  }
-                }, {
-                  name: {
-                    contains: search,
-                    mode: 'insensitive'
-                  }
-                }]
-              },
-              userId: { not: session.user.id }
+    totalUsers = await prisma.user.count({
+       where: {
+          OR: [{
+            pseudo: {
+              contains: search,
+              mode: 'insensitive'
             }
-          }
-        }
+          }, {
+            name: {
+              contains: search,
+              mode: 'insensitive'
+            }
+          }]
+        },
+        skip: skip,
+        take: COUNT_ITEMS_PER_PAGE,
       });
 
         totalAuthor = await prisma.book.count({
@@ -165,8 +159,8 @@ export default async function ListBooks({ props }: any) {
             }
           }
         },
-        // skip: skip,
-        // take: COUNT_ITEMS_PER_PAGE,
+        skip: skip,
+        take: COUNT_ITEMS_PER_PAGE,
       });
       
       console.log('books found by user', users, "total: ", totalUsers)
