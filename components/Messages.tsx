@@ -56,7 +56,7 @@ const Messages = ({ messages, borrowId, isPurchase, borrowDate }: { messages: an
         />
       </div>
       <div className="mt-5">
-        <FormButtonActionState >Ajouter message</FormButtonActionState>
+        <FormButtonActionState className="cursor-pointer" >Ajouter message</FormButtonActionState>
       </div>
     </form>
   </div>)

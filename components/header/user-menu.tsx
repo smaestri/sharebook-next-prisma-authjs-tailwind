@@ -22,6 +22,7 @@ export default function UserMenu({ borrowsCount, lendsCount }: AccountProps) {
   const router = useRouter()
   //const { userConnected, loading }: any = useUserContext();
   const [modalSigninOpen, setModalSigninOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   // const [modalFriendOpen, setModalFriendOpen] = useState(false);
     const { 
         data: session, 
@@ -44,7 +45,7 @@ export default function UserMenu({ borrowsCount, lendsCount }: AccountProps) {
 
       <ModalSignin isOpen={modalSigninOpen} onClose={() => setModalSigninOpen(false)} />
       {/* <ModalFriend isOpen={modalFriendOpen} onClose={() => setModalFriendOpen(false)} /> */}
-      {session?.user && session?.user?.image && <DropdownMenu>
+      {session?.user && session?.user?.image && <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
         <DropdownMenuTrigger>
           
           <div style={{ position: "relative" }}>
@@ -71,25 +72,25 @@ export default function UserMenu({ borrowsCount, lendsCount }: AccountProps) {
           <DropdownMenuItem key="profile" className="h-14 gap-2">
             <p className="font-semibold">Signed in as {session?.user.email}</p>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild key="books">
-            <Link href="/my-books">Ma bibiliothèque</Link>
+          <DropdownMenuItem key="books">
+            <Link href="/my-books" onClick={() => setMenuOpen(false)}>Ma bibiliothèque</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild key="purchases">
+          <DropdownMenuItem key="purchases">
             <div>
-              <Link href="/purchases">Mes achats</Link>
+              <Link href="/purchases" onClick={() => setMenuOpen(false)}>Mes achats</Link>
               {borrowsCount > 0 && <Badge variant="destructive">{borrowsCount}</Badge>}
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild key="sales">
+          <DropdownMenuItem key="sales">
             <div>
-              <Link href="/sales">Mes ventes</Link>
+              <Link href="/sales" onClick={() => setMenuOpen(false)}>Mes ventes</Link>
               {lendsCount > 0 && <Badge variant="destructive">{lendsCount}</Badge>}
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild key="account">
-            <Link href="/account">Mes infos</Link>
+          <DropdownMenuItem key="account">
+            <Link href="/account" onClick={() => setMenuOpen(false)}>Mes infos</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem key="logout" color="danger" onClick={signOutAndRedirect}>
+          <DropdownMenuItem key="logout" color="danger" onClick={() => { setMenuOpen(false); signOutAndRedirect(); }}>
             Log Out
           </DropdownMenuItem>
         </DropdownMenuContent>

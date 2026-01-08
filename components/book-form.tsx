@@ -56,7 +56,7 @@ export default function BookForm({ book, email, displayLinkToDetail = false, cat
                         {book.UserBook?.length > 1 && <DialogUser book={book} userBooks={book.UserBook} />}
                         {book.UserBook?.length == 1 && !iHaveThisBook && !iHavePurchasedThisBook &&
                             <Link onNavigate={() => { setLoading(true); }} href={`/purchases/new?userBookId=${book.UserBook[0].id}`}>
-                                <FormButton pending={loading}>Demander</FormButton>
+                                <FormButton className="cursor-pointer" pending={loading}>Demander</FormButton>
                             </Link>}
                     </div>
 
@@ -66,7 +66,7 @@ export default function BookForm({ book, email, displayLinkToDetail = false, cat
                 {iHaveThisBook && <div>Vous possédez déjà ce livre</div>}
                 {iHavePurchasedThisBook && <div>Vous avez déjà acheté/emprunté ce livre</div>}
                 {!iHaveThisBook && !iHavePurchasedThisBook &&
-                    <FormButton pending={loading} onClick={() => setModalOpen(true)}>Je possède ce livre!</FormButton>}
+                    <FormButton className="cursor-pointer" pending={loading} onClick={() => setModalOpen(true)}>Je possède ce livre!</FormButton>}
             </div>
 
             <div>

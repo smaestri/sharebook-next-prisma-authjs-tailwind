@@ -41,10 +41,10 @@ const ModalRefus = ({ isOpen, onClose, sale }: { isOpen: boolean, onClose: any, 
               />}
 
             <DialogFooter>
-              <Button onClick={onClose}>
+              <Button className="cursor-pointer" onClick={onClose}>
                 Fermer
               </Button>
-              <FormButton>
+              <FormButton className="cursor-pointer">
                 Valider
               </FormButton>
             </DialogFooter>

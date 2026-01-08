@@ -46,10 +46,10 @@ const ModalGetBook = ({ categories, isOpen, onClose, book }: { isOpen: any, cate
           </DialogHeader>
           <BookCreateInfos form={form} categories={categories} />
           <DialogFooter className="mt-2">
-              <FormButton pending={form.formState.isSubmitting || loading}>
+              <FormButton className="cursor-pointer" pending={form.formState.isSubmitting || loading}>
                 Valider
               </FormButton>
-              <Button type="button" variant="secondary" onClick={onClose}>
+              <Button className="cursor-pointer" type="button" variant="secondary" onClick={onClose}>
                 Fermer
               </Button>
           </DialogFooter>

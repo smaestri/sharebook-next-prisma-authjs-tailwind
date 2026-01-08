@@ -122,7 +122,7 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
             <BookCreateInfos form={form} categories={categories} />
 
           </FieldGroup>
-          <FormButton pending={form.formState.isSubmitting || loading}>Save</FormButton>
+          <FormButton className="cursor-pointer" pending={form.formState.isSubmitting || loading}>Save</FormButton>
           {errorMessage ? <div className="p-2 bg-red-200 border border-red-400">{errorMessage}</div> : null}
         </form>
 

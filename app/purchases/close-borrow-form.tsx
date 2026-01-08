@@ -6,7 +6,7 @@ export default function CloseBorrowForm({ bookId, borrowId }: { bookId: number, 
 
     return (
         <form action={closeBorrowAction}>
-            <FormButton>Close</FormButton>
+            <FormButton className="cursor-pointer">Close</FormButton>
         </form>
     )
 

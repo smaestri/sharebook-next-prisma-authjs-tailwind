@@ -34,7 +34,7 @@ const DialogUser = ({ userBooks, book }: { userBooks: any, book: any }) => {
                   <div>{userBook.user.name}</div>
                   <div>{userBook.user.city} ({userBook.user.cp})</div>
                   <div><Link href={`/purchases/new?userBookId=${userBook.id}`} onNavigate={() => { setLoading(true); }}>
-                    <FormButton pending={loading}>Demander</FormButton>
+                    <FormButton className="cursor-pointer" pending={loading}>Demander</FormButton>
                   </Link></div>
                 </div>
               ))}

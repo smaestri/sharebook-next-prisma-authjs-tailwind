@@ -136,7 +136,7 @@ export default function UserAccountForm({ email, userInfo }: { email: string, us
                             />
                         </div>
                         <div>
-                            <FormButton pending={form.formState.isSubmitting || loading}>
+                            <FormButton className="cursor-pointer" pending={form.formState.isSubmitting || loading}>
                                 Valider
                             </FormButton>
                         </div>

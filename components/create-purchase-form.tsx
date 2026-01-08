@@ -43,7 +43,7 @@ export default function PurchaseForm({ userBook }: any) {
             />
           </div>
           <div>
-            <FormButtonActionState>Valider ma demande</FormButtonActionState>
+            <FormButtonActionState className="cursor-pointer">Valider ma demande</FormButtonActionState>
           </div>
 
         </div>
@@ -59,7 +59,7 @@ const Choice = ({ date, setDate }: any) => {
   return (
     <div className="flex flex-col gap-2">
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
+        <PopoverTrigger>
           <Button
             variant="outline"
             id="date"

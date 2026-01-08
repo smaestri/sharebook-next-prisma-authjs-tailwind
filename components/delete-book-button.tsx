@@ -20,7 +20,7 @@ export function DeleteBook({ userBookId }: { userBookId: number }) {
 
   return (<>
     <form action={action}>
-      <FormButtonActionState>Delete</FormButtonActionState>
+      <FormButtonActionState className="cursor-pointer">Delete</FormButtonActionState>
     </form>
     <Dialog open={showBorrowModal} onOpenChange={onOpenChange}>
       <DialogContent>
