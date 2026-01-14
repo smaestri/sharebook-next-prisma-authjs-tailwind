@@ -16,6 +16,9 @@ export default async function DetailsBookPage({ params, searchParams }: { params
   let book = null;
   if (!searchParams.title && params.id) {
     book = await prisma.book.findFirst({
+      include: {
+        category: true,
+      },
       where: {
         id: parseInt(params.id),
       }

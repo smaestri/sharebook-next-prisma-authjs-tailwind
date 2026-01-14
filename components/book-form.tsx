@@ -85,6 +85,7 @@ export default function BookForm({ book, email, displayLinkToDetail = false, cat
                     {!displayLinkToDetail &&
                         <p title={book.title} className="line-clamp-3 italic">{book.title} - {book.author}</p>
                     }
+                    {book?.category?.name && <p>Catégorie: {book.category.name}</p>}
                 </div>
             </div>
             {renbderBookCOntent()}
