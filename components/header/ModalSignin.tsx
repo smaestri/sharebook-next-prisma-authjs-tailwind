@@ -7,8 +7,24 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader } from '../ui/dialog'
 import { Button } from '../ui/button'
 import { DialogTitle } from '@radix-ui/react-dialog'
 import { signIn } from '@/auth-client'
+import { useState } from 'react'
+import { Spinner } from '../ui/spinner'
 
 const ModalSignin = ({ isOpen, onClose }: { isOpen: boolean, onClose: any }) => {
+  const [loadingProvider, setLoadingProvider] = useState<string | null>(null)
+
+  const handleSocialSignIn = async (provider: string) => {
+    try {
+      setLoadingProvider(provider)
+      // signIn.social should trigger a redirect; awaiting in case it returns a promise
+      await (signIn.social({ provider, callbackURL: '/' }) as Promise<any>)
+    } catch (err) {
+      // if sign-in fails synchronously, remove loading state
+      console.error('Social sign-in error', err)
+      setLoadingProvider(null)
+    }
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
@@ -18,32 +34,44 @@ const ModalSignin = ({ isOpen, onClose }: { isOpen: boolean, onClose: any }) => 
           </DialogTitle></DialogHeader>
         <div className="flex justify-center items-center gap-6 my-4">
           <button
-            onClick={() => signIn.social({ provider: "github", callbackURL: "/" })}
-            aria-label="Se connecter avec GitHub"
-            className="p-1 rounded-full transition-transform transform hover:scale-105 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            onClick={() => handleSocialSignIn('github')}
+            aria-label={loadingProvider === 'github' ? 'Connexion en cours...' : 'Se connecter avec GitHub'}
+            aria-busy={loadingProvider === 'github'}
+            disabled={!!loadingProvider}
+            className={`p-1 rounded-full transition-transform transform hover:scale-105 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${loadingProvider ? 'opacity-60 cursor-not-allowed' : ''}`}
           >
-            <Image
-              src={githubIcon}
-              alt="Github"
-              width={48}
-              height={48}
-            />
+            {loadingProvider === 'github' ? (
+              <Spinner className="w-12 h-12" />
+            ) : (
+              <Image
+                src={githubIcon}
+                alt="Github"
+                width={48}
+                height={48}
+              />
+            )}
           </button>
           <button
-            onClick={() => signIn.social({ provider: "google", callbackURL: "/" })}
-            aria-label="Se connecter avec Google"
-            className="p-1 rounded-full transition-transform transform hover:scale-105 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            onClick={() => handleSocialSignIn('google')}
+            aria-label={loadingProvider === 'google' ? 'Connexion en cours...' : 'Se connecter avec Google'}
+            aria-busy={loadingProvider === 'google'}
+            disabled={!!loadingProvider}
+            className={`p-1 rounded-full transition-transform transform hover:scale-105 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${loadingProvider ? 'opacity-60 cursor-not-allowed' : ''}`}
           >
-            <Image
-              src={googleIcon}
-              alt="Google"
-              width={48}
-              height={48}
-            />
+            {loadingProvider === 'google' ? (
+              <Spinner className="w-12 h-12" />
+            ) : (
+              <Image
+                src={googleIcon}
+                alt="Google"
+                width={48}
+                height={48}
+              />
+            )}
           </button>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
+          <Button variant="outline" onClick={onClose} disabled={!!loadingProvider}>Cancel</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>)

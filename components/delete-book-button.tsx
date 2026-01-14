@@ -31,7 +31,7 @@ export function DeleteBook({ userBookId }: { userBookId: number }) {
           </p>
         </DialogDescription>
         <DialogFooter>
-            <Button variant="outline" onClick={() => { }}>Fermer</Button>
+            <Button variant="outline" onClick={onOpenChange}>Fermer</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

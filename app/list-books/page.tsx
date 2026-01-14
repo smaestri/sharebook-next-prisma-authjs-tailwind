@@ -11,20 +11,21 @@ export interface ListBooksProps {
     search?: string
     page?: number,
     searchType?: string
+    countTitle?: number
   }
 }
 
 export default async function ListBooksPage({ searchParams }: ListBooksProps) {
-  const { categoryId, userId, search, page, searchType } = await searchParams
-  const key = (categoryId || "") + (userId || "") + (search || "") + (page || "") + (searchType || "")
+  const { categoryId, userId, search, page, searchType, countTitle } = await searchParams
+  const key = (categoryId || "") + (userId || "") + (search || "") + (page || "") + (searchType || "") + (countTitle || "")
   return (<Suspense key={key} fallback={<BookCreateLoading />}>
-    <ListBooks props={{
-      categoryId: categoryId,
-      userId: userId,
-      search: search,
-      pageParam: page,
-      searchType: searchType
-    }}
+    <ListBooks
+      categoryId={categoryId}
+      userId={userId}
+      search={search}
+      pageParam={page}
+      searchType={searchType}
+      countTitle={countTitle}
     />
   </Suspense>)
 }

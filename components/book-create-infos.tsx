@@ -23,7 +23,7 @@ export default function BookCreateInfos({ form, categories }: any) {
                     <Field>
                         <FieldLabel>Catégorie</FieldLabel>
                         <Select name={field.name} value={field.value} onValueChange={field.onChange}>
-                            <SelectTrigger>
+                            <SelectTrigger className="hover:transform-none">
                                 <SelectValue placeholder="Select category" />
                             </SelectTrigger>
                             <SelectContent>

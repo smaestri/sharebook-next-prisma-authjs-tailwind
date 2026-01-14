@@ -48,7 +48,9 @@ export default function MyBooksForm({ books, email }: MyBooksFormProps) {
                   <DeleteBook userBookId={userBook.id} />
                 </div>
                 <div>
-                  <Link onNavigate={()=>{setLoading(true)}} href={`/my-books/new?userBookId=${userBook.id}`}><Button>Modifier</Button></Link>
+                  <Link onNavigate={()=>{setLoading(true)}} href={`/my-books/new?userBookId=${userBook.id}`}>
+                    <Button className="cursor-pointer">Modifier</Button>
+                  </Link>
                 </div>
               </div>
             }

@@ -10,8 +10,8 @@ import Link from "next/link";
 export type BookWithCategoryAndUser = any
 export const COUNT_ITEMS_PER_PAGE = 20
 
-export default async function ListBooks({ props }: any) {
-  const { categoryId, userId, search, pageParam, searchType } = props;
+export default async function ListBooks( props: any) {
+  const { categoryId, userId, search, pageParam, searchType, countTitle} = props;
 
   const session = await auth.api.getSession({
     headers: await headers()
@@ -26,7 +26,7 @@ export default async function ListBooks({ props }: any) {
 
   let books: BookWithCategoryAndUser[] = []
   let users: any[] = []
-  let totalTitle = 0 , totalAuthor = 0, totalUsers = 0;
+  let totalTitle = 0, totalAuthor = 0, totalUsers = 0;
   if (categoryId) {
     books = await prisma.book.findMany({
       include: {
@@ -52,7 +52,7 @@ export default async function ListBooks({ props }: any) {
       include: {
         UserBook: {
           include: { user: true },
-          where: { deleted: false}
+          where: { deleted: false }
         },
       },
       where: {
@@ -79,31 +79,31 @@ export default async function ListBooks({ props }: any) {
   } else if (search) {
 
     totalUsers = await prisma.user.count({
-       where: {
-          OR: [{
-            pseudo: {
-              contains: search,
-              mode: 'insensitive'
-            }
-          }, {
-            name: {
-              contains: search,
-              mode: 'insensitive'
-            }
-          }]
-        },
-        skip: skip,
-        take: COUNT_ITEMS_PER_PAGE,
-      });
-
-        totalAuthor = await prisma.book.count({
-        where: {
-          author: {
+      where: {
+        OR: [{
+          pseudo: {
             contains: search,
             mode: 'insensitive'
           }
+        }, {
+          name: {
+            contains: search,
+            mode: 'insensitive'
+          }
+        }]
+      },
+      skip: skip,
+      take: COUNT_ITEMS_PER_PAGE,
+    });
+
+    totalAuthor = await prisma.book.count({
+      where: {
+        author: {
+          contains: search,
+          mode: 'insensitive'
         }
-      });
+      }
+    });
 
     if (!searchType || searchType === 'title') {
       console.log('ok')
@@ -112,6 +112,9 @@ export default async function ListBooks({ props }: any) {
       totalTitle = res.numFound
       console.log('books found by title ', books, "total: ", totalTitle)
     } else if (searchType === 'author') {
+
+      totalTitle = countTitle || 0;
+
       books = await prisma.book.findMany({
         include: {
           UserBook: {
@@ -129,10 +132,11 @@ export default async function ListBooks({ props }: any) {
         take: COUNT_ITEMS_PER_PAGE,
       });
 
-      
+
       console.log('books found by author ', books, "total: ", totalAuthor)
 
     } else if (searchType === 'users') {
+      totalTitle = countTitle || 0;
 
       users = await prisma.user.findMany({
         where: {
@@ -162,7 +166,7 @@ export default async function ListBooks({ props }: any) {
         skip: skip,
         take: COUNT_ITEMS_PER_PAGE,
       });
-      
+
       console.log('books found by user', users, "total: ", totalUsers)
     }
   }
@@ -198,39 +202,39 @@ export default async function ListBooks({ props }: any) {
 
   const renderListBooks = (searchType: string) => {
 
-    if(books?.length == 0){
+    if (books?.length == 0) {
       return <div>Aucun {searchType} trouvé</div>
     }
 
     return (<>
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-10 mb-10">
         {books?.map((book: any) => (
           <BookPage key={book.title} book={book} myBooks={myBooks} myPurchases={myPurchases} categories={categories} email={email} displayLinkToDetail={true} />
         ))}
       </div>
-      <PaginationHandler page={page} total={totalTitle} categoryId={categoryId} userId={userId} search={search} />
+      {totalTitle > COUNT_ITEMS_PER_PAGE && <PaginationHandler page={page} total={totalTitle} categoryId={categoryId} userId={userId} search={search} />}
     </>
     )
   }
 
-  const renderListUsers= (searchType: string) => {
+  const renderListUsers = (searchType: string) => {
 
-    if(users?.length == 0){
+    if (users?.length == 0) {
       return <div>Aucun {searchType} trouvé</div>
     }
 
     return (<>
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-4 mb-10">
         {users?.map((user: any) => (
           <div key={user.id}>
             <Link href={`/list-books?userId=${user.id}`}>
               <h2>{user.name} ({user.pseudo}) possède {user.UserBook?.length} livres</h2>
             </Link>
-     
+
           </div>
         ))}
       </div>
-      <PaginationHandler page={page} total={totalUsers} categoryId={categoryId} userId={userId} search={search} />
+      {totalUsers > COUNT_ITEMS_PER_PAGE &&  <PaginationHandler page={page} total={totalUsers} categoryId={categoryId} userId={userId} search={search} />}
     </>
     )
   }
@@ -242,8 +246,8 @@ export default async function ListBooks({ props }: any) {
           <TabsTrigger value="title">
             <Link href={`/list-books?search=${search}&searchType=title`} >Titres ({totalTitle})</Link>
           </TabsTrigger>
-          <TabsTrigger value="author"><Link href={`/list-books?search=${search}&searchType=author`}>Auteurs ({totalAuthor})</Link></TabsTrigger>
-          <TabsTrigger value="users"><Link href={`/list-books?search=${search}&searchType=users`}>Utilisateurs ({totalUsers})</Link></TabsTrigger>
+          <TabsTrigger value="author"><Link href={`/list-books?search=${search}&searchType=author&countTitle=${totalTitle}`}>Auteurs ({totalAuthor})</Link></TabsTrigger>
+          <TabsTrigger value="users"><Link href={`/list-books?search=${search}&searchType=users&countTitle=${totalTitle}`}>Utilisateurs ({totalUsers})</Link></TabsTrigger>
         </TabsList>
         <TabsContent value="title">
           {renderListBooks("livre")}

@@ -11,7 +11,7 @@ import z from "zod"
 import BookCreateInfos from "@/components/book-create-infos"
 import FormButton from "@/components/form-button"
 
-const ModalGetBook = ({ categories, isOpen, onClose, book }: { isOpen: any, categories: any, onClose: any, book: any}) => {
+const ModalGetBook = ({ categories, isOpen, onClose, book }: { isOpen: any, categories: any, onClose: any, book: any }) => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -38,7 +38,7 @@ const ModalGetBook = ({ categories, isOpen, onClose, book }: { isOpen: any, cate
   }
 
   return (
-    <Dialog open={isOpen}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogHeader>
@@ -46,12 +46,14 @@ const ModalGetBook = ({ categories, isOpen, onClose, book }: { isOpen: any, cate
           </DialogHeader>
           <BookCreateInfos form={form} categories={categories} />
           <DialogFooter className="mt-2">
-              <FormButton className="cursor-pointer" pending={form.formState.isSubmitting || loading}>
-                Valider
-              </FormButton>
+            <FormButton className="cursor-pointer" pending={form.formState.isSubmitting || loading}>
+              Valider
+            </FormButton>
+            <DialogClose asChild>
               <Button className="cursor-pointer" type="button" variant="secondary" onClick={onClose}>
                 Fermer
               </Button>
+            </DialogClose>
           </DialogFooter>
         </form>
 
