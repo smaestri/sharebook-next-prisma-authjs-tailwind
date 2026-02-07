@@ -362,7 +362,7 @@ export async function addAsFriend(friendId: string) {
     const existing = await prisma.friend.findFirst({ where: { userId: session?.user?.id, friendId } })
     if (existing) {
         console.log('already friend')
-        return
+        return {message: "already friend"}
     }
     await prisma.friend.create({
         data: {
@@ -399,7 +399,7 @@ export async function addAsPendingFriend(email: string) {
     redirect('/my-friends')
 }
 
-export const removeFriend = async (friendId: string) => {
+export const removeFriend = async (friendId: number) => {
     const session = await auth.api.getSession({
         headers: await headers()
     })
@@ -408,10 +408,24 @@ export const removeFriend = async (friendId: string) => {
     }
     await prisma.friend.delete({
         where: {
-            userId_friendId: {
-                userId: session.user.id,
-                friendId: friendId
-            }
+            id: friendId
+        }
+    })
+    revalidatePath('/my-friends')
+    redirect('/my-friends')
+
+}
+
+export const removePendingFriend = async (id: number) => {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+    if (!session?.user?.id) {
+        return {message: "error no user"}
+    }
+    await prisma.pendingFriend.delete({
+        where: {
+            id: id
         }
     })
     revalidatePath('/my-friends')

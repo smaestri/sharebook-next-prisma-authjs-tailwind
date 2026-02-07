@@ -3,6 +3,8 @@ import { headers } from "next/headers";
 import prisma from "@/lib/prisma";
 import RemoveFriendButton from "@/components/RemoveFriendButton";
 import FriendLine from "@/components/friend-line";
+import AddPendingFriendForm from "@/components/AddPendingFriendForm";
+import PendingFriendsList from "@/components/PendingFriendsList";
 
 export default async function MyFriends() {
     const session = await auth.api.getSession({
@@ -30,6 +32,12 @@ export default async function MyFriends() {
             userId: session?.user?.id
         }
     });
+
+    const pendingFriends = await prisma.pendingFriend.findMany({
+        where: {
+            userId: session?.user?.id
+        }
+    });
     return (
         <div className="flex flex-col gap-4">
             <h1 className="text-3xl font-bold mb-6">Mes Amis</h1>
@@ -40,8 +48,17 @@ export default async function MyFriends() {
                     <RemoveFriendButton friendId={f.friend.id} />
                 </div>
             )}
+            <h1 className="text-3xl font-bold mb-3">Invitation</h1>
+            <AddPendingFriendForm />
+            <div className="text-sm text-gray-500">Votre ami recevra une invitation par email pour devenir votre ami sur ShareBook.</div>
+            {pendingFriends.length > 0 && (<>
+                <h2 className="text-2xl font-bold mb-3">Invitations en cours</h2>
+                <PendingFriendsList pendingFriends={pendingFriends} />
+            </>)}
+
         </div>
     )
+
 }
 
 

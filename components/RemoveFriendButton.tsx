@@ -9,11 +9,11 @@ export default function RemoveFriendButton({ friendId }: { friendId: string }) {
     const handleRemove = async () => {
         if (!confirm("Êtes-vous sûr de vouloir supprimer cet ami ?")) return
         setLoading(true)
-        await removeFriend(friendId)
+        await removeFriend(parseInt(friendId))
         setLoading(false)
     }
 
-    if(loading) return <div className="ml-2 p-1 rounded text-red-600 opacity-60">Veuillez patienter...</div>
+    if (loading) return <div className="ml-2 p-1 rounded text-red-600 opacity-60">Veuillez patienter...</div>
 
     return (
         <button
