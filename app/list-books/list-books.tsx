@@ -7,6 +7,7 @@ import { getBookInfoFromLib } from "@/lib/utils-search";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PaginationHandler from "./PaginationHandler";
 import Link from "next/link";
+import { SearchType } from "./page";
 export type BookWithCategoryAndUser = any
 export const COUNT_ITEMS_PER_PAGE = 20
 
@@ -27,7 +28,15 @@ export default async function ListBooks( props: any) {
   let books: BookWithCategoryAndUser[] = []
   let users: any[] = []
   let totalTitle = 0, totalAuthor = 0, totalUsers = 0;
+  let userName =""
+  let categoryLabel = ""
   if (categoryId) {
+    const category = await prisma.category.findFirst({
+      where: {
+        id: parseInt(categoryId)
+      }
+    })
+    categoryLabel = category?.name || ""
     books = await prisma.book.findMany({
       include: {
         UserBook: {
@@ -48,6 +57,15 @@ export default async function ListBooks( props: any) {
       },
     });
   } else if (userId) {
+
+
+    const user = await prisma.user.findMany({
+      where: {
+        id: String(userId)
+      }
+    })
+    userName = user[0].name || user[0].pseudo || "Utilisateur"
+
     books = await prisma.book.findMany({
       include: {
         UserBook: {
@@ -59,7 +77,8 @@ export default async function ListBooks( props: any) {
         UserBook: {
           some: {
             userId: String(userId),
-          }
+            deleted: false,
+          },
         }
       },
       skip: skip,
@@ -217,6 +236,27 @@ export default async function ListBooks( props: any) {
     )
   }
 
+  const getTitle = (searchType: SearchType) => {
+
+    if(categoryLabel) {
+      return "Livres de la catégorie " + categoryLabel
+    }
+    if(userName) {
+      return "Livres de " + userName
+    }
+console.log('searchType in getTitle', searchType)
+    switch(searchType) {
+      case SearchType.TITLE:
+        return "Liste des livres avec le titre '" + search + "'"
+      case SearchType.AUTHOR:
+        return "Liste des livres avec l'auteur '" + search + "'"
+      case SearchType.USER:
+        return "Liste des utilisateurs avec le nom '" + search + "'"
+      default:
+        return "Liste des livres avec le titre '" + search + "'"
+    }
+  }
+
   const renderListUsers = (searchType: string) => {
 
     if (users?.length == 0) {
@@ -241,6 +281,9 @@ export default async function ListBooks( props: any) {
   console.log('searchType in ListBooks', searchType)
   if (search) {
     return (
+      <>
+      <h1 className="text-3xl font-bold mb-6">{getTitle(searchType as SearchType)}</h1>
+      
       <Tabs defaultValue={searchType || "title"} >
         <TabsList>
           <TabsTrigger value="title">
@@ -259,10 +302,13 @@ export default async function ListBooks( props: any) {
           {renderListUsers("utilisateur")}
         </TabsContent>
       </Tabs>
+      </>
     )
   }
 
-  return renderListBooks("livre")
-
+  return (<>
+          <h1 className="text-3xl font-bold mb-6">{getTitle(searchType as SearchType)}</h1>
+    {renderListBooks("livre")}
+  </> )
 }
 

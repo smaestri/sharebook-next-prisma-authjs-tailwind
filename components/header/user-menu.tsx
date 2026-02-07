@@ -87,6 +87,11 @@ export default function UserMenu({ borrowsCount, lendsCount }: AccountProps) {
               {lendsCount > 0 && <Badge variant="destructive">{lendsCount}</Badge>}
             </div>
           </DropdownMenuItem>
+          <DropdownMenuItem key="friends">
+            <div>
+              <Link href="/friends" onClick={() => setMenuOpen(false)}>Mes amis</Link>
+            </div>
+          </DropdownMenuItem>
           <DropdownMenuItem key="account">
             <Link href="/account" onClick={() => setMenuOpen(false)}>Mes infos</Link>
           </DropdownMenuItem>

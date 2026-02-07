@@ -33,7 +33,10 @@ export default async function Account() {
     }
 
     return (
-        <UserAccountForm email={email} userInfo={userInfo} />
+        <>
+          <h1 className="text-3xl font-bold mb-6">Mon Compte</h1>
+          <UserAccountForm email={email} userInfo={userInfo} />
+        </>
     )
       
 }

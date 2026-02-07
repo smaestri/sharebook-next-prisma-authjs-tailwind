@@ -72,7 +72,7 @@ export default function BookForm({ book, email, displayLinkToDetail = false, cat
     return (
         <div
             key={book.id}
-            className="flex flex-col w-[300px]"
+            className="flex flex-col w-[300px] mt3 mb-10 border p-4 rounded-lg"
         >
             <div className="flex flex-col items-center">
                 <div className="h-[150px] mb-3">

@@ -15,6 +15,12 @@ export interface ListBooksProps {
   }
 }
 
+export enum SearchType {
+  TITLE = "title",
+  AUTHOR = "author",
+  USER = "users"
+}
+
 export default async function ListBooksPage({ searchParams }: ListBooksProps) {
   const { categoryId, userId, search, page, searchType, countTitle } = await searchParams
   const key = (categoryId || "") + (userId || "") + (search || "") + (page || "") + (searchType || "") + (countTitle || "")

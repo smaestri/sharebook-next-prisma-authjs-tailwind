@@ -22,7 +22,7 @@ export default async function SignIn() {
 
   return (
     <>
-
+      <h1 className="text-3xl font-bold mb-6">Accueil</h1>
       {(!user?.cp || !user.city) && <ModalCity email={user?.email || ""} isOpen={true} />}
 
       <div>Bienvenue</div>

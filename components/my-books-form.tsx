@@ -22,7 +22,7 @@ export default function MyBooksForm({ books, email }: MyBooksFormProps) {
       {books?.map((userBook: any) => (
         <div
           key={userBook.id}
-          className="flex flex-col w-[300px]"
+          className="flex flex-col w-[300px] mt3 mb-10 border p-4 rounded-lg"
         >
           <div className="flex flex-col items-center">
             <div className="h-[150px] mb-3">
