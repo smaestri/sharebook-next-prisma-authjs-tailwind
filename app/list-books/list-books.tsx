@@ -8,6 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PaginationHandler from "./PaginationHandler";
 import Link from "next/link";
 import { SearchType } from "./page";
+import AddFriendButton from "./AddFriendButton";
+import FriendLine from "@/components/friend-line";
 export type BookWithCategoryAndUser = any
 export const COUNT_ITEMS_PER_PAGE = 20
 
@@ -30,6 +32,7 @@ export default async function ListBooks( props: any) {
   let totalTitle = 0, totalAuthor = 0, totalUsers = 0;
   let userName =""
   let categoryLabel = ""
+  let alreadyFriend = false;
   if (categoryId) {
     const category = await prisma.category.findFirst({
       where: {
@@ -57,14 +60,12 @@ export default async function ListBooks( props: any) {
       },
     });
   } else if (userId) {
-
-
-    const user = await prisma.user.findMany({
+    const user = await prisma.user.findFirst({
       where: {
         id: String(userId)
       }
     })
-    userName = user[0].name || user[0].pseudo || "Utilisateur"
+    userName = user?.name || user?.pseudo || "Utilisateur"
 
     books = await prisma.book.findMany({
       include: {
@@ -95,6 +96,14 @@ export default async function ListBooks( props: any) {
         }
       },
     });
+
+    alreadyFriend = await prisma.friend.findFirst({
+      where: {
+        userId: session.user.id,
+        friendId: String(userId)
+      }
+    }) ? true : false;
+
   } else if (search) {
 
     totalUsers = await prisma.user.count({
@@ -266,12 +275,7 @@ console.log('searchType in getTitle', searchType)
     return (<>
       <div className="flex flex-wrap gap-4 mb-10">
         {users?.map((user: any) => (
-          <div key={user.id}>
-            <Link href={`/list-books?userId=${user.id}`}>
-              <h2>{user.name} ({user.pseudo}) possède {user.UserBook?.length} livres</h2>
-            </Link>
-
-          </div>
+          <FriendLine user={user}/>
         ))}
       </div>
       {totalUsers > COUNT_ITEMS_PER_PAGE &&  <PaginationHandler page={page} total={totalUsers} categoryId={categoryId} userId={userId} search={search} />}
@@ -305,9 +309,15 @@ console.log('searchType in getTitle', searchType)
       </>
     )
   }
-
+  
   return (<>
-          <h1 className="text-3xl font-bold mb-6">{getTitle(searchType as SearchType)}</h1>
+    <div className="flex items-center mb-6 gap-2">
+      <h1 className="text-3xl font-bold">{getTitle(searchType as SearchType)}</h1>
+      {userId && !alreadyFriend && <AddFriendButton userId={userId} />}
+      {userId && alreadyFriend && <div className="flex flex-row gap-2">
+        <span>Vous êtes amis ! (<Link href="/my-friends" className="underline">Voir tous</Link>)</span>
+      </div>}
+    </div>
     {renderListBooks("livre")}
   </> )
 }

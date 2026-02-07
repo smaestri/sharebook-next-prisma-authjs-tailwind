@@ -73,27 +73,27 @@ export default function UserMenu({ borrowsCount, lendsCount }: AccountProps) {
             <p className="font-semibold">Signed in as {session?.user.email}</p>
           </DropdownMenuItem>
           <DropdownMenuItem key="books">
-            <Link href="/my-books" onClick={() => setMenuOpen(false)}>Ma bibiliothèque</Link>
+            <Link href="/my-books" onClick={() => setMenuOpen(false)} className="underline">Ma bibiliothèque</Link>
           </DropdownMenuItem>
           <DropdownMenuItem key="purchases">
             <div>
-              <Link href="/purchases" onClick={() => setMenuOpen(false)}>Mes achats</Link>
+              <Link href="/purchases" onClick={() => setMenuOpen(false)} className="underline">Mes achats</Link>
               {borrowsCount > 0 && <Badge variant="destructive">{borrowsCount}</Badge>}
             </div>
           </DropdownMenuItem>
           <DropdownMenuItem key="sales">
             <div>
-              <Link href="/sales" onClick={() => setMenuOpen(false)}>Mes ventes</Link>
+              <Link href="/sales" onClick={() => setMenuOpen(false)} className="underline">Mes ventes</Link>
               {lendsCount > 0 && <Badge variant="destructive">{lendsCount}</Badge>}
             </div>
           </DropdownMenuItem>
           <DropdownMenuItem key="friends">
             <div>
-              <Link href="/friends" onClick={() => setMenuOpen(false)}>Mes amis</Link>
+              <Link href="/my-friends" onClick={() => setMenuOpen(false)} className="underline">Mes amis</Link>
             </div>
           </DropdownMenuItem>
           <DropdownMenuItem key="account">
-            <Link href="/account" onClick={() => setMenuOpen(false)}>Mes infos</Link>
+            <Link href="/account" onClick={() => setMenuOpen(false)} className="underline">Mes infos</Link>
           </DropdownMenuItem>
           <DropdownMenuItem key="logout" color="danger" onClick={() => { setMenuOpen(false); signOutAndRedirect(); }}>
             Log Out

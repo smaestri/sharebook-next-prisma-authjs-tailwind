@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { BORROW_STATUS } from "@/lib/constants";
 import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
 import FormButton from "./form-button";
 import ImageWithLoading from "./ImageWithLoading";
 

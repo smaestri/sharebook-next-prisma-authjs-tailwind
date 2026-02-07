@@ -16,7 +16,7 @@ export default function SideBarView({ categories }: { categories: Counter[] }) {
   const renderCategories = categories.map((cat: Counter) => {
     return (
       <div key={cat.name}>
-        <Link href={{ pathname: `/list-books`, query: { categoryId: cat.id } }} >
+        <Link href={{ pathname: `/list-books`, query: { categoryId: cat.id } }} className="underline">
           {cat.name}({cat.count})
         </Link></div>)
   })

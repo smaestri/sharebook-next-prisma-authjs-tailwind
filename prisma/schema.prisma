@@ -32,6 +32,8 @@ model User {
   cp         String?
   city         String?
   street       String?
+  friends       Friend[] @relation("userFriends")
+  friendOf      Friend[] @relation("friendUser")
 
   @@unique([email])
   @@map("user")
@@ -143,6 +145,20 @@ model UserBook {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   deleted     Boolean   @default(false)
   Borrow      Borrow[]
+}
+
+model Friend {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now())
+  userId    String
+  user      User      @relation("userFriends", fields: [userId], references: [id], onDelete: Cascade)
+  friendId  String
+  friend    User      @relation("friendUser", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+  @@index([userId])
+  @@index([friendId])
+  @@map("friend")
 }
 
 

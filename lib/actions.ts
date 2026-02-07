@@ -350,3 +350,47 @@ export async function addMessage(borrowId: any, isPurchase: any, message?: strin
     revalidatePath(path)
     redirect(path)
 }
+
+export async function addAsFriend(friendId: string) {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+    if(!session?.user?.id) {
+        console.error('error no user')
+        return {message: "error no user"}
+    }
+    const existing = await prisma.friend.findFirst({ where: { userId: session?.user?.id, friendId } })
+    if (existing) {
+        console.log('already friend')
+        return
+    }
+    await prisma.friend.create({
+        data: {
+            userId: session?.user?.id,
+            friendId: friendId,
+        },
+    })
+
+    revalidatePath('/my-friends')
+    redirect('/my-friends')
+}
+
+export const removeFriend = async (friendId: string) => {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+    if (!session?.user?.id) {
+        return {message: "error no user"}
+    }
+    await prisma.friend.delete({
+        where: {
+            userId_friendId: {
+                userId: session.user.id,
+                friendId: friendId
+            }
+        }
+    })
+    revalidatePath('/my-friends')
+    redirect('/my-friends')
+
+}

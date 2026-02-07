@@ -23,7 +23,7 @@ export default function BookForm({ book, email, displayLinkToDetail = false, cat
         }
         if (book.UserBook?.length == 1 && !iHaveThisBook && !iHavePurchasedThisBook) {
             content = <div className="flex justify-center gap-2 mt-3">
-                <Link onNavigate={() => { setLoading(true); }} href={`/purchases/new?userBookId=${book.UserBook[0].id}`}>
+                <Link onNavigate={() => { setLoading(true); }} href={`/purchases/new?userBookId=${book.UserBook[0].id}`} className="underline">
                     <FormButton className="cursor-pointer" pending={loading}>Demander</FormButton>
                 </Link>
             </div>
@@ -56,7 +56,7 @@ export default function BookForm({ book, email, displayLinkToDetail = false, cat
                     </div>}
                     <div>
                         {book.UserBook?.length > 1 && <span>{book.UserBook?.length} utilisateurs possèdent ce livres</span>}
-                        {book.UserBook?.length === 1 && <span><Link href={`/list-books?userId=${book.UserBook[0].user.id}`}>{book.UserBook[0].user.name}</Link> possède ce livre</span>}
+                        {book.UserBook?.length === 1 && <span><Link href={`/list-books?userId=${book.UserBook[0].user.id}`} className="underline">{book.UserBook[0].user.name}</Link> possède ce livre</span>}
                     </div>
                 </div>
                 {book.UserBook?.length === 1 && !iHaveThisBook && <div className="flex flex-row gap-2">
@@ -79,7 +79,7 @@ export default function BookForm({ book, email, displayLinkToDetail = false, cat
                     <ImageWithLoading title={book.title} src={book.image} />
                 </div>
                 <div className="mb-5">
-                    {displayLinkToDetail && <Link href={urlBookDetail} onClick={() => { setLoading(true); }}>
+                    {displayLinkToDetail && <Link href={urlBookDetail} onClick={() => { setLoading(true); }} className="underline">
                         <p title={book.title} className="line-clamp-3 italic">{book.title} - {book.author}</p>
                     </Link>}
                     {!displayLinkToDetail &&
