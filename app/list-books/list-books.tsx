@@ -108,6 +108,7 @@ export default async function ListBooks( props: any) {
 
     totalUsers = await prisma.user.count({
       where: {
+        id: { not: session.user.id },
         OR: [{
           pseudo: {
             contains: search,
@@ -118,7 +119,8 @@ export default async function ListBooks( props: any) {
             contains: search,
             mode: 'insensitive'
           }
-        }]
+        }],
+
       },
       skip: skip,
       take: COUNT_ITEMS_PER_PAGE,
@@ -168,6 +170,7 @@ export default async function ListBooks( props: any) {
 
       users = await prisma.user.findMany({
         where: {
+          id: { not: session.user.id },
           OR: [{
             pseudo: {
               contains: search,

@@ -35,7 +35,7 @@ export default function PurchaseSelector({ isPurchase }: any) {
         onCheckedChange={handleSwitchChange}
         checked={status === "closed"}
       />
-      <Label htmlFor="airplane-mode">{isPurchase ? "Achats" : "Ventes"} clôturé{isPurchase ? "" : "e"}s</Label>
+      <Label htmlFor="airplane-mode">{isPurchase ? "Demandes" : "Offres"} clôturées</Label>
     </div>
   )
 

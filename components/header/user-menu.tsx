@@ -73,17 +73,17 @@ export default function UserMenu({ borrowsCount, lendsCount }: AccountProps) {
             <p className="font-semibold">Signed in as {session?.user.email}</p>
           </DropdownMenuItem>
           <DropdownMenuItem key="books">
-            <Link href="/my-books" onClick={() => setMenuOpen(false)} className="underline">Ma bibiliothèque</Link>
+            <Link href="/my-books" onClick={() => setMenuOpen(false)} className="underline">Mes livres</Link>
           </DropdownMenuItem>
           <DropdownMenuItem key="purchases">
             <div>
-              <Link href="/purchases" onClick={() => setMenuOpen(false)} className="underline">Mes achats</Link>
+              <Link href="/purchases" onClick={() => setMenuOpen(false)} className="underline">Mes demandes</Link>
               {borrowsCount > 0 && <Badge variant="destructive">{borrowsCount}</Badge>}
             </div>
           </DropdownMenuItem>
           <DropdownMenuItem key="sales">
             <div>
-              <Link href="/sales" onClick={() => setMenuOpen(false)} className="underline">Mes ventes</Link>
+              <Link href="/sales" onClick={() => setMenuOpen(false)} className="underline">Mes offres</Link>
               {lendsCount > 0 && <Badge variant="destructive">{lendsCount}</Badge>}
             </div>
           </DropdownMenuItem>

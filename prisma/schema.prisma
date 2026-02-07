@@ -34,6 +34,7 @@ model User {
   street       String?
   friends       Friend[] @relation("userFriends")
   friendOf      Friend[] @relation("friendUser")
+  pendingFriends PendingFriend[] @relation("userPendingFriends")
 
   @@unique([email])
   @@map("user")
@@ -159,6 +160,18 @@ model Friend {
   @@index([userId])
   @@index([friendId])
   @@map("friend")
+}
+
+model PendingFriend {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now())
+  userId    String
+  user      User      @relation("userPendingFriends", fields: [userId], references: [id], onDelete: Cascade)
+  email     String
+
+  @@unique([userId, email])
+  @@index([userId])
+  @@map("pending_friend")
 }
 
 

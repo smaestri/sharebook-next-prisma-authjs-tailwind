@@ -30,6 +30,7 @@ export default async function MyBooks() {
 
     <div className="flex justify-center">
       <div className="flex flex-col">
+        <h1 className="text-3xl font-bold mb-6">Mes livres</h1>
         <MyBooksForm email={email} books={books} />
         <div className="mt-3">
           <Link href="/my-books/new">

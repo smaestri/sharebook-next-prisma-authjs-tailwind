@@ -56,12 +56,15 @@ export default async function PurchasePage({ searchParams }: any) {
 
   return (
     <div className="flex justify-center">
-      <div className="flex flex-row gap-3">
-        <div>
-          <PurchaseClient sale={borrowWithMessage} isPurchase={isPurchase} buyerName={buyerName} />
-        </div>
-        <div>
-          <Messages messages={borrowWithMessage.messages} borrowId={borrowWithMessage.id} isPurchase={isPurchase} borrowDate={borrowDate} />
+      <div className="flex flex-col gap-3 w-full">
+        <h1 className="text-3xl font-bold mb-3">Demande du livre "{borrowWithMessage.userBook.book.title}"</h1>
+        <div className="flex flex-row gap-3">
+          <div>
+            <PurchaseClient sale={borrowWithMessage} isPurchase={isPurchase} buyerName={buyerName} />
+          </div>
+          <div>
+            <Messages messages={borrowWithMessage.messages} borrowId={borrowWithMessage.id} isPurchase={isPurchase} borrowDate={borrowDate} />
+          </div>
         </div>
       </div>
     </div>)

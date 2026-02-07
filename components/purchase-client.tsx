@@ -35,7 +35,7 @@ export default function PurchaseClient({ sale, isPurchase, buyerName, isItem }: 
                 </Link>
               </div>
               <div>
-                <Link className="no-underline hover:underline" href={`/purchase?id=${sale.id}&isPurchase=${isPurchase}`}>
+                <Link className="underline" href={`/purchase?id=${sale.id}&isPurchase=${isPurchase}`}>
                   Détails et messages
                 </Link>
               </div>
