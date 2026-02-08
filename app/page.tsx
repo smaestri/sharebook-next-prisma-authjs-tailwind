@@ -1,8 +1,8 @@
 import { auth } from "@/auth"
 import { headers } from "next/headers";
 import prisma from "@/lib/prisma";
-import ModalCity from "./AdditionalUserInfos/ModalCity";
 import RecentBooksCarousel from "@/components/RecentBooksCarousel";
+import CityClient from "@/components/CityClient";
 
 export default async function SignIn() {
 
@@ -45,7 +45,7 @@ export default async function SignIn() {
   return (
     <>
       <h1 className="text-3xl font-bold mb-6">Accueil</h1>
-      {(!user?.cp || !user.city) && <ModalCity email={user?.email || ""} isOpen={true} />}
+      {(!user?.cp || !user.city) && <CityClient user={user}/>}
 
       <div>
         <p>Bienvenue sur LivresEntreAmis! Ce site vous permet de partager vos livres, et trouver les livres que d'autres personnes partagent.</p>
