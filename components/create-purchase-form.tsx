@@ -8,6 +8,7 @@ import { purchaseBook } from "@/lib/actions"
 import { Calendar } from "./ui/calendar"
 import { Textarea } from "./ui/textarea"
 import FormButtonActionState from "./form-button-action-state"
+import { format } from "date-fns"
 
 
 export default function PurchaseForm({ userBook }: any) {
@@ -24,8 +25,8 @@ export default function PurchaseForm({ userBook }: any) {
             <h1 className="text-lg font-semibold text-gray-900 truncate max-w-[60ch]" title={userBook.book.title}>
               {`"${userBook.book.title}"`} <span className="text-sm text-muted-foreground">— {userBook.user.pseudo}</span>
             </h1>
-          </div> 
-            <div className="flex flex-row gap-2 items-center">
+          </div>
+          <div className="flex flex-row gap-2 items-center">
             <div>Date de rencontre souhaitée</div>
             <div className="flex justify-center gap-2">
               <Choice date={date} setDate={setDate} />
@@ -33,11 +34,11 @@ export default function PurchaseForm({ userBook }: any) {
           </div>
 
           <div>
-            <p>Message au vendeur (heure RDV, ou toute autre information)</p>
+            <p>Message au propriétaire du livre (heure RDV, ou toute autre information)</p>
             <Textarea
               name="message"
               onChange={(event) => setMessage(event.target.value)}
-              placeholder="Message au vendeur"
+              placeholder="Message au propriétaire du livre"
             />
           </div>
           <div>
@@ -52,62 +53,28 @@ export default function PurchaseForm({ userBook }: any) {
 
 const Choice = ({ date, setDate }: any) => {
 
-  const [open, setOpen] = useState(false)
-
   return (
     <div className="flex flex-col gap-2">
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger>
+      <Popover>
+        <PopoverTrigger asChild>
           <Button
             variant="outline"
-            id="date"
-            className="w-48 justify-between font-normal"
+            data-empty={!date}
+            className="data-[empty=true]:text-muted-foreground w-[212px] justify-between text-left font-normal"
           >
-            {date ? date.toLocaleDateString() : "Select date"}
+            {date ? format(date, "PPP") : <span>Sélectionner une date</span>}
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+        <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             mode="single"
             selected={date}
-            captionLayout="dropdown"
-            onSelect={(date) => {
-              setDate(date)
-              setOpen(false)
-            }}
+            onSelect={setDate}
+            defaultMonth={date}
           />
         </PopoverContent>
       </Popover>
-      {/* <Calendar
-      mode="single"
-      selected={datePicker}
-      onSelect={setDatePicker}
-      className="rounded-md border shadow-sm"
-      captionLayout="dropdown"
-    /> */}
-      {/* <Select
-        required
-        // items={times}
-        name={timeFieldName}
-        // className="w-[180px]"
-      >
-        {times.map((time) => (
-          <SelectItem key={time.id} value={time.id}>
-            {time.label}
-          </SelectItem>
-        ))}
-      </Select> */}
-      {/* <Calendar
-        selected={new Date()}
-        // minValue={today(getLocalTimeZone())}
-        aria-label="Date (No Selection)"
-        onChange={setDate} /> */}
-      {/* <Select
-        required
-        items={times}
-        name={timeFieldName}>
-          <SelectItem key={time.id} value={time.id} >{time.label}</SelectItem>
-      </Select> */}
+
     </div>)
 }

@@ -8,6 +8,7 @@ import { auth } from "@/auth";
 import { headers } from "next/headers";
 import { bookSchema, BookType, UserInfoType } from "./ValidationSchemas";
 import { UserBooksWithBorrow } from "./DbSchemas";
+import { sendPendingFriendInvitation } from "./email";
 
 export const updateUser = async (email: string, cp: string, formData: UserInfoType) => {
     await prisma.user.update({
@@ -430,12 +431,27 @@ export async function addAsPendingFriend(email: string) {
     }
 
     console.log('creating pf with email', email, ' for userId', session?.user?.id)
-    await prisma.pendingFriend.create({
+    const pendingFriend = await prisma.pendingFriend.create({
         data: {
             userId: session?.user?.id,
             email: email,
         },
     })
+
+    // Get the sender's info to include in the email
+    const sender = await prisma.user.findUnique({
+        where: { id: session?.user?.id },
+        select: { name: true, pseudo: true, email: true }
+    })
+
+    // Send invitation email
+    if (sender) {
+        await sendPendingFriendInvitation(
+            email,
+            sender.name,
+            sender.pseudo || sender.name
+        )
+    }
 
     revalidatePath('/my-friends')
     redirect('/my-friends')

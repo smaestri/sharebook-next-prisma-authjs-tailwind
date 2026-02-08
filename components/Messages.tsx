@@ -52,7 +52,7 @@ const Messages = ({ messages, borrowId, isPurchase, borrowDate }: { messages: an
         <Textarea
           name="message"
           onChange={(event) => setMessage(event.target.value)}
-          placeholder="Message au vendeur"
+          placeholder="Message au propriétaire du livre"
         />
       </div>
       <div className="mt-5">

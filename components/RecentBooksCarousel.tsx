@@ -35,7 +35,7 @@ export default async function RecentBooksCarousel() {
       <CarouselContent>
         {userBooks.map((userBook) => (
           <CarouselItem key={userBook.id} className="basis-1/3">
-              <div className="rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow h-full flex flex-col items-center">
+              <div className="flex flex-col mt3 mb-10 border p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow items-center">
                   <div className="h-40">
                     <ImageWithLoading
                       title={userBook.book.title}
@@ -52,7 +52,7 @@ export default async function RecentBooksCarousel() {
                 </div>
                 <div>
                     <Link href={`/list-books/${userBook.book.id}`} className="cursor-pointer">
-                      <Button variant="outline">Voir</Button>
+                      <Button className="cursor-pointer" variant="outline">Voir</Button>
                     </Link>
                 </div>
               </div>

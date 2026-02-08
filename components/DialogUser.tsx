@@ -26,7 +26,7 @@ const DialogUser = ({ userBooks, book }: { userBooks: any, book: any }) => {
           <div>
             <div>
               <div className="flex flex-row gap-10 font-bold">
-                <div>Vendeur</div>
+                <div>Propriétaire</div>
                 <div>Lieu</div>
               </div>
               {userBooks.map((userBook: any) => (
