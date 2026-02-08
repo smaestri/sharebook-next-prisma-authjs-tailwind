@@ -28,7 +28,7 @@ export default function UserAccountForm({ email, userInfo }: { email: string, us
     }, [userInfo])
 
     const refreshCities = async (cp: any) => {
-        const url = `http://localhost:3000/api/geo?cp=${cp}`
+        const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/geo?cp=${cp}`
         try {
             setLoading(true)
             const response = await axios.get(url)

@@ -69,7 +69,7 @@ export default function SearchInputAutoComplete({ redirect, callback, callbackNo
 
 
     const search = async (value: string) => {
-        const url = `http://localhost:3000/api/search?value=${value}`
+        const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/search?value=${value}`
         try {
 
             setLoading(true)
