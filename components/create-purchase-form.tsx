@@ -13,7 +13,6 @@ import FormButtonActionState from "./form-button-action-state"
 export default function PurchaseForm({ userBook }: any) {
 
   const [message, setMessage] = useState<string>();
-  const [loading, setLoading] = useState<boolean>(false);
   const [date, setDate] = useState<Date | undefined>(undefined)
   const [formState, action] = useActionState(purchaseBook.bind(null, userBook.id, date, message), { message: '' })
 

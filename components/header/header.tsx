@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import SearchInput from "./search-input";
 import UserMenuPage from "../../app/user-menu/page";
 
@@ -8,7 +9,14 @@ export default async function Header() {
     <div className="flex-1">
       <div>
         <Link href="/">
-          <p className="hidden sm:block font-bold text-inherit">Sharebook</p>
+          <Image
+            src="/logo.jpg"
+            alt="Livres entre amis"
+            width={240}
+            height={80}
+            priority
+            className="hidden sm:block"
+          />
         </Link>
       </div>
     </div>

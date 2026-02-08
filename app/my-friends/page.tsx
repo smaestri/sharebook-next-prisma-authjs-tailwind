@@ -45,7 +45,7 @@ export default async function MyFriends() {
             {friends.map(f =>
                 <div key={f.friend.id} className="flex items-center gap-2 p-2 border rounded">
                     <FriendLine user={f.friend} />
-                    <RemoveFriendButton friendId={f.friend.id} />
+                    <RemoveFriendButton friendId={f.id} />
                 </div>
             )}
             <h1 className="text-3xl font-bold mb-3">Invitation</h1>
@@ -54,6 +54,8 @@ export default async function MyFriends() {
             {pendingFriends.length > 0 && (<>
                 <h2 className="text-2xl font-bold mb-3">Invitations en cours</h2>
                 <PendingFriendsList pendingFriends={pendingFriends} />
+                <div className="text-sm text-gray-500">Une fois ces personnes inscrites, elles apparaîtront dans votre liste d'amis.</div>
+
             </>)}
 
         </div>

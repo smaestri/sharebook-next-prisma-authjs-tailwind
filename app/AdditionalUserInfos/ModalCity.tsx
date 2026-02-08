@@ -2,7 +2,6 @@
 
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import UserAccountForm from "./user-account-form"
-import { Button } from "@/components/ui/button"
 
 const ModalCity = ({ email, isOpen }: { email: string, isOpen: boolean }) => {
 

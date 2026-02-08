@@ -1,21 +1,15 @@
 "use client"
-import { useState } from "react"
+import { useActionState, useState } from "react"
 import { Input } from "./ui/input"
 import FormButton from "./form-button"
 import { addAsPendingFriend } from "@/lib/actions"
 
 export default function AddPendingFriendForm() {
     const [email, setEmail] = useState("")
-    const [loading, setLoading] = useState(false)
-    const handleSubmit = async (e: React.FormEvent) => {
-        setLoading(true)
-        await addAsPendingFriend(email)
-        setEmail("")
-        setLoading(false)
-    }
-
+    const [formState, action, isPending] = useActionState(addAsPendingFriend.bind(null, email), { message: '' })
+    
     return (
-        <form onSubmit={handleSubmit} className="flex gap-2 items-start">
+        <form action={action} className="flex gap-2 items-start">
             <div className="flex-1">
                 <Input
                     type="email"
@@ -23,15 +17,16 @@ export default function AddPendingFriendForm() {
                     className="border p-2 rounded w-full"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    disabled={loading}
+                    disabled={isPending}
                 />
             </div>
             <FormButton
-                pending={loading}
+                pending={isPending}
                 className="cursor-pointer"
             >
                 Envoyer invitation
             </FormButton>
+            {formState?.message && <div className="text-sm text-red-500">{formState.message}</div>}
         </form>
     )
 }

@@ -3,13 +3,13 @@ import { removeFriend } from "@/lib/actions"
 import { X } from "lucide-react"
 import { useState } from "react"
 
-export default function RemoveFriendButton({ friendId }: { friendId: string }) {
+export default function RemoveFriendButton({ friendId }: { friendId: number }) {
     const [loading, setLoading] = useState(false)
 
     const handleRemove = async () => {
         if (!confirm("Êtes-vous sûr de vouloir supprimer cet ami ?")) return
         setLoading(true)
-        await removeFriend(parseInt(friendId))
+        await removeFriend(friendId)
         setLoading(false)
     }
 
