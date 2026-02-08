@@ -1,5 +1,3 @@
-import { search } from "@/app/generated/prisma/sql";
-import prisma from "@/lib/prisma";
 import { getBookInfoFromLibForBookCreation } from "@/lib/utils-search";
 
 export async function GET(request: Request) {

@@ -109,6 +109,11 @@ export const getBookInfoFromLib = async (search: string, page?: number, numberOf
   //   author: null,
   //   title
   // })
+  return {
+    numFound: 0,
+    start: 0,
+    booksFound: []
+  };
 }
 
 
