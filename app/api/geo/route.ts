@@ -1,6 +1,19 @@
 import axios from "axios";
 import * as cheerio from 'cheerio';
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+export async function OPTIONS(request: Request) {
+  return new Response(null, {
+    status: 200,
+    headers: corsHeaders,
+  });
+}
+
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const cp = searchParams.get('cp')
@@ -13,7 +26,10 @@ export async function GET(request: Request) {
             "User-Agent": "axios 0.21.1"
           }
         });
-        return Response.json({ cities: response.data })
+        return Response.json({ cities: response.data }, {
+          status: 200,
+          headers: corsHeaders,
+        })
 
       } catch (error) {
         console.log('err' + JSON.stringify(error))

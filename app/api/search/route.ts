@@ -1,11 +1,27 @@
 import { getBookInfoFromLibForBookCreation } from "@/lib/utils-search";
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+export async function OPTIONS(request: Request) {
+  return new Response(null, {
+    status: 200,
+    headers: corsHeaders,
+  });
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
 
   const value = searchParams.get('value')
   if (!value) {
-    return Response.json({ books: [] })
+    return Response.json({ books: [] }, {
+      status: 200,
+      headers: corsHeaders,
+    })
   }
   console.log('api SEARCH called with value' + value)
   const ftsValue = value.split(" ").join(" & ")
@@ -32,6 +48,9 @@ export async function GET(request: Request) {
     //     }
     //   }
       console.log('bookcreated', result.length)
-      return Response.json({ books: booksFromLib })
+      return Response.json({ books: booksFromLib }, {
+        status: 200,
+        headers: corsHeaders,
+      })
    // }
 }
