@@ -23,7 +23,7 @@ export default async function ListBooks( props: any) {
   if (!Number.isFinite(page) || page < 1) page = 1;
   const skip = (page - 1) * COUNT_ITEMS_PER_PAGE;
   if (!session?.user) return (
-    <div>Please connect</div>
+    <div>Connectez-vous afin de voir tous les livres disponibles!</div>
   )
   const email = session.user.email
 

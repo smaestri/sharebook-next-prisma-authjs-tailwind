@@ -9,10 +9,7 @@ export interface Counter {
 }
 
 export default function SideBarView({ categories }: { categories: Counter[] }) {
-  const { data: session } = useSession()
-  if (!session?.user) {
-    return <div>Please login</div>
-  }
+
   const renderCategories = categories.map((cat: Counter) => {
     return (
       <div key={cat.name}>

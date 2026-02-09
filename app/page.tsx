@@ -9,10 +9,6 @@ export default async function SignIn() {
   const session = await auth.api.getSession({
     headers: await headers()
   })
-  if (!session?.user) return (
-    <div>Please sign in.</div>
-  )
-
   // fetchu user from DB to get address
   const user = await prisma.user.findFirst({
     where: {
