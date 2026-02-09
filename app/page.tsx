@@ -23,7 +23,7 @@ export default async function SignIn() {
     }
   })
   console.log("pendingFriend", pendingFriend)
-  if (pendingFriend) {
+  if (pendingFriend && pendingFriend.userId && session?.user.id) {
     await prisma.friend.create({
       data: {
         userId: pendingFriend.userId,
