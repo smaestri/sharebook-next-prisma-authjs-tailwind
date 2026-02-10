@@ -8,7 +8,7 @@ import { auth } from "@/auth";
 import { headers } from "next/headers";
 import { bookSchema, BookType, UserInfoType } from "./ValidationSchemas";
 import { UserBooksWithBorrow } from "./DbSchemas";
-import { sendPendingFriendInvitation, sendBookRequestEmail } from "./email";
+import { sendPendingFriendInvitation, sendBookRequestEmail, sendBookRequestCancellationEmail } from "./email";
 
 export const updateUser = async (email: string, cp: string, formData: UserInfoType) => {
     await prisma.user.update({
@@ -235,6 +235,27 @@ export async function refusePurchase(purchaseId: number) {
 
 
 export async function cancelPurchase(purchaseId: number) {
+    // Get the borrow details with related data
+    const borrow = await prisma.borrow.findUnique({
+        where: {
+            id: purchaseId,
+        },
+        include: {
+            borrower: true,
+            userBook: {
+                include: {
+                    book: true,
+                    user: true,
+                }
+            }
+        }
+    })
+
+    if (!borrow) {
+        console.error('borrow not found')
+        return { message: "error borrow not found" }
+    }
+
     await prisma.borrow.update({
         where: {
             id: purchaseId,
@@ -244,6 +265,19 @@ export async function cancelPurchase(purchaseId: number) {
             closedDate: new Date(),
         },
     })
+
+    // Send cancellation email to book owner
+    const bookOwner = borrow.userBook.user
+    const borrower = borrow.borrower
+
+    await sendBookRequestCancellationEmail(
+        bookOwner.email,
+        bookOwner.name,
+        borrower.name,
+        borrower.pseudo || borrower.name,
+        borrow.userBook.book.title,
+        borrow.userBook.book.author
+    )
 
     revalidatePath('/purchases')
     redirect('/purchases')
