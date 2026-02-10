@@ -178,3 +178,74 @@ export async function sendBookRequestCancellationEmail(
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 }
+
+export async function sendBookRequestAcceptanceEmail(
+  recipientEmail: string,
+  recipientName: string,
+  ownerName: string,
+  ownerPseudo: string,
+  bookTitle: string,
+  bookAuthor: string,
+  requestType: 'LOAN' | 'GIFT' | 'SALE',
+  rdvDate?: string,
+  rdvPlace?: string,
+  price?: number
+) {
+  try {
+    const requestTypeLabel = {
+      LOAN: 'Demande de prêt acceptée',
+      GIFT: 'Demande de don acceptée',
+      SALE: 'Demande d\'achat acceptée'
+    }[requestType];
+
+    const actionDescription = {
+      LOAN: 'a accepté de vous prêter',
+      GIFT: 'a accepté de vous donner',
+      SALE: 'a accepté de vous vendre'
+    }[requestType];
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: recipientEmail,
+      subject: `${requestTypeLabel} - ${bookTitle}`,
+      html: `
+        <div style="font-family: Georgia, 'Times New Roman', serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #28a745;">${requestTypeLabel}</h2>
+          <p>Bonjour ${recipientName},</p>
+          <p><strong>${ownerName}</strong> (${ownerPseudo}) ${actionDescription} le livre:</p>
+          <div style="background-color: #f0f8f0; padding: 15px; border-left: 4px solid #28a745; margin: 20px 0;">
+            <p style="margin: 5px 0;"><strong>${bookTitle}</strong></p>
+            <p style="margin: 5px 0; color: #666;">Auteur: ${bookAuthor}</p>
+            ${requestType === 'SALE' && price ? `<p style="margin: 5px 0; font-weight: bold;">Prix: ${price}€</p>` : ''}
+          </div>
+          <div style="background-color: #fffacd; padding: 15px; margin: 20px 0; border-radius: 5px;">
+            <h3 style="margin-top: 0;">Détails du rendez-vous:</h3>
+            ${rdvDate ? `<p><strong>Date:</strong> ${new Date(rdvDate).toLocaleDateString('fr-FR')} à ${new Date(rdvDate).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</p>` : '<p><strong>Date:</strong> À confirmer</p>'}
+            ${rdvPlace ? `<p><strong>Lieu:</strong> ${rdvPlace}</p>` : '<p><strong>Lieu:</strong> À confirmer</p>'}
+          </div>
+          <p>
+            <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://livresentreamis.com'}/purchases" 
+               style="display: inline-block; background-color: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">
+              Consulter les détails
+            </a>
+          </p>
+          <p style="color: #666; font-size: 14px; margin-top: 20px;">
+            N'oubliez pas de contacter ${ownerName} pour confirmer les détails du rendez-vous si nécessaire.
+          </p>
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+          <p style="color: #666; font-size: 12px;">
+            Vous avez reçu cet email car votre demande sur Livres Entre Amis a été acceptée.
+          </p>
+        </div>
+      `,
+      text: `Bonjour ${recipientName},\n\n${ownerName} (${ownerPseudo}) ${actionDescription} le livre: ${bookTitle} par ${bookAuthor}\n\nDétails du rendez-vous:\nDate: ${rdvDate ? new Date(rdvDate).toLocaleDateString('fr-FR') : 'À confirmer'}\nLieu: ${rdvPlace || 'À confirmer'}\n${requestType === 'SALE' && price ? `Prix: ${price}€\n` : ''}\nConsultez les détails: ${process.env.NEXT_PUBLIC_APP_URL || 'https://livresentreamis.com'}/purchases`,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Book request acceptance email sent successfully:', info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('Error sending book request acceptance email:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+  }
+}

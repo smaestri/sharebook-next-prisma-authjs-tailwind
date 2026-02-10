@@ -8,7 +8,7 @@ import { auth } from "@/auth";
 import { headers } from "next/headers";
 import { bookSchema, BookType, UserInfoType } from "./ValidationSchemas";
 import { UserBooksWithBorrow } from "./DbSchemas";
-import { sendPendingFriendInvitation, sendBookRequestEmail, sendBookRequestCancellationEmail } from "./email";
+import { sendPendingFriendInvitation, sendBookRequestEmail, sendBookRequestCancellationEmail, sendBookRequestAcceptanceEmail } from "./email";
 
 export const updateUser = async (email: string, cp: string, formData: UserInfoType) => {
     await prisma.user.update({
@@ -203,6 +203,26 @@ export async function deleteBook(id: number) {
 }
 
 export async function validatePurchase(purchaseId: number) {
+    // Get the borrow details with related data
+    const borrow = await prisma.borrow.findUnique({
+        where: {
+            id: purchaseId,
+        },
+        include: {
+            borrower: true,
+            userBook: {
+                include: {
+                    book: true,
+                    user: true,
+                }
+            }
+        }
+    })
+
+    if (!borrow) {
+        console.error('borrow not found')
+        return { message: "error borrow not found" }
+    }
 
     await prisma.borrow.update({
         where: {
@@ -213,6 +233,24 @@ export async function validatePurchase(purchaseId: number) {
             validatedDate: new Date(),
         },
     })
+
+    // Send acceptance email to borrower
+    const borrower = borrow.borrower
+    const bookOwner = borrow.userBook.user
+    const requestType: 'LOAN' | 'GIFT' | 'SALE' = borrow.userBook.price && borrow.userBook.price > 0 ? 'SALE' : 'LOAN'
+
+    await sendBookRequestAcceptanceEmail(
+        borrower.email,
+        borrower.name,
+        bookOwner.name,
+        bookOwner.pseudo || bookOwner.name,
+        borrow.userBook.book.title,
+        borrow.userBook.book.author,
+        requestType,
+        borrow.rdvDate,
+        borrow.rdvPlace,
+        borrow.userBook.price || undefined
+    )
 
     revalidatePath('/sales')
     redirect('/sales')
