@@ -70,7 +70,7 @@ export default function PurchaseClient({ sale, isPurchase, buyerName, isItem }: 
           </div>
         </div>
         <div className="flex flex-col mt-3 gap-2 items-center">
-          {sale.status === BORROW_STATUS.PENDING && isPurchase && <Badge variant="outline">Attente de validation du vendeur</Badge>}
+          {sale.status === BORROW_STATUS.PENDING && isPurchase && <Badge variant="outline">Attente de validation du propriétaire</Badge>}
           <div className="flex flex-row gap-2">
             {sale.status === BORROW_STATUS.PENDING && !isPurchase && <div><FormButton className="cursor-pointer" pending={loading} onClick={() => {setLoading(true);validatePurchase(sale.id)}}>Accepter</FormButton></div>}
             {sale.status === BORROW_STATUS.PENDING && !isPurchase && <div><FormButton className="cursor-pointer" pending={loading} onClick={() => {setLoading(true);refusePurchase(sale.id)}}>Refuser</FormButton></div>}

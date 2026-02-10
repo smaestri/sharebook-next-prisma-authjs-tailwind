@@ -8,7 +8,7 @@ import { auth } from "@/auth";
 import { headers } from "next/headers";
 import { bookSchema, BookType, UserInfoType } from "./ValidationSchemas";
 import { UserBooksWithBorrow } from "./DbSchemas";
-import { sendPendingFriendInvitation } from "./email";
+import { sendPendingFriendInvitation, sendBookRequestEmail } from "./email";
 
 export const updateUser = async (email: string, cp: string, formData: UserInfoType) => {
     await prisma.user.update({
@@ -264,7 +264,11 @@ export async function purchaseBook(userBookId: string, rdvDate: any, message?: s
     console.log('userConnectedId', userConnectedId)
 
     const userBook = await prisma.userBook.findUnique({
-        where: { id: parseInt(userBookId) }
+        where: { id: parseInt(userBookId) },
+        include: {
+            book: true,
+            user: true
+        }
     })
     if (!userBook) {
         console.error('error book not found')
@@ -272,6 +276,15 @@ export async function purchaseBook(userBookId: string, rdvDate: any, message?: s
     }
 
     console.log('userBook found:', userBook)
+
+    // Get requester info
+    const requester = await prisma.user.findUnique({
+        where: { id: userConnectedId }
+    })
+    if (!requester) {
+        console.error('error requester not found')
+        return { message: "error requester not found" }
+    }
 
     // 1. Insert borrow
     console.log('creating borrow for userConnectedId:', userConnectedId, 'and userBook', userBook)
@@ -294,6 +307,24 @@ export async function purchaseBook(userBookId: string, rdvDate: any, message?: s
             }
         })
     }
+
+    // 3. Send email to book owner
+    // Determine request type based on whether price is set (SALE if price > 0, LOAN otherwise)
+    const requestType: 'LOAN' | 'GIFT' | 'SALE' = userBook.price && userBook.price > 0 ? 'SALE' : 'LOAN'
+    
+    await sendBookRequestEmail(
+        userBook.user.email,
+        userBook.user.name,
+        requester.name,
+        requester.pseudo || requester.name,
+        userBook.book.title,
+        userBook.book.author,
+        requestType,
+        message,
+        rdvDate,
+        userBook.price || undefined
+    )
+    
     revalidatePath('/purchases')
     redirect('/purchases')
 }

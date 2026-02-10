@@ -57,3 +57,73 @@ export async function sendPendingFriendInvitation(
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 }
+
+export async function sendBookRequestEmail(
+  recipientEmail: string,
+  recipientName: string,
+  requesterName: string,
+  requesterPseudo: string,
+  bookTitle: string,
+  bookAuthor: string,
+  requestType: 'LOAN' | 'GIFT' | 'SALE',
+  message?: string,
+  rdvDate?: string,
+  price?: number
+) {
+  try {
+    const requestTypeLabel = {
+      LOAN: 'Demande de prêt',
+      GIFT: 'Demande de don',
+      SALE: 'Demande d\'achat'
+    }[requestType];
+
+    const requestTypeDescription = {
+      LOAN: 'vous demande de prêter',
+      GIFT: 'vous demande de donner',
+      SALE: 'souhaite acheter'
+    }[requestType];
+
+    const priceDisplay = requestType === 'SALE' && price ? `à ${price}€` : '';
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: recipientEmail,
+      subject: `${requestTypeLabel} - ${bookTitle} par ${requesterName}`,
+      html: `
+        <div style="font-family: Georgia, 'Times New Roman', serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2>${requestTypeLabel}</h2>
+          <p>Bonjour ${recipientName},</p>
+          <p><strong>${requesterName}</strong> (${requesterPseudo}) ${requestTypeDescription} votre livre:</p>
+          <div style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #0066cc; margin: 20px 0;">
+            <p style="margin: 5px 0;"><strong>${bookTitle}</strong></p>
+            <p style="margin: 5px 0; color: #666;">Auteur: ${bookAuthor}</p>
+            ${requestType === 'SALE' && price ? `<p style="margin: 5px 0; font-weight: bold;">Prix proposé: ${price}€</p>` : ''}
+          </div>
+          ${rdvDate ? `<p><strong>Date proposée pour le rendez-vous:</strong> ${new Date(rdvDate).toLocaleDateString('fr-FR')}</p>` : ''}
+          ${message ? `<div style="background-color: #fffacd; padding: 10px; margin: 20px 0; border-radius: 5px;">
+            <p><strong>Message de ${requesterName}:</strong></p>
+            <p>${message.replace(/\n/g, '<br>')}</p>
+          </div>` : ''}
+          <p>
+            <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://livresentreamis.com'}/sales" 
+               style="display: inline-block; background-color: #0066cc; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 20px 0;">
+              Consulter la demande
+            </a>
+          </p>
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+          <p style="color: #666; font-size: 12px;">
+            Vous avez reçu cet email car quelqu'un a fait une demande sur un de vos livres sur Livres Entre Amis.
+          </p>
+        </div>
+      `,
+      text: `Bonjour ${recipientName},\n\n${requesterName} (${requesterPseudo}) ${requestTypeDescription} votre livre: ${bookTitle} par ${bookAuthor}\n\n${rdvDate ? `Date proposée: ${new Date(rdvDate).toLocaleDateString('fr-FR')}\n\n` : ''}${message ? `Message: ${message}\n\n` : ''}Consultez votre demande: ${process.env.NEXT_PUBLIC_APP_URL || 'https://livresentreamis.com'}/purchases`,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Book request email sent successfully:', info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('Error sending book request email:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+  }
+}
