@@ -187,8 +187,8 @@ export async function sendBookRequestAcceptanceEmail(
   bookTitle: string,
   bookAuthor: string,
   requestType: 'LOAN' | 'GIFT' | 'SALE',
-  rdvDate?: string,
-  rdvPlace?: string,
+  rdvDate?: Date | null,
+  rdvPlace?: string | null,
   price?: number
 ) {
   try {
