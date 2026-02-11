@@ -38,7 +38,7 @@ export default function UserMenu({ borrowsCount, lendsCount }: AccountProps) {
   }
   return (
     <>
-      {!session?.user && <Button onClick={() => setModalSigninOpen(true)}>
+      {!session?.user && <Button className='cursor-pointer' onClick={() => setModalSigninOpen(true)}>
         Connexion
       </Button>}
       {/* {session?.user  && <Button onClick={() => setModalFriendOpen(true)}>Voir les livres d'un ami</Button>} */}
