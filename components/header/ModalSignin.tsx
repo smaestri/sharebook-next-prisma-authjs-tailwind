@@ -17,7 +17,7 @@ const ModalSignin = ({ isOpen, onClose }: { isOpen: boolean, onClose: any }) => 
     try {
       setLoadingProvider(provider)
       // signIn.social should trigger a redirect; awaiting in case it returns a promise
-      await (signIn.social({ provider, callbackURL: '/' }) as Promise<any>)
+      await (signIn.social({ provider, callbackURL: provider === 'google' ? process.env.REDIRECT_URL_GOOGLE : process.env.REDIRECT_URL_GITHUB }))
     } catch (err) {
       // if sign-in fails synchronously, remove loading state
       console.error('Social sign-in error', err)
