@@ -10,7 +10,6 @@ import FormButtonActionState from "./form-button-action-state"
 
 const Messages = ({ messages, borrowId, isPurchase, borrowDate }: { messages: any, borrowId: any, isPurchase: any, borrowDate: BorrowDate}) => {
   const [message, setMessage] = useState<string>();
-  const [loading, setLoading] = useState<boolean>();
   let firstUserMessage = ""
   if (messages && messages.length > 0) {
     firstUserMessage = messages[0].user.pseudo
@@ -52,7 +51,7 @@ const Messages = ({ messages, borrowId, isPurchase, borrowDate }: { messages: an
         <Textarea
           name="message"
           onChange={(event) => setMessage(event.target.value)}
-          placeholder="Message au propriétaire du livre"
+          placeholder={`Message ${isPurchase ? "au propriétaire " : "à l'emprunteur "}de ce livre`}
         />
       </div>
       <div className="mt-5">

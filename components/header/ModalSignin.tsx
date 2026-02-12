@@ -30,7 +30,7 @@ const ModalSignin = ({ isOpen, onClose }: { isOpen: boolean, onClose: any }) => 
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader className="flex flex-col gap-1">
           <DialogTitle>
-            Choisir un fournisseur
+            Choisir un fournisseur avec lequel vous souhaitez vous connecter sur LivresEntreAmis: 
           </DialogTitle></DialogHeader>
         <div className="flex justify-center items-center gap-6 my-4">
           <button
@@ -38,7 +38,7 @@ const ModalSignin = ({ isOpen, onClose }: { isOpen: boolean, onClose: any }) => 
             aria-label={loadingProvider === 'github' ? 'Connexion en cours...' : 'Se connecter avec GitHub'}
             aria-busy={loadingProvider === 'github'}
             disabled={!!loadingProvider}
-            className={`p-1 cursor-pointer rounded-full transition-transform transform hover:scale-105 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${loadingProvider ? 'opacity-60 cursor-not-allowed' : ''}`}
+            className={`flex flex-col items-center gap-2 p-1 cursor-pointer rounded-full transition-transform transform hover:scale-105 hover:opacity-90 focus:outline-none focus:ring-offset-2 focus:ring-primary ${loadingProvider ? 'opacity-60 cursor-not-allowed' : ''}`}
           >
             {loadingProvider === 'github' ? (
               <Spinner className="w-12 h-12" />
@@ -50,13 +50,14 @@ const ModalSignin = ({ isOpen, onClose }: { isOpen: boolean, onClose: any }) => 
                 height={48}
               />
             )}
+            <span className="text-sm font-medium">Github</span>
           </button>
           <button
             onClick={() => handleSocialSignIn('google')}
             aria-label={loadingProvider === 'google' ? 'Connexion en cours...' : 'Se connecter avec Google'}
             aria-busy={loadingProvider === 'google'}
             disabled={!!loadingProvider}
-            className={`p-1  cursor-pointer rounded-full transition-transform transform hover:scale-105 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${loadingProvider ? 'opacity-60 cursor-not-allowed' : ''}`}
+            className={`flex flex-col items-center gap-2 p-1  cursor-pointer rounded-full transition-transform transform hover:scale-105 hover:opacity-90 focus:outline-none focus:ring-offset-2 focus:ring-primary ${loadingProvider ? 'opacity-60 cursor-not-allowed' : ''}`}
           >
             {loadingProvider === 'google' ? (
               <Spinner className="w-12 h-12" />
@@ -68,6 +69,7 @@ const ModalSignin = ({ isOpen, onClose }: { isOpen: boolean, onClose: any }) => 
                 height={48}
               />
             )}
+            <span className="text-sm font-medium">Google</span>
           </button>
         </div>
         <DialogFooter>

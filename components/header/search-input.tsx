@@ -27,7 +27,7 @@ export default function SearchInput() {
         <form onSubmit={handleSubmit}>
             <InputGroup>
                 <InputGroupInput
-                    placeholder="Search..."
+                    placeholder="Rechercher par titre, auteur, nom d'utilisateur..."
                     aria-label="Search books"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
@@ -36,7 +36,7 @@ export default function SearchInput() {
                     <SearchIcon />
                 </InputGroupAddon>
                 <InputGroupAddon align="inline-end">
-                    <InputGroupButton type="submit" onClick={() => doSearch(search)}>Search</InputGroupButton>
+                    <InputGroupButton type="submit" onClick={() => doSearch(search)}>Rechercher</InputGroupButton>
                 </InputGroupAddon>
             </InputGroup>
         </form>)

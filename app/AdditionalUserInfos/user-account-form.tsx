@@ -71,7 +71,7 @@ export default function UserAccountForm({ email, userInfo }: { email: string, us
                 <div className="flex justify-center">
                     <div className="flex flex-col gap-2">
                         <div>
-                            Merci de renseigner votre pseudo et votre adresse précise SVP, qui sera le lieu de la vente avec le demandeur.
+                            Merci de renseigner votre pseudo et votre adresse précise SVP, qui sera le lieu de rencontre avec le demandeur (il possible de changer en envoyant un message au propriétaire / demandeur, une fois la demande éffectuée).
                         </div>
                         <div>
                             <Controller

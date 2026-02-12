@@ -59,7 +59,7 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
 
   const renderBookForm = () => {
     return (
-      <div className="w-300">
+      <div className="w-[300px]">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
@@ -112,7 +112,7 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel>Auteur</FieldLabel>
-                  <Input disabled={!!userBook || authorDisabled} placeholder="auteur" {...field} />
+                  <Input width="w-sm" disabled={!!userBook || authorDisabled} placeholder="auteur" {...field} />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -122,17 +122,18 @@ export default function CreateEditBookForm({ categories, userBook }: CreateEditB
             <BookCreateInfos form={form} categories={categories} />
 
           </FieldGroup>
-          <FormButton className="cursor-pointer" pending={form.formState.isSubmitting || loading}>Save</FormButton>
+          <FormButton className="cursor-pointer" pending={form.formState.isSubmitting || loading}>Enregistrer</FormButton>
           {errorMessage ? <div className="p-2 bg-red-200 border border-red-400">{errorMessage}</div> : null}
         </form>
 
       </div>)
   }
   return (
-    <div className="flex">
-      <div>
-        {renderBookForm()}
+      <div className="flex justify-center">
+        <div className="flex flex-col">
+          <h1 className="text-3xl font-bold mb-6">Déclarer un livre</h1>
+          {renderBookForm()}
+        </div>
       </div>
-    </div>
   )
 }

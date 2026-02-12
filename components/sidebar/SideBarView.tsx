@@ -14,7 +14,7 @@ export default function SideBarView({ categories }: { categories: Counter[] }) {
     return (
       <div key={cat.name}>
         <Link href={{ pathname: `/list-books`, query: { categoryId: cat.id } }} className="underline">
-          {cat.name}({cat.count})
+          {cat.name} ({cat.count})
         </Link></div>)
   })
   return (<div className="flex flex-col">

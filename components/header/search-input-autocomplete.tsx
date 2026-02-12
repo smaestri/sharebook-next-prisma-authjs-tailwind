@@ -175,7 +175,7 @@ export default function SearchInputAutoComplete({ redirect, callback, callbackNo
                         value={defaultValue || finalValue || searchVal}
                         onFocus={handleFocus}
                         onChange={handleChange}
-                        placeholder="Search..." />
+                        placeholder="rechercher un livre par son titre..." />
                 </div>
                 {renderResults()}
 

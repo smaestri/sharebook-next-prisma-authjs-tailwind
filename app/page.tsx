@@ -46,7 +46,7 @@ export default async function SignIn() {
       <div>
         <p>Bienvenue sur LivresEntreAmis! Ce site vous permet de partager vos livres, et trouver les livres que d'autres personnes partagent.</p>
         <p>Une fois votre livre trouvé, vous pourrez faire une demande à son propriétaire pour convenir d'un RDV et obtenir le livre! Il peut s'agir d'une vente, prêt ou don, au goût du propriétaire du livre!</p>
-        <p>Et n'oubliez pas d'ajouter cette personne en tant qu'ami, ce qui vous permettra de facilement voir ses livres via le lien "Mes amis" du menu utilisateur! De plus, cette page vous permet d'inviter une personne qui ne serait pas encore inscrite: quand celle-ci se connectera au site, elle deviendra automatiquement votre ami!</p>
+        <p>Et n'oubliez pas d'ajouter cette personne en tant qu'ami, en cliquant sur son nom dans la page du livre. Ainsi, cela vous permettra de facilement voir ses livres via le lien "Mes amis" du menu utilisateur! De plus, cette page vous permet d'inviter une personne qui ne serait pas encore inscrite: quand celle-ci se connectera au site, elle deviendra automatiquement votre ami!</p>
         <p>Bonne visite!</p>
         </div>
       
